@@ -1,25 +1,3 @@
-/* import { Link, routes } from '@redwoodjs/router'
-import { MetaTags } from '@redwoodjs/web'
-
-const SignUpPage = () => {
-  return (
-    <>
-      <MetaTags title="SignUp" description="SignUp page" />
-
-      <h1>SignUpPage</h1>
-      <p>
-        Find me in <code>./web/src/pages/SignUpPage/SignUpPage.tsx</code>
-      </p>
-      <p>
-        My default route is named <code>signUp</code>, link to me with `
-        <Link to={routes.signUp()}>SignUp</Link>`
-      </p>
-    </>
-  )
-}
-
-export default SignUpPage */
-import { gql, useMutation } from '@apollo/client'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
@@ -27,27 +5,13 @@ import Button from '@mui/material/Button'
 import Container from '@mui/material/Container'
 import CssBaseline from '@mui/material/CssBaseline'
 import Grid from '@mui/material/Grid'
-import Link from '@mui/material/Link'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 
-//add Mutation to create user
+import { Link, routes } from '@redwoodjs/router'
 
-export const CREATE_NEW_USER = gql`
-  mutation addNewUser($username: String!, $password: String!) {
-    addNewUser(username: $username, password: $password) {
-      code
-      success
-      message
-      user {
-        id
-        username
-        password
-      }
-    }
-  }
-`
+//add Mutation to create user
 
 function Copyright(props: any) {
   return (
@@ -65,29 +29,10 @@ const theme = createTheme()
 export default function SignUp() {
   const [username, setUserName] = React.useState('')
   const [password, setPassword] = React.useState('')
-  const [addNewUser, { data: mutationData }] = useMutation(CREATE_NEW_USER)
   const HandleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     if (event) {
       event.preventDefault()
     }
-    async function callMutation(username: string, password: string) {
-      try {
-        await addNewUser({
-          variables: {
-            username: username,
-            password: password,
-          },
-        })
-      } catch (error) {
-        console.error('Error adding new user:', error)
-      }
-    }
-    try {
-      callMutation(username, password)
-    } catch (error) {
-      console.error('Error adding new user:', error)
-    }
-    console.log('mutationData', mutationData)
   }
 
   return (
@@ -167,7 +112,7 @@ export default function SignUp() {
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link href="SignIn" variant="body2">
+                <Link to={routes.signIn()}>
                   Already have an account? Sign in
                 </Link>
               </Grid>
