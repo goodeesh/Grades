@@ -1,4 +1,4 @@
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
+/* import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -84,3 +84,27 @@ export default function SignIn() {
     </ThemeProvider>
   )
 }
+ */
+import React from 'react'
+
+import { useAuth0 } from '@auth0/auth0-react'
+
+const LoginButton = () => {
+  const { logout } = useAuth0()
+  const { loginWithPopup } = useAuth0()
+
+  return (
+    <>
+      <button onClick={() => loginWithPopup()}>Log In</button>
+      <button
+        onClick={() =>
+          logout({ logoutParams: { returnTo: window.location.origin } })
+        }
+      >
+        Log Out
+      </button>
+    </>
+  )
+}
+
+export default LoginButton

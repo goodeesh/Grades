@@ -10,9 +10,11 @@ generator client {
 
 model User {
   id       Int    @id @default(autoincrement())
-  username String @unique
+  email    String @unique
   password String
   role     String
+  name     String
+  lastName String
 
   // Teacher-User to Subjects relationship
   subjects          Subject[]         @relation("TeacherSubjects")

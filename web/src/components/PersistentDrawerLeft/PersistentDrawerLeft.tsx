@@ -27,6 +27,7 @@ export const routes = {
   students: () => '/students',
   signIn: () => '/sign-in',
   signUp: () => '/sign-up',
+  profile: () => '/profile',
   // Define other routes as needed
 }
 
@@ -52,8 +53,8 @@ const mainNavbarItems = [
   {
     id: 3,
     icon: <PeopleIcon />,
-    label: 'Sign Up',
-    route: routes.signUp,
+    label: 'Profile',
+    route: routes.profile,
   },
 ]
 
@@ -160,7 +161,7 @@ export default function MiniDrawer() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div">
-            Mini variant drawer
+            Grades
           </Typography>
         </Toolbar>
       </AppBar>

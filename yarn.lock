@@ -118,6 +118,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@auth0/auth0-react@npm:^2.2.1":
+  version: 2.2.1
+  resolution: "@auth0/auth0-react@npm:2.2.1"
+  dependencies:
+    "@auth0/auth0-spa-js": ^2.1.2
+  peerDependencies:
+    react: ^16.11.0 || ^17 || ^18
+    react-dom: ^16.11.0 || ^17 || ^18
+  checksum: 080d4ac96510525bac79516d9b48e363a0d325dc9cef6b54d1ca90cbc44f4cd2b98b7bb5f8a80aa0f6205c2269fb96d0be062afce42ed6067fea87751c067ac7
+  languageName: node
+  linkType: hard
+
+"@auth0/auth0-spa-js@npm:^2.1.2":
+  version: 2.1.2
+  resolution: "@auth0/auth0-spa-js@npm:2.1.2"
+  checksum: fb3a6b2ca2782a2f4aa03afe539a042076d0683c3f08e87a3bf93c6db6ad89f79441cb525f768b8bd3bb0c6b240833390bb2e06055ae30e9edf02575233ed4c7
+  languageName: node
+  linkType: hard
+
 "@babel/cli@npm:7.22.15":
   version: 7.22.15
   resolution: "@babel/cli@npm:7.22.15"
@@ -18138,6 +18157,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "root-workspace-0b6124@workspace:."
   dependencies:
+    "@auth0/auth0-react": ^2.2.1
     "@emotion/react": ^11.11.1
     "@emotion/styled": ^11.11.0
     "@mui/icons-material": ^5.14.14
