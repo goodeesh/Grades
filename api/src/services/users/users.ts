@@ -48,4 +48,7 @@ export const User: UserRelationResolvers = {
   SubjectStudents: (_obj, { root }) => {
     return db.user.findUnique({ where: { id: root?.id } }).SubjectStudents()
   },
+  Grades: (_obj, { root }) => {
+    return db.user.findUnique({ where: { id: root?.id } }).Grades()
+  },
 }

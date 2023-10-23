@@ -8,7 +8,7 @@ import { truncate } from 'src/lib/formatters'
 import type { DeleteUserMutationVariables, FindUsers } from 'types/graphql'
 
 const DELETE_USER_MUTATION = gql`
-  mutation DeleteUserMutation($id: Int!) {
+  mutation DeleteUserMutation($id: String!) {
     deleteUser(id: $id) {
       id
     }
@@ -42,9 +42,9 @@ const UsersList = ({ users }: FindUsers) => {
         <thead>
           <tr>
             <th>Id</th>
-            <th>Username</th>
-            <th>Password</th>
             <th>Role</th>
+            <th>Name</th>
+            <th>Last name</th>
             <th>&nbsp;</th>
           </tr>
         </thead>
@@ -52,9 +52,9 @@ const UsersList = ({ users }: FindUsers) => {
           {users.map((user) => (
             <tr key={user.id}>
               <td>{truncate(user.id)}</td>
-              <td>{truncate(user.username)}</td>
-              <td>{truncate(user.password)}</td>
               <td>{truncate(user.role)}</td>
+              <td>{truncate(user.name)}</td>
+              <td>{truncate(user.lastName)}</td>
               <td>
                 <nav className="rw-table-actions">
                   <Link

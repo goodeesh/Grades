@@ -35,42 +35,6 @@ const UserForm = (props: UserFormProps) => {
         />
 
         <Label
-          name="username"
-          className="rw-label"
-          errorClassName="rw-label rw-label-error"
-        >
-          Username
-        </Label>
-
-        <TextField
-          name="username"
-          defaultValue={props.user?.username}
-          className="rw-input"
-          errorClassName="rw-input rw-input-error"
-          validation={{ required: true }}
-        />
-
-        <FieldError name="username" className="rw-field-error" />
-
-        <Label
-          name="password"
-          className="rw-label"
-          errorClassName="rw-label rw-label-error"
-        >
-          Password
-        </Label>
-
-        <TextField
-          name="password"
-          defaultValue={props.user?.password}
-          className="rw-input"
-          errorClassName="rw-input rw-input-error"
-          validation={{ required: true }}
-        />
-
-        <FieldError name="password" className="rw-field-error" />
-
-        <Label
           name="role"
           className="rw-label"
           errorClassName="rw-label rw-label-error"
@@ -87,6 +51,42 @@ const UserForm = (props: UserFormProps) => {
         />
 
         <FieldError name="role" className="rw-field-error" />
+
+        <Label
+          name="name"
+          className="rw-label"
+          errorClassName="rw-label rw-label-error"
+        >
+          Name
+        </Label>
+
+        <TextField
+          name="name"
+          defaultValue={props.user?.name}
+          className="rw-input"
+          errorClassName="rw-input rw-input-error"
+          validation={{ required: true }}
+        />
+
+        <FieldError name="name" className="rw-field-error" />
+
+        <Label
+          name="lastName"
+          className="rw-label"
+          errorClassName="rw-label rw-label-error"
+        >
+          Last name
+        </Label>
+
+        <TextField
+          name="lastName"
+          defaultValue={props.user?.lastName}
+          className="rw-input"
+          errorClassName="rw-input rw-input-error"
+          validation={{ required: true }}
+        />
+
+        <FieldError name="lastName" className="rw-field-error" />
 
         <div className="rw-button-group">
           <Submit disabled={props.loading} className="rw-button rw-button-blue">

@@ -7,7 +7,7 @@ import {} from 'src/lib/formatters'
 import type { DeleteUserMutationVariables, FindUserById } from 'types/graphql'
 
 const DELETE_USER_MUTATION = gql`
-  mutation DeleteUserMutation($id: Int!) {
+  mutation DeleteUserMutation($id: String!) {
     deleteUser(id: $id) {
       id
     }
@@ -50,16 +50,16 @@ const User = ({ user }: Props) => {
               <td>{user.id}</td>
             </tr>
             <tr>
-              <th>Username</th>
-              <td>{user.username}</td>
-            </tr>
-            <tr>
-              <th>Password</th>
-              <td>{user.password}</td>
-            </tr>
-            <tr>
               <th>Role</th>
               <td>{user.role}</td>
+            </tr>
+            <tr>
+              <th>Name</th>
+              <td>{user.name}</td>
+            </tr>
+            <tr>
+              <th>Last name</th>
+              <td>{user.lastName}</td>
             </tr>
           </tbody>
         </table>

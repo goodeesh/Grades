@@ -5,12 +5,12 @@ import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
 import User from 'src/components/User/User'
 
 export const QUERY = gql`
-  query FindUserById($id: Int!) {
+  query FindUserById($id: String!) {
     user: user(id: $id) {
       id
-      username
-      password
       role
+      name
+      lastName
     }
   }
 `
