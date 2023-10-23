@@ -1,9 +1,11 @@
+import { useAuth0 } from '@auth0/auth0-react'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import HomeIcon from '@mui/icons-material/Home'
 import LoginIcon from '@mui/icons-material/Login'
 import MenuIcon from '@mui/icons-material/Menu'
 import PeopleIcon from '@mui/icons-material/People'
+import { Button } from '@mui/material'
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar'
 import Box from '@mui/material/Box'
 import CssBaseline from '@mui/material/CssBaseline'
@@ -130,8 +132,18 @@ const Drawer = styled(MuiDrawer, {
 }))
 
 export default function MiniDrawer() {
+  const { isAuthenticated, logout, loginWithPopup } = useAuth0()
+
   const theme = useTheme()
   const [open, setOpen] = React.useState(false)
+
+  const handleLogin = () => {
+    if (isAuthenticated) {
+      logout({ logoutParams: { returnTo: window.location.origin } })
+    } else {
+      loginWithPopup()
+    }
+  }
 
   const handleDrawerOpen = () => {
     setOpen(true)
@@ -163,6 +175,13 @@ export default function MiniDrawer() {
           <Typography variant="h6" noWrap component="div">
             Grades
           </Typography>
+          <Button
+            sx={{ alignItems: 'flex-end', marginLeft: 'auto' }}
+            color="inherit"
+            onClick={handleLogin}
+          >
+            {isAuthenticated ? 'Log down' : 'Log in'}
+          </Button>
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>
