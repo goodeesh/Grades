@@ -3,7 +3,6 @@ import {
   FormError,
   FieldError,
   Label,
-  NumberField,
   TextField,
   Submit,
 } from '@redwoodjs/forms'
@@ -43,7 +42,7 @@ const SubjectForm = (props: SubjectFormProps) => {
           Teacher id
         </Label>
 
-        <NumberField
+        <TextField
           name="teacherId"
           defaultValue={props.subject?.teacherId}
           className="rw-input"

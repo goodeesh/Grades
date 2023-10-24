@@ -61,7 +61,7 @@ const GradeForm = (props: GradeFormProps) => {
           User id
         </Label>
 
-        <NumberField
+        <TextField
           name="userId"
           defaultValue={props.grade?.userId}
           className="rw-input"

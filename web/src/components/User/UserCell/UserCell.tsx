@@ -8,6 +8,7 @@ export const QUERY = gql`
   query FindUserById($id: String!) {
     user: user(id: $id) {
       id
+      email
       role
       name
       lastName

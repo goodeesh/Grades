@@ -9,6 +9,7 @@ export const QUERY = gql`
   query FindUsers {
     users {
       id
+      email
       role
       name
       lastName

@@ -26,6 +26,7 @@ describe('users', () => {
     const result = await createUser({
       input: {
         id: 'String',
+        email: 'String1068242',
         role: 'String',
         name: 'String',
         lastName: 'String',
@@ -33,6 +34,7 @@ describe('users', () => {
     })
 
     expect(result.id).toEqual('String')
+    expect(result.email).toEqual('String1068242')
     expect(result.role).toEqual('String')
     expect(result.name).toEqual('String')
     expect(result.lastName).toEqual('String')

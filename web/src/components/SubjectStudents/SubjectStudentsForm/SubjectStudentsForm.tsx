@@ -4,6 +4,7 @@ import {
   FieldError,
   Label,
   NumberField,
+  TextField,
   Submit,
 } from '@redwoodjs/forms'
 
@@ -68,7 +69,7 @@ const SubjectStudentsForm = (props: SubjectStudentsFormProps) => {
           User id
         </Label>
 
-        <NumberField
+        <TextField
           name="userId"
           defaultValue={props.subjectStudents?.userId}
           className="rw-input"

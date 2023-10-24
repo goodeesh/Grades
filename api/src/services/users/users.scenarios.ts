@@ -6,6 +6,7 @@ export const standard = defineScenario<Prisma.UserCreateArgs>({
     one: {
       data: {
         id: 'String',
+        email: 'String9772879',
         role: 'String',
         name: 'String',
         lastName: 'String',
@@ -14,6 +15,7 @@ export const standard = defineScenario<Prisma.UserCreateArgs>({
     two: {
       data: {
         id: 'String',
+        email: 'String3670528',
         role: 'String',
         name: 'String',
         lastName: 'String',

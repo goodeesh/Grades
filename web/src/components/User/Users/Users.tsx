@@ -42,6 +42,7 @@ const UsersList = ({ users }: FindUsers) => {
         <thead>
           <tr>
             <th>Id</th>
+            <th>Email</th>
             <th>Role</th>
             <th>Name</th>
             <th>Last name</th>
@@ -52,6 +53,7 @@ const UsersList = ({ users }: FindUsers) => {
           {users.map((user) => (
             <tr key={user.id}>
               <td>{truncate(user.id)}</td>
+              <td>{truncate(user.email)}</td>
               <td>{truncate(user.role)}</td>
               <td>{truncate(user.name)}</td>
               <td>{truncate(user.lastName)}</td>

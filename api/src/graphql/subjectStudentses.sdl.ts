@@ -4,7 +4,7 @@ export const schema = gql`
     subject: Subject!
     subjectId: Int!
     User: User
-    userId: Int
+    userId: String
   }
 
   type Query {
@@ -14,12 +14,12 @@ export const schema = gql`
 
   input CreateSubjectStudentsInput {
     subjectId: Int!
-    userId: Int
+    userId: String
   }
 
   input UpdateSubjectStudentsInput {
     subjectId: Int
-    userId: Int
+    userId: String
   }
 
   type Mutation {

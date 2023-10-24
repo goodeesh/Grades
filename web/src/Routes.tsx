@@ -14,20 +14,12 @@ import ScaffoldLayout from 'src/layouts/ScaffoldLayout'
 const Routes = () => {
   return (
     <Router>
-      <Set wrap={ScaffoldLayout} title="Users" titleTo="users" buttonLabel="New User" buttonTo="newUser">
-        <Route path="/users/{id}/edit" page={UserEditUserPage} name="editUser" />
-        <Route path="/users/{id}" page={UserUserPage} name="user" />
-      </Set>
-      <Route path="/profile" page={ProfilePage} name="profile" />
       <Set wrap={ScaffoldLayout} title="Grades" titleTo="grades" buttonLabel="New Grade" buttonTo="newGrade">
         <Route path="/grades/new" page={GradeNewGradePage} name="newGrade" />
         <Route path="/grades/{id:Int}/edit" page={GradeEditGradePage} name="editGrade" />
         <Route path="/grades/{id:Int}" page={GradeGradePage} name="grade" />
         <Route path="/grades" page={GradeGradesPage} name="grades" />
       </Set>
-      <Route path="/sign-up" page={SignUpPage} name="signUp" />
-      <Route path="/sign-in" page={SignInPage} name="signIn" />
-      <Route path="/" page={HomePage} name="home" />
       <Set wrap={ScaffoldLayout} title="SubjectStudentses" titleTo="subjectStudentses" buttonLabel="New SubjectStudents" buttonTo="newSubjectStudents">
         <Route path="/subject-studentses/new" page={SubjectStudentsNewSubjectStudentsPage} name="newSubjectStudents" />
         <Route path="/subject-studentses/{id:Int}/edit" page={SubjectStudentsEditSubjectStudentsPage} name="editSubjectStudents" />
@@ -42,10 +34,14 @@ const Routes = () => {
       </Set>
       <Set wrap={ScaffoldLayout} title="Users" titleTo="users" buttonLabel="New User" buttonTo="newUser">
         <Route path="/users/new" page={UserNewUserPage} name="newUser" />
-        <Route path="/users/{id:Int}/edit" page={UserEditUserPage} name="editUser" />
-        <Route path="/users/{id:Int}" page={UserUserPage} name="user" />
+        <Route path="/users/{id}/edit" page={UserEditUserPage} name="editUser" />
+        <Route path="/users/{id}" page={UserUserPage} name="user" />
         <Route path="/users" page={UserUsersPage} name="users" />
       </Set>
+      <Route path="/profile" page={ProfilePage} name="profile" />
+      <Route path="/sign-up" page={SignUpPage} name="signUp" />
+      <Route path="/sign-in" page={SignInPage} name="signIn" />
+      <Route path="/" page={HomePage} name="home" />
       <Route notfound page={NotFoundPage} />
     </Router>
   )

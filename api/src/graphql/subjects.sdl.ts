@@ -2,11 +2,12 @@ export const schema = gql`
   type Subject {
     id: Int!
     teacher: User!
-    teacherId: Int!
+    teacherId: String!
     subjectName: String!
     students: [User]!
     studentsInSubject: [User]!
     subjectStudents: [SubjectStudents]!
+    grades: [Grade]!
   }
 
   type Query {
@@ -15,12 +16,12 @@ export const schema = gql`
   }
 
   input CreateSubjectInput {
-    teacherId: Int!
+    teacherId: String!
     subjectName: String!
   }
 
   input UpdateSubjectInput {
-    teacherId: Int
+    teacherId: String
     subjectName: String
   }
 
