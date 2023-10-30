@@ -90,12 +90,15 @@ import React from 'react'
 import { useAuth0 } from '@auth0/auth0-react'
 
 const LoginButton = () => {
-  const { logout } = useAuth0()
-  const { loginWithPopup } = useAuth0()
-
+  const { user, isAuthenticated, isLoading, loginWithPopup, logout } =
+    useAuth0()
+  async function handleLogin() {
+    await loginWithPopup()
+    console.log(user)
+  }
   return (
     <>
-      <button onClick={() => loginWithPopup()}>Log In</button>
+      <button onClick={() => handleLogin()}>Log In</button>
       <button
         onClick={() =>
           logout({ logoutParams: { returnTo: window.location.origin } })
