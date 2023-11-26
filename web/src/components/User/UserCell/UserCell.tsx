@@ -5,7 +5,7 @@ import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
 import User from 'src/components/User/User'
 
 export const QUERY = gql`
-  query FindUserById($id: String!) {
+  query FindUserById($id: Int!) {
     user: user(id: $id) {
       id
       email

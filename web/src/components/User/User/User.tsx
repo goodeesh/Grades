@@ -7,7 +7,7 @@ import {} from 'src/lib/formatters'
 import type { DeleteUserMutationVariables, FindUserById } from 'types/graphql'
 
 const DELETE_USER_MUTATION = gql`
-  mutation DeleteUserMutation($id: String!) {
+  mutation DeleteUserMutation($id: Int!) {
     deleteUser(id: $id) {
       id
     }

@@ -13,18 +13,6 @@ const CREATE_USER_MUTATION = gql`
     }
   }
 `
-export const [createUser, { loading, error }] = useMutation(
-  CREATE_USER_MUTATION,
-  {
-    onCompleted: () => {
-      toast.success('User created')
-      navigate(routes.users())
-    },
-    onError: (error) => {
-      toast.error(error.message)
-    },
-  }
-)
 
 const NewUser = () => {
   const [createUser, { loading, error }] = useMutation(CREATE_USER_MUTATION, {

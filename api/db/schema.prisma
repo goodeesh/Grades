@@ -9,9 +9,9 @@ generator client {
 }
 
 model User {
-  id       String @id
-  email    String @unique
-  role     String
+  id       Int     @id @default(autoincrement())
+  email    String  @unique
+  role     String? // "TEACHER" or "STUDENT"
   name     String
   lastName String
 
@@ -26,7 +26,7 @@ model User {
 model Subject {
   id          Int    @id @default(autoincrement())
   teacher     User   @relation(fields: [teacherId], references: [id])
-  teacherId   String
+  teacherId   Int
   subjectName String
   students    User[] @relation("StudentSubjects")
 
@@ -41,7 +41,7 @@ model SubjectStudents {
   subject   Subject @relation(fields: [subjectId], references: [id])
   subjectId Int
   User      User?   @relation(fields: [userId], references: [id])
-  userId    String?
+  userId    Int?
 }
 
 model Grade {
@@ -49,7 +49,7 @@ model Grade {
   subject   Subject @relation(fields: [subjectId], references: [id])
   subjectId Int
   User      User    @relation(fields: [userId], references: [id])
-  userId    String
+  userId    Int
   grade     Int
   date      String
 }
