@@ -3,6 +3,8 @@ import React, { useEffect } from 'react'
 import { gql, useMutation } from '@apollo/client'
 import { useAuth0 } from '@auth0/auth0-react'
 
+import { navigate } from '@redwoodjs/router'
+
 const CREATE_USER_MUTATION = gql`
   mutation CreateUserMutation($input: CreateUserInput!) {
     createUser(input: $input) {
@@ -17,7 +19,7 @@ const CREATE_USER_MUTATION = gql`
 const LoginButton = () => {
   const { user, isAuthenticated, isLoading, loginWithPopup, logout } =
     useAuth0()
-  const [createUser, { loading, error }] = useMutation(CREATE_USER_MUTATION)
+  const [createUser] = useMutation(CREATE_USER_MUTATION)
 
   useEffect(() => {
     if (isAuthenticated && user) {
@@ -28,16 +30,12 @@ const LoginButton = () => {
         lastName: family_name,
       }
 
-      createUser({ variables: { input } })
-        .then(() => {
-          console.log('User created successfully!')
-          // Handle success if needed
-        })
-        .catch((error) => {
-          console.error('Error creating user:', error)
-          // Handle error if needed
-        })
+      createUser({ variables: { input } }).then(() => {
+        console.log('User created successfully!')
+      })
+      navigate('/')
     }
+    //add redirect to home page
   }, [isAuthenticated, user, createUser])
 
   if (isLoading) {
