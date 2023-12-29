@@ -12,6 +12,8 @@ const App = () => (
   <Auth0Provider
     domain="dev-qq1y7rqwp0ybcyvd.us.auth0.com"
     clientId="8yUhTgyOTvWeQrRWCwnOQUj8pJrx6eq8"
+    cacheLocation="localstorage"
+    useRefreshTokens={true}
     authorizationParams={{
       redirect_uri: window.location.origin,
     }}

@@ -16,9 +16,23 @@ export const user: QueryResolvers['user'] = ({ id }) => {
   })
 }
 
+export const getUserByEmail: QueryResolvers['getUserByEmail'] = ({ input }) => {
+  return db.user.findUnique({
+    where: { email: input.email },
+  })
+}
+
 export const createUser: MutationResolvers['createUser'] = ({ input }) => {
   return db.user.create({
     data: input,
+  })
+}
+
+export const changueRole: MutationResolvers['changueRole'] = ({ input }) => {
+  console.log('hi')
+  return db.user.update({
+    data: { role: input.role },
+    where: { email: input.email },
   })
 }
 
