@@ -4,6 +4,7 @@ export const schema = gql`
     teacher: User!
     teacherId: String!
     subjectName: String!
+    subjectDescription: String!
     students: [User]!
     studentsInSubject: [User]!
     subjectStudents: [SubjectStudents]!
@@ -16,12 +17,13 @@ export const schema = gql`
   }
 
   input CreateSubjectInput {
-    teacherId: String!
+    teacherId: Int!
     subjectName: String!
+    subjectDescription: String!
   }
 
   input UpdateSubjectInput {
-    teacherId: String
+    teacherId: Int
     subjectName: String
   }
 

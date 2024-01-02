@@ -8,7 +8,6 @@ import { MyField } from './MyField'
 interface Values {
   className: string
   description: string
-  email: string
 }
 
 interface Props {
@@ -45,7 +44,6 @@ export const MyForm: React.FC<Props> = ({ onSubmit }) => {
           <Button variant="contained" type="submit">
             submit
           </Button>
-          <pre>{JSON.stringify(values, null, 2)}</pre>
         </Form>
       )}
     </Formik>
