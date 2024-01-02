@@ -50,7 +50,7 @@ const GET_USER_QUERY = gql`
 
 export const routes = {
   home: () => '/',
-  students: () => '/students',
+  classes: () => '/classes',
   signIn: () => '/sign-in',
   signUp: () => '/sign-up',
   profile: () => '/profile',
@@ -67,8 +67,8 @@ const mainNavbarItems = [
   {
     id: 1,
     icon: <PeopleIcon />,
-    label: 'Students',
-    route: routes.students,
+    label: 'Classes',
+    route: routes.classes,
   },
   {
     id: 2,

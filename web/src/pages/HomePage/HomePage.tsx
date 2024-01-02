@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 
 import { useAuth0 } from '@auth0/auth0-react'
-import { WindowSharp } from '@mui/icons-material'
 import { Box, Button, Grid, Typography } from '@mui/material'
 
 import { useMutation } from '@redwoodjs/web'
