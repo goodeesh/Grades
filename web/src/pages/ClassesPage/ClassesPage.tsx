@@ -6,6 +6,7 @@ import Snackbar from '@mui/material/Snackbar'
 
 import { useMutation } from '@redwoodjs/web'
 
+import DraggableList from 'src/components/DraggableList/List'
 import { MyForm } from 'src/components/Forms/NewClass/MyForm'
 import { UserContext } from 'src/components/PersistentDrawerLeft'
 
@@ -20,6 +21,20 @@ const CREATE_SUBJECT = gql`
 `
 
 const ClassesPage = () => {
+  const itemList = [
+    {
+      id: 'item1',
+      primary: 'Item 1',
+    },
+    {
+      id: 'item2',
+      primary: 'Item 2',
+    },
+    {
+      id: 'item3',
+      primary: 'Item 3',
+    },
+  ]
   const userData = React.useContext(UserContext)
   const [addNewClass, setAddNewClass] = React.useState(false) // Initialize addNewClass with false
   const [open, setOpen] = React.useState(false)
@@ -71,6 +86,11 @@ const ClassesPage = () => {
               }
             />
           )}
+        </Box>
+        <Box display="flex" justifyContent="center" alignItems="center">
+          <br />
+          <br />
+          <DraggableList items={itemList} />
         </Box>
       </Grid>
     </>
