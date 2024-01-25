@@ -6,6 +6,14 @@ import type {
 
 import { db } from 'src/lib/db'
 
+export const subjectsByTeacherId: QueryResolvers['subjectsByTeacherId'] = ({
+  teacherId,
+}) => {
+  return db.subject.findMany({
+    where: { teacherId },
+  })
+}
+
 export const subjects: QueryResolvers['subjects'] = () => {
   return db.subject.findMany()
 }

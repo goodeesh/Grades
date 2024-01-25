@@ -24,16 +24,33 @@ interface Item {
 
 interface DraggableListProps {
   items: Item[]
+  handleDelete: (id: string) => void
 }
 
-const DraggableList: React.FC<DraggableListProps> = ({ items }) => {
+const DraggableList: React.FC<DraggableListProps> = ({
+  items,
+  handleDelete,
+}) => {
+  const [orderedItems, setOrderedItems] = React.useState<Item[]>([])
+  React.useEffect(() => {
+    if (items) {
+      setOrderedItems(items)
+    }
+  }, [items])
   // const [dense, setDense] = React.useState(false)
   // const [secondary, setSecondary] = React.useState(false)
   const dense = false // or false, depending on your needs
   const secondary = false
-  const handleDragEnd = (result: any) => {
-    // Handle the drag end logic here
-    console.log(result)
+  const handleDragEnd = (result) => {
+    if (!result.destination) {
+      return
+    }
+
+    const itemsCopy = Array.from(orderedItems)
+    const [reorderedItem] = itemsCopy.splice(result.source.index, 1)
+    itemsCopy.splice(result.destination.index, 0, reorderedItem)
+
+    setOrderedItems(itemsCopy)
   }
 
   return (
@@ -47,35 +64,47 @@ const DraggableList: React.FC<DraggableListProps> = ({ items }) => {
               {...provided.droppableProps}
             >
               <List dense={dense}>
-                {items.map((item, index) => (
-                  <Draggable key={item.id} draggableId={item.id} index={index}>
-                    {(
-                      provided: DraggableProvided
-                      // snapshot: DraggableStateSnapshot
-                    ) => (
-                      <ListItem
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        secondaryAction={
-                          <IconButton edge="end" aria-label="delete">
-                            <DeleteIcon />
-                          </IconButton>
-                        }
-                      >
-                        <ListItemAvatar>
-                          <Avatar>
-                            <FolderIcon />
-                          </Avatar>
-                        </ListItemAvatar>
-                        <ListItemText
-                          primary={item.primary}
-                          secondary={secondary ? 'Secondary text' : null}
-                        />
-                      </ListItem>
-                    )}
-                  </Draggable>
-                ))}
+                {Array.isArray(orderedItems) ? (
+                  orderedItems.map((item, index) => (
+                    <Draggable
+                      key={item.id}
+                      draggableId={item.id}
+                      index={index}
+                    >
+                      {(
+                        provided: DraggableProvided
+                        // snapshot: DraggableStateSnapshot
+                      ) => (
+                        <ListItem
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          secondaryAction={
+                            <IconButton
+                              edge="end"
+                              aria-label="delete"
+                              onClick={() => handleDelete(item.id)}
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          }
+                        >
+                          <ListItemAvatar>
+                            <Avatar>
+                              <FolderIcon />
+                            </Avatar>
+                          </ListItemAvatar>
+                          <ListItemText
+                            primary={item.primary}
+                            secondary={secondary ? 'Secondary text' : null}
+                          />
+                        </ListItem>
+                      )}
+                    </Draggable>
+                  ))
+                ) : (
+                  <p>Loading...</p>
+                )}
                 {provided.placeholder}
               </List>
             </Box>

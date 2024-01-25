@@ -24,12 +24,13 @@ model User {
 }
 
 model Subject {
-  id                 Int    @id @default(autoincrement())
-  teacher            User   @relation(fields: [teacherId], references: [id])
+  id                 Int     @id @default(autoincrement())
+  teacher            User    @relation(fields: [teacherId], references: [id])
   teacherId          Int
+  archived           Boolean @default(false)
   subjectName        String
   subjectDescription String // Add this line
-  students           User[] @relation("StudentSubjects")
+  students           User[]  @relation("StudentSubjects")
 
   // Many-to-Many relationship with students through SubjectStudents table
   studentsInSubject User[]            @relation("TeacherSubjects")

@@ -4,7 +4,7 @@ import { Box, Button, Grid } from '@mui/material'
 import Alert from '@mui/material/Alert'
 import Snackbar from '@mui/material/Snackbar'
 
-import { useMutation } from '@redwoodjs/web'
+import { useMutation, useQuery } from '@redwoodjs/web'
 
 import DraggableList from 'src/components/DraggableList/List'
 import { MyForm } from 'src/components/Forms/NewClass/MyForm'
@@ -19,31 +19,73 @@ const CREATE_SUBJECT = gql`
     }
   }
 `
+const GET_SUBJECTS_FOR_TEACHER = gql`
+  query GetSubjectsForTeacherQuery($teacherId: Int!) {
+    subjectsByTeacherId(teacherId: $teacherId) {
+      id
+      teacherId
+      subjectName
+      subjectDescription
+    }
+  }
+`
+const DELETE_SUBJECT = gql`
+  mutation DeleteSubjectMutation($id: Int!) {
+    deleteSubject(id: $id) {
+      id
+    }
+  }
+`
+const createItemList = (data) => {
+  if (!data || !data.subjectsByTeacherId) {
+    return []
+  }
+
+  return data.subjectsByTeacherId.map((subject) => ({
+    id: subject.id.toString(),
+    primary: subject.subjectName,
+  }))
+}
 
 const ClassesPage = () => {
-  const itemList = [
-    {
-      id: 'item1',
-      primary: 'Item 1',
-    },
-    {
-      id: 'item2',
-      primary: 'Item 2',
-    },
-    {
-      id: 'item3',
-      primary: 'Item 3',
-    },
-  ]
   const userData = React.useContext(UserContext)
+  const { loading, data, refetch } = useQuery(GET_SUBJECTS_FOR_TEACHER, {
+    variables: { teacherId: userData?.getUserByEmail.id },
+  })
+  const [itemList, setItemList] = React.useState([])
+  React.useEffect(() => {
+    if (data) {
+      setItemList(createItemList(data))
+    }
+  }, [data])
+  const [messageForSnackbar, setMessageForSnackbar] = React.useState('')
   const [addNewClass, setAddNewClass] = React.useState(false) // Initialize addNewClass with false
   const [open, setOpen] = React.useState(false)
   const [createSubject] = useMutation(CREATE_SUBJECT, {
     onCompleted: () => {
-      setAddNewClass(false) // Set addNewClass to false when the mutation is completed
+      setAddNewClass(false)
+      setMessageForSnackbar('Class added successfully!')
       setOpen(true) // Open the Snackbar
+
+      refetch()
     },
   })
+  const [deleteSubject] = useMutation(DELETE_SUBJECT, {
+    onCompleted: () => {
+      setMessageForSnackbar('Class deleted successfully!')
+      setOpen(true) // Close the Snackbar
+      refetch()
+    },
+  })
+  const handleDelete = (id) => {
+    const idNumber = parseInt(id)
+    deleteSubject({ variables: { id: idNumber } })
+    const remainingItems = itemList.filter((item) => item.id !== idNumber)
+    setItemList(remainingItems)
+  }
+  if (!userData) {
+    return <div>Loading...</div>
+  }
   return (
     <>
       <Grid component="main" maxWidth="xs" textAlign="center" margin="auto">
@@ -58,7 +100,7 @@ const ClassesPage = () => {
             severity="success"
             sx={{ width: '100%' }}
           >
-            The class was successfully added!
+            {messageForSnackbar}
           </Alert>
         </Snackbar>
         <Button
@@ -90,7 +132,8 @@ const ClassesPage = () => {
         <Box display="flex" justifyContent="center" alignItems="center">
           <br />
           <br />
-          <DraggableList items={itemList} />
+          {loading && <div>Loading...</div>}
+          <DraggableList items={itemList} handleDelete={handleDelete} />
         </Box>
       </Grid>
     </>
