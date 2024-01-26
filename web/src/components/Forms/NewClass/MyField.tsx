@@ -8,10 +8,10 @@ export const MyField: React.FC<FieldProps & TextFieldProps> = ({
   placeholder,
   field,
 }) => {
-  if (field.name === 'description') {
+  if (field.name === 'description' || field.name === 'secondary') {
     return (
       <TextField
-        sx={{ width: '50%' }}
+        sx={{ width: '100%' }}
         multiline
         rows={4}
         placeholder={placeholder}
@@ -20,6 +20,6 @@ export const MyField: React.FC<FieldProps & TextFieldProps> = ({
     )
   }
   return (
-    <TextField sx={{ width: '50%' }} placeholder={placeholder} {...field} />
+    <TextField sx={{ width: '100%' }} placeholder={placeholder} {...field} />
   )
 }

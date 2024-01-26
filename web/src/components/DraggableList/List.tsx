@@ -1,8 +1,10 @@
 import * as React from 'react'
 
 import DeleteIcon from '@mui/icons-material/Delete'
+import EditIcon from '@mui/icons-material/Edit'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import FolderIcon from '@mui/icons-material/Folder'
+import SaveIcon from '@mui/icons-material/Save'
 import {
   Accordion,
   AccordionActions,
@@ -15,6 +17,7 @@ import IconButton from '@mui/material/IconButton'
 import List from '@mui/material/List'
 import ListItemAvatar from '@mui/material/ListItemAvatar'
 import ListItemText from '@mui/material/ListItemText'
+import { Formik, Field, Form } from 'formik'
 import {
   DragDropContext,
   Draggable,
@@ -23,10 +26,13 @@ import {
   DraggableProvided,
 } from 'react-beautiful-dnd'
 
+import { MyField } from '../Forms/NewClass/MyField'
+
 interface Item {
   id: string
   primary: string
   secondary?: string
+  order: number
 }
 
 interface DraggableListProps {
@@ -64,20 +70,33 @@ const DraggableList: React.FC<DraggableListProps> = ({
       const [movedItem] = newOrderedItems.splice(fromIndex, 1)
       newOrderedItems.splice(toIndex, 0, movedItem)
 
-      //Find the two items that have changed positions
-      const updatedItems = newOrderedItems.map((item, index) => ({
-        ...item,
-        order: index + 1,
-      }))
-      console.log(newOrderedItems)
+      // Set the order property of each item to its index in the array plus 1
+      for (let i = 0; i < newOrderedItems.length; i++) {
+        newOrderedItems[i].order = i + 1
+      }
+
       // Update local state
       setOrderedItems(newOrderedItems)
-      console.log(updatedItems)
+
       // Call function to update the backend
-      handleUpdateOrderSubjects(updatedItems)
+      handleUpdateOrderSubjects(newOrderedItems)
     }
   }
-  console.log(items)
+  const [editingItem, setEditingItem] = React.useState(null)
+
+  const handleEdit = (id) => {
+    setEditingItem(id)
+  }
+  const [expandedItem, setExpandedItem] = React.useState(null)
+
+  const handleAccordionChange = (id) => (event, isExpanded) => {
+    setExpandedItem(isExpanded ? id : false)
+  }
+
+  const handleSave = (id) => {
+    // Save your changes here
+    setEditingItem(null)
+  }
   return (
     <Box sx={{ flexGrow: 1, maxWidth: 752 }}>
       <DragDropContext onDragEnd={handleDragEnd}>
@@ -91,45 +110,94 @@ const DraggableList: React.FC<DraggableListProps> = ({
               <List dense={dense}>
                 {Array.isArray(orderedItems) ? (
                   orderedItems.map((item, index) => (
-                    <Draggable
+                    <Formik
                       key={item.id}
-                      draggableId={item.id}
-                      index={index}
+                      initialValues={item}
+                      onSubmit={handleSave}
+                      enableReinitialize
                     >
-                      {(provided: DraggableProvided) => (
-                        <Accordion
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                        >
-                          <AccordionSummary
-                            expandIcon={<ExpandMoreIcon />}
-                            aria-controls={`panel${index}-content`}
-                            id={`panel${index}-header`}
-                          >
-                            <ListItemAvatar>
-                              <Avatar>
-                                <FolderIcon />
-                              </Avatar>
-                            </ListItemAvatar>
-                            <ListItemText
-                              primary={item.primary}
-                              secondary={secondary ? 'Secondary text' : null}
-                            />
-                          </AccordionSummary>
-                          <AccordionDetails>
-                            {item.secondary ? item.secondary : 'No description'}
-                          </AccordionDetails>
-                          <AccordionActions>
-                            <IconButton edge="end" aria-label="delete">
-                              <DeleteIcon
-                                onClick={() => handleDelete(item.id)}
-                              />
-                            </IconButton>
-                          </AccordionActions>
-                        </Accordion>
+                      {({ handleSubmit }) => (
+                        <Draggable draggableId={item.id} index={index}>
+                          {(provided: DraggableProvided) => (
+                            <Form onSubmit={handleSubmit} key={editingItem}>
+                              {' '}
+                              <Accordion
+                                key={item.id}
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                                expanded={expandedItem === item.id}
+                                onChange={handleAccordionChange(item.id)}
+                              >
+                                <AccordionSummary
+                                  expandIcon={<ExpandMoreIcon />}
+                                  aria-controls={`panel${index}-content`}
+                                  id={`panel${index}-header`}
+                                >
+                                  <ListItemAvatar>
+                                    <Avatar>
+                                      <FolderIcon />
+                                    </Avatar>
+                                  </ListItemAvatar>
+                                  {editingItem === item.id ? (
+                                    <Box width="100%">
+                                      <Field
+                                        name="primary"
+                                        component={MyField}
+                                      />
+                                    </Box>
+                                  ) : (
+                                    <Box width="100%">
+                                      <ListItemText
+                                        primary={item.primary}
+                                        secondary={
+                                          secondary ? 'Secondary text' : null
+                                        }
+                                      />
+                                    </Box>
+                                  )}
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                  {editingItem === item.id ? (
+                                    <Box width="100%">
+                                      <Field
+                                        name="secondary"
+                                        component={MyField}
+                                      />
+                                    </Box>
+                                  ) : item.secondary ? (
+                                    item.secondary
+                                  ) : (
+                                    'No description'
+                                  )}
+                                </AccordionDetails>
+                                <AccordionActions>
+                                  <IconButton
+                                    edge="end"
+                                    aria-label="delete"
+                                    onClick={() => handleDelete(item.id)}
+                                  >
+                                    <DeleteIcon />
+                                  </IconButton>
+                                  {editingItem === item.id ? (
+                                    <IconButton aria-label="save" type="submit">
+                                      <SaveIcon />
+                                    </IconButton>
+                                  ) : (
+                                    <IconButton
+                                      aria-label="edit"
+                                      onClick={() => handleEdit(item.id)}
+                                    >
+                                      <EditIcon />
+                                    </IconButton>
+                                  )}
+                                </AccordionActions>
+                              </Accordion>
+                            </Form>
+                          )}
+                        </Draggable>
                       )}
-                    </Draggable>
+                    </Formik>
                   ))
                 ) : (
                   <p>Loading...</p>

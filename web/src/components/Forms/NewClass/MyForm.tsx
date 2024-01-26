@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { Button } from '@mui/material'
+import { Box, Button, Grid } from '@mui/material'
 import { Form, Formik, Field } from 'formik'
 
 import { MyField } from './MyField'
@@ -23,28 +23,30 @@ export const MyForm: React.FC<Props> = ({ onSubmit }) => {
       }}
     >
       {({ values }) => (
-        <Form>
-          <div>
-            <Field
-              name="className"
-              placeholder="class name"
-              component={MyField}
-            />
-          </div>
-          <br />
-          <div>
-            <Field
-              name="description"
-              placeholder="description"
-              component={MyField}
-            />
-          </div>
-          <br />
-
-          <Button variant="contained" type="submit">
-            submit
-          </Button>
-        </Form>
+        <Grid container justifyContent="center">
+          <Form>
+            <Box width="100%" paddingBottom="20px">
+              <Field
+                placeholder="class name"
+                name="className"
+                component={MyField}
+              />
+            </Box>
+            <Box width="100%" paddingBottom="20px">
+              <Field
+                as="textarea"
+                name="description"
+                placeholder="description"
+                component={MyField}
+              />
+            </Box>
+            <Box width="100%" paddingBottom="20px">
+              <Button variant="contained" type="submit">
+                submit
+              </Button>
+            </Box>
+          </Form>
+        </Grid>
       )}
     </Formik>
   )
