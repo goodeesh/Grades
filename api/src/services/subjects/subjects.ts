@@ -63,11 +63,15 @@ export const updateOrderSubject: MutationResolvers['updateOrderSubject'] =
       where: { id },
     })
   }
-// export const deleteSubject: MutationResolvers['deleteSubject'] = ({ id }) => {
-//   return db.subject.delete({
-//     where: { id },
-//   })
-// }
+
+export const updateNameDescription: MutationResolvers['updateNameDescription'] =
+  async ({ id, input }) => {
+    return db.subject.update({
+      data: input,
+      where: { id },
+    })
+  }
+
 export const deleteSubject: MutationResolvers['deleteSubject'] = async ({
   id,
 }) => {

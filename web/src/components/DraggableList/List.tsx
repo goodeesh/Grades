@@ -39,12 +39,14 @@ interface DraggableListProps {
   items: Item[]
   handleDelete: (id: string) => void
   handleUpdateOrderSubjects: (data) => void
+  handleNameDescription: (id, input) => void
 }
 
 const DraggableList: React.FC<DraggableListProps> = ({
   items,
   handleDelete,
   handleUpdateOrderSubjects,
+  handleNameDescription,
 }) => {
   const [orderedItems, setOrderedItems] = React.useState<Item[]>([])
   React.useEffect(() => {
@@ -93,7 +95,11 @@ const DraggableList: React.FC<DraggableListProps> = ({
     setExpandedItem(isExpanded ? id : false)
   }
 
-  const handleSave = (id) => {
+  const handleSave = (item) => {
+    handleNameDescription(item.id, {
+      name: item.primary,
+      description: item.secondary,
+    })
     // Save your changes here
     setEditingItem(null)
   }
@@ -140,7 +146,10 @@ const DraggableList: React.FC<DraggableListProps> = ({
                                     </Avatar>
                                   </ListItemAvatar>
                                   {editingItem === item.id ? (
-                                    <Box width="100%">
+                                    <Box
+                                      width="100%"
+                                      onClick={(e) => e.stopPropagation()}
+                                    >
                                       <Field
                                         name="primary"
                                         component={MyField}

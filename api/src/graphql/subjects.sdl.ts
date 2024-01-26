@@ -25,6 +25,15 @@ export const schema = gql`
     deleteSubject(id: Int!): Subject! @requireAuth
     updateOrderSubject(id: Int!, input: UpdateOrderSubjectInput!): Subject!
       @requireAuth
+    updateNameDescription(
+      id: Int!
+      input: UpdateNameDescriptionInput!
+    ): Subject! @requireAuth
+  }
+
+  input UpdateNameDescriptionInput {
+    subjectName: String!
+    subjectDescription: String!
   }
 
   input UpdateOrderSubjectInput {

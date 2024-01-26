@@ -53,6 +53,21 @@ const UPDATE_SUBJECT = gql`
     }
   }
 `
+const UPDATE_NAME_DESCRIPTION = gql`
+  mutation updateNameDescription(
+    $id: Int!
+    $input: UpdateNameDescriptionInput!
+  ) {
+    updateNameDescription(id: $id, input: $input) {
+      id
+      teacherId
+      subjectName
+      subjectDescription
+      order
+      archived
+    }
+  }
+`
 const createItemList = (data) => {
   if (!data || !data.subjectsByTeacherId) {
     return []
@@ -99,6 +114,19 @@ const ClassesPage = () => {
     },
   })
   const [updateSubject] = useMutation(UPDATE_SUBJECT)
+  const [updateNameDescription] = useMutation(UPDATE_NAME_DESCRIPTION)
+  const handleUpdateNameDescription = (id, input) => {
+    const idNumber = parseInt(id)
+    updateNameDescription({
+      variables: {
+        id: idNumber,
+        input: {
+          subjectName: input.name,
+          subjectDescription: input.description,
+        },
+      },
+    })
+  }
   const handleUpdateOrderSubjects = (data) => {
     for (let i = 0; i < data.length; i++) {
       updateSubject({
@@ -169,6 +197,7 @@ const ClassesPage = () => {
             items={itemList}
             handleDelete={handleDelete}
             handleUpdateOrderSubjects={handleUpdateOrderSubjects}
+            handleNameDescription={handleUpdateNameDescription}
           />
         </Box>
       </Grid>
