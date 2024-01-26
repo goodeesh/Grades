@@ -1,12 +1,18 @@
 import * as React from 'react'
 
 import DeleteIcon from '@mui/icons-material/Delete'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import FolderIcon from '@mui/icons-material/Folder'
+import {
+  Accordion,
+  AccordionActions,
+  AccordionDetails,
+  AccordionSummary,
+} from '@mui/material'
 import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
 import List from '@mui/material/List'
-import ListItem from '@mui/material/ListItem'
 import ListItemAvatar from '@mui/material/ListItemAvatar'
 import ListItemText from '@mui/material/ListItemText'
 import {
@@ -20,6 +26,7 @@ import {
 interface Item {
   id: string
   primary: string
+  secondary?: string
 }
 
 interface DraggableListProps {
@@ -70,7 +77,7 @@ const DraggableList: React.FC<DraggableListProps> = ({
       handleUpdateOrderSubjects(updatedItems)
     }
   }
-
+  console.log(items)
   return (
     <Box sx={{ flexGrow: 1, maxWidth: 752 }}>
       <DragDropContext onDragEnd={handleDragEnd}>
@@ -89,34 +96,38 @@ const DraggableList: React.FC<DraggableListProps> = ({
                       draggableId={item.id}
                       index={index}
                     >
-                      {(
-                        provided: DraggableProvided
-                        // snapshot: DraggableStateSnapshot
-                      ) => (
-                        <ListItem
+                      {(provided: DraggableProvided) => (
+                        <Accordion
                           ref={provided.innerRef}
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
-                          secondaryAction={
-                            <IconButton
-                              edge="end"
-                              aria-label="delete"
-                              onClick={() => handleDelete(item.id)}
-                            >
-                              <DeleteIcon />
-                            </IconButton>
-                          }
                         >
-                          <ListItemAvatar>
-                            <Avatar>
-                              <FolderIcon />
-                            </Avatar>
-                          </ListItemAvatar>
-                          <ListItemText
-                            primary={item.primary}
-                            secondary={secondary ? 'Secondary text' : null}
-                          />
-                        </ListItem>
+                          <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            aria-controls={`panel${index}-content`}
+                            id={`panel${index}-header`}
+                          >
+                            <ListItemAvatar>
+                              <Avatar>
+                                <FolderIcon />
+                              </Avatar>
+                            </ListItemAvatar>
+                            <ListItemText
+                              primary={item.primary}
+                              secondary={secondary ? 'Secondary text' : null}
+                            />
+                          </AccordionSummary>
+                          <AccordionDetails>
+                            {item.secondary ? item.secondary : 'No description'}
+                          </AccordionDetails>
+                          <AccordionActions>
+                            <IconButton edge="end" aria-label="delete">
+                              <DeleteIcon
+                                onClick={() => handleDelete(item.id)}
+                              />
+                            </IconButton>
+                          </AccordionActions>
+                        </Accordion>
                       )}
                     </Draggable>
                   ))

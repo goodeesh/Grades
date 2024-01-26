@@ -62,6 +62,7 @@ const createItemList = (data) => {
     .map((subject) => ({
       id: subject.id.toString(),
       primary: subject.subjectName,
+      secondary: subject.subjectDescription,
       order: subject.order,
       archived: subject.archived,
     }))
