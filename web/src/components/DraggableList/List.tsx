@@ -25,11 +25,13 @@ interface Item {
 interface DraggableListProps {
   items: Item[]
   handleDelete: (id: string) => void
+  handleUpdateOrderSubjects: (data) => void
 }
 
 const DraggableList: React.FC<DraggableListProps> = ({
   items,
   handleDelete,
+  handleUpdateOrderSubjects,
 }) => {
   const [orderedItems, setOrderedItems] = React.useState<Item[]>([])
   React.useEffect(() => {
@@ -41,16 +43,32 @@ const DraggableList: React.FC<DraggableListProps> = ({
   // const [secondary, setSecondary] = React.useState(false)
   const dense = false // or false, depending on your needs
   const secondary = false
+
   const handleDragEnd = (result) => {
     if (!result.destination) {
       return
     }
 
-    const itemsCopy = Array.from(orderedItems)
-    const [reorderedItem] = itemsCopy.splice(result.source.index, 1)
-    itemsCopy.splice(result.destination.index, 0, reorderedItem)
+    const fromIndex = result.source.index
+    const toIndex = result.destination.index
 
-    setOrderedItems(itemsCopy)
+    if (fromIndex !== toIndex) {
+      const newOrderedItems = Array.from(orderedItems)
+      const [movedItem] = newOrderedItems.splice(fromIndex, 1)
+      newOrderedItems.splice(toIndex, 0, movedItem)
+
+      //Find the two items that have changed positions
+      const updatedItems = newOrderedItems.map((item, index) => ({
+        ...item,
+        order: index + 1,
+      }))
+      console.log(newOrderedItems)
+      // Update local state
+      setOrderedItems(newOrderedItems)
+      console.log(updatedItems)
+      // Call function to update the backend
+      handleUpdateOrderSubjects(updatedItems)
+    }
   }
 
   return (

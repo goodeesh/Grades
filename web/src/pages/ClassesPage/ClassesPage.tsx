@@ -26,6 +26,8 @@ const GET_SUBJECTS_FOR_TEACHER = gql`
       teacherId
       subjectName
       subjectDescription
+      order
+      archived
     }
   }
 `
@@ -36,15 +38,34 @@ const DELETE_SUBJECT = gql`
     }
   }
 `
+const UPDATE_SUBJECT = gql`
+  mutation UpdateOrderSubjectMutation(
+    $id: Int!
+    $input: UpdateOrderSubjectInput!
+  ) {
+    updateOrderSubject(id: $id, input: $input) {
+      id
+      teacherId
+      subjectName
+      subjectDescription
+      order
+      archived
+    }
+  }
+`
 const createItemList = (data) => {
   if (!data || !data.subjectsByTeacherId) {
     return []
   }
-
-  return data.subjectsByTeacherId.map((subject) => ({
-    id: subject.id.toString(),
-    primary: subject.subjectName,
-  }))
+  //order the list
+  return data.subjectsByTeacherId
+    .map((subject) => ({
+      id: subject.id.toString(),
+      primary: subject.subjectName,
+      order: subject.order,
+      archived: subject.archived,
+    }))
+    .sort((a, b) => a.order - b.order)
 }
 
 const ClassesPage = () => {
@@ -65,8 +86,7 @@ const ClassesPage = () => {
     onCompleted: () => {
       setAddNewClass(false)
       setMessageForSnackbar('Class added successfully!')
-      setOpen(true) // Open the Snackbar
-
+      setOpen(true) // Open the Snackbard
       refetch()
     },
   })
@@ -77,6 +97,17 @@ const ClassesPage = () => {
       refetch()
     },
   })
+  const [updateSubject] = useMutation(UPDATE_SUBJECT)
+  const handleUpdateOrderSubjects = (data) => {
+    for (let i = 0; i < data.length; i++) {
+      updateSubject({
+        variables: {
+          id: parseInt(data[i].id),
+          input: { order: data[i].order },
+        },
+      })
+    }
+  }
   const handleDelete = (id) => {
     const idNumber = parseInt(id)
     deleteSubject({ variables: { id: idNumber } })
@@ -133,7 +164,11 @@ const ClassesPage = () => {
           <br />
           <br />
           {loading && <div>Loading...</div>}
-          <DraggableList items={itemList} handleDelete={handleDelete} />
+          <DraggableList
+            items={itemList}
+            handleDelete={handleDelete}
+            handleUpdateOrderSubjects={handleUpdateOrderSubjects}
+          />
         </Box>
       </Grid>
     </>

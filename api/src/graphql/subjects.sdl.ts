@@ -5,6 +5,8 @@ export const schema = gql`
     teacherId: String!
     subjectName: String!
     subjectDescription: String!
+    order: Int
+    archived: Boolean!
     students: [User]!
     studentsInSubject: [User]!
     subjectStudents: [SubjectStudents]!
@@ -15,6 +17,18 @@ export const schema = gql`
     subjects: [Subject!]! @requireAuth
     subject(id: Int!): Subject @requireAuth
     subjectsByTeacherId(teacherId: Int!): [Subject!]! @requireAuth
+  }
+
+  type Mutation {
+    createSubject(input: CreateSubjectInput!): Subject! @requireAuth
+    updateSubject(id: Int!, input: UpdateSubjectInput!): Subject! @requireAuth
+    deleteSubject(id: Int!): Subject! @requireAuth
+    updateOrderSubject(id: Int!, input: UpdateOrderSubjectInput!): Subject!
+      @requireAuth
+  }
+
+  input UpdateOrderSubjectInput {
+    order: Int!
   }
 
   input subjectsByTeacherIdInput {
@@ -30,11 +44,8 @@ export const schema = gql`
   input UpdateSubjectInput {
     teacherId: Int
     subjectName: String
-  }
-
-  type Mutation {
-    createSubject(input: CreateSubjectInput!): Subject! @requireAuth
-    updateSubject(id: Int!, input: UpdateSubjectInput!): Subject! @requireAuth
-    deleteSubject(id: Int!): Subject! @requireAuth
+    subjectDescription: String
+    order: Int
+    archived: Boolean
   }
 `
