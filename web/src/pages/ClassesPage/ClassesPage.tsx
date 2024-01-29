@@ -21,7 +21,7 @@ const CREATE_SUBJECT = gql`
   }
 `
 const GET_SUBJECTS_FOR_TEACHER = gql`
-  query GetSubjectsForTeacherQuery($teacherId: Int!) {
+  query GetSubjectsForTeacherQuery($teacherId: String!) {
     subjectsByTeacherId(teacherId: $teacherId) {
       id
       teacherId
@@ -33,7 +33,7 @@ const GET_SUBJECTS_FOR_TEACHER = gql`
   }
 `
 const DELETE_SUBJECT = gql`
-  mutation DeleteSubjectMutation($id: Int!) {
+  mutation DeleteSubjectMutation($id: String!) {
     deleteSubject(id: $id) {
       id
     }
@@ -41,7 +41,7 @@ const DELETE_SUBJECT = gql`
 `
 const UPDATE_SUBJECT = gql`
   mutation UpdateOrderSubjectMutation(
-    $id: Int!
+    $id: String!
     $input: UpdateOrderSubjectInput!
   ) {
     updateOrderSubject(id: $id, input: $input) {
@@ -56,7 +56,7 @@ const UPDATE_SUBJECT = gql`
 `
 const UPDATE_NAME_DESCRIPTION = gql`
   mutation updateNameDescription(
-    $id: Int!
+    $id: String!
     $input: UpdateNameDescriptionInput!
   ) {
     updateNameDescription(id: $id, input: $input) {
@@ -86,8 +86,6 @@ const createItemList = (data) => {
 }
 
 const ClassesPage = () => {
-  const { id } = useParams()
-  console.log(id)
   const userData = React.useContext(UserContext)
   const { loading, data, refetch } = useQuery(GET_SUBJECTS_FOR_TEACHER, {
     variables: { teacherId: userData?.getUserByEmail.id },
@@ -119,10 +117,9 @@ const ClassesPage = () => {
   const [updateSubject] = useMutation(UPDATE_SUBJECT)
   const [updateNameDescription] = useMutation(UPDATE_NAME_DESCRIPTION)
   const handleUpdateNameDescription = (id, input) => {
-    const idNumber = parseInt(id)
     updateNameDescription({
       variables: {
-        id: idNumber,
+        id: id,
         input: {
           subjectName: input.name,
           subjectDescription: input.description,
@@ -132,24 +129,22 @@ const ClassesPage = () => {
   }
   const handleOpen = (id) => {
     //navigate to the class page
-    const idNumber = parseInt(id)
-    navigate(`/classes/${idNumber}`)
+    navigate(`/classes/${id}`)
   }
 
   const handleUpdateOrderSubjects = (data) => {
     for (let i = 0; i < data.length; i++) {
       updateSubject({
         variables: {
-          id: parseInt(data[i].id),
+          id: data[i].id,
           input: { order: data[i].order },
         },
       })
     }
   }
   const handleDelete = (id) => {
-    const idNumber = parseInt(id)
-    deleteSubject({ variables: { id: idNumber } })
-    const remainingItems = itemList.filter((item) => item.id !== idNumber)
+    deleteSubject({ variables: { id: id } })
+    const remainingItems = itemList.filter((item) => item.id !== id)
     setItemList(remainingItems)
   }
   if (!userData) {

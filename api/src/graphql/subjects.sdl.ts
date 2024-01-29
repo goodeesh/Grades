@@ -1,6 +1,6 @@
 export const schema = gql`
   type Subject {
-    id: Int!
+    id: String!
     teacher: User!
     teacherId: String!
     subjectName: String!
@@ -15,18 +15,19 @@ export const schema = gql`
 
   type Query {
     subjects: [Subject!]! @requireAuth
-    subject(id: Int!): Subject @requireAuth
-    subjectsByTeacherId(teacherId: Int!): [Subject!]! @requireAuth
+    subject(id: String!): Subject @requireAuth
+    subjectsByTeacherId(teacherId: String!): [Subject!]! @requireAuth
   }
 
   type Mutation {
     createSubject(input: CreateSubjectInput!): Subject! @requireAuth
-    updateSubject(id: Int!, input: UpdateSubjectInput!): Subject! @requireAuth
-    deleteSubject(id: Int!): Subject! @requireAuth
-    updateOrderSubject(id: Int!, input: UpdateOrderSubjectInput!): Subject!
+    updateSubject(id: String!, input: UpdateSubjectInput!): Subject!
+      @requireAuth
+    deleteSubject(id: String!): Subject! @requireAuth
+    updateOrderSubject(id: String!, input: UpdateOrderSubjectInput!): Subject!
       @requireAuth
     updateNameDescription(
-      id: Int!
+      id: String!
       input: UpdateNameDescriptionInput!
     ): Subject! @requireAuth
   }
@@ -41,17 +42,17 @@ export const schema = gql`
   }
 
   input subjectsByTeacherIdInput {
-    teacherId: Int!
+    teacherId: String!
   }
 
   input CreateSubjectInput {
-    teacherId: Int!
+    teacherId: String!
     subjectName: String!
     subjectDescription: String!
   }
 
   input UpdateSubjectInput {
-    teacherId: Int
+    teacherId: String
     subjectName: String
     subjectDescription: String
     order: Int

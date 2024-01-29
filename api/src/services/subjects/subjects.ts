@@ -9,6 +9,7 @@ import { db } from 'src/lib/db'
 export const subjectsByTeacherId: QueryResolvers['subjectsByTeacherId'] = ({
   teacherId,
 }) => {
+  console.log(teacherId)
   return db.subject.findMany({
     where: { teacherId },
     orderBy: { order: 'asc' },
