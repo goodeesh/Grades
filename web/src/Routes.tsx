@@ -7,16 +7,19 @@
 // 'src/pages/HomePage/HomePage.js'         -> HomePage
 // 'src/pages/Admin/BooksPage/BooksPage.js' -> AdminBooksPage
 
-import { Set, Router, Route } from '@redwoodjs/router'
-
-import ScaffoldLayout from 'src/layouts/ScaffoldLayout'
+import { Router, Route } from '@redwoodjs/router'
 
 const Routes = () => {
   return (
     <Router>
       <Route path="/classes/{id:String}" page={ClassesPage} name="manageClass" />
       <Route path="/classes" page={ClassesPage} name="classes" />
-      <Set wrap={ScaffoldLayout} title="Users" titleTo="users" buttonLabel="New User" buttonTo="newUser">
+      <Route path="/profile" page={ProfilePage} name="profile" />
+      <Route path="/sign-up" page={SignUpPage} name="signUp" />
+      <Route path="/sign-in" page={SignInPage} name="signIn" />
+      <Route path="/" page={HomePage} name="home" />
+      <Route notfound page={NotFoundPage} />
+      {/* <Set wrap={ScaffoldLayout} title="Users" titleTo="users" buttonLabel="New User" buttonTo="newUser">
         <Route path="/users/{id:Int}/edit" page={UserEditUserPage} name="editUser" />
         <Route path="/users/{id:Int}" page={UserUserPage} name="user" />
       </Set>
@@ -43,12 +46,7 @@ const Routes = () => {
         <Route path="/users/{id}/edit" page={UserEditUserPage} name="editUser" />
         <Route path="/users/{id}" page={UserUserPage} name="user" />
         <Route path="/users" page={UserUsersPage} name="users" />
-      </Set>
-      <Route path="/profile" page={ProfilePage} name="profile" />
-      <Route path="/sign-up" page={SignUpPage} name="signUp" />
-      <Route path="/sign-in" page={SignInPage} name="signIn" />
-      <Route path="/" page={HomePage} name="home" />
-      <Route notfound page={NotFoundPage} />
+      </Set> */}
     </Router>
   )
 }
