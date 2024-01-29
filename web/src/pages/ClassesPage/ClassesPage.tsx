@@ -4,6 +4,7 @@ import { Box, Button, Grid } from '@mui/material'
 import Alert from '@mui/material/Alert'
 import Snackbar from '@mui/material/Snackbar'
 
+import { navigate } from '@redwoodjs/router'
 import { useMutation, useQuery } from '@redwoodjs/web'
 
 import DraggableList from 'src/components/DraggableList/List'
@@ -127,6 +128,12 @@ const ClassesPage = () => {
       },
     })
   }
+  const handleOpen = (id) => {
+    //navigate to the class page
+    const idNumber = parseInt(id)
+    navigate(`/classes/${idNumber}`)
+  }
+
   const handleUpdateOrderSubjects = (data) => {
     for (let i = 0; i < data.length; i++) {
       updateSubject({
@@ -198,6 +205,7 @@ const ClassesPage = () => {
             handleDelete={handleDelete}
             handleUpdateOrderSubjects={handleUpdateOrderSubjects}
             handleNameDescription={handleUpdateNameDescription}
+            handleOpen={handleOpen}
           />
         </Box>
       </Grid>

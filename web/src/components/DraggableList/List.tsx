@@ -4,6 +4,7 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import FolderIcon from '@mui/icons-material/Folder'
+import LaunchIcon from '@mui/icons-material/Launch'
 import SaveIcon from '@mui/icons-material/Save'
 import {
   Accordion,
@@ -40,6 +41,7 @@ interface DraggableListProps {
   handleDelete: (id: string) => void
   handleUpdateOrderSubjects: (data) => void
   handleNameDescription: (id, input) => void
+  handleOpen: (id) => void
 }
 
 const DraggableList: React.FC<DraggableListProps> = ({
@@ -189,17 +191,29 @@ const DraggableList: React.FC<DraggableListProps> = ({
                                     <DeleteIcon />
                                   </IconButton>
                                   {editingItem === item.id ? (
-                                    <IconButton aria-label="save" type="submit">
+                                    <IconButton
+                                      edge="end"
+                                      aria-label="save"
+                                      type="submit"
+                                    >
                                       <SaveIcon />
                                     </IconButton>
                                   ) : (
                                     <IconButton
+                                      edge="end"
                                       aria-label="edit"
                                       onClick={() => handleEdit(item.id)}
                                     >
                                       <EditIcon />
                                     </IconButton>
                                   )}
+                                  <IconButton
+                                    edge="end"
+                                    aria-label="open"
+                                    onClick={() => handleDelete(item.id)}
+                                  >
+                                    <LaunchIcon />
+                                  </IconButton>
                                 </AccordionActions>
                               </Accordion>
                             </Form>
