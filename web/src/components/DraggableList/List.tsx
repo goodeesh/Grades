@@ -49,6 +49,7 @@ const DraggableList: React.FC<DraggableListProps> = ({
   handleDelete,
   handleUpdateOrderSubjects,
   handleNameDescription,
+  handleOpen,
 }) => {
   const [orderedItems, setOrderedItems] = React.useState<Item[]>([])
   React.useEffect(() => {
@@ -210,7 +211,7 @@ const DraggableList: React.FC<DraggableListProps> = ({
                                   <IconButton
                                     edge="end"
                                     aria-label="open"
-                                    onClick={() => handleDelete(item.id)}
+                                    onClick={() => handleOpen(item.id)}
                                   >
                                     <LaunchIcon />
                                   </IconButton>

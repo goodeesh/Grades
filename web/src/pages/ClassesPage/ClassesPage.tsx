@@ -4,7 +4,7 @@ import { Box, Button, Grid } from '@mui/material'
 import Alert from '@mui/material/Alert'
 import Snackbar from '@mui/material/Snackbar'
 
-import { navigate } from '@redwoodjs/router'
+import { navigate, useParams } from '@redwoodjs/router'
 import { useMutation, useQuery } from '@redwoodjs/web'
 
 import DraggableList from 'src/components/DraggableList/List'
@@ -86,6 +86,8 @@ const createItemList = (data) => {
 }
 
 const ClassesPage = () => {
+  const { id } = useParams()
+  console.log(id)
   const userData = React.useContext(UserContext)
   const { loading, data, refetch } = useQuery(GET_SUBJECTS_FOR_TEACHER, {
     variables: { teacherId: userData?.getUserByEmail.id },
