@@ -4,7 +4,7 @@ import { Box, Button, Grid } from '@mui/material'
 import Alert from '@mui/material/Alert'
 import Snackbar from '@mui/material/Snackbar'
 
-import { navigate, useParams } from '@redwoodjs/router'
+import { navigate, routes, useParams } from '@redwoodjs/router'
 import { useMutation, useQuery } from '@redwoodjs/web'
 
 import DraggableList from 'src/components/DraggableList/List'
@@ -90,6 +90,7 @@ const ClassesPage = () => {
   const { loading, data, refetch } = useQuery(GET_SUBJECTS_FOR_TEACHER, {
     variables: { teacherId: userData?.getUserByEmail.id },
   })
+  console.log(userData?.getUserByEmail.id)
   const [itemList, setItemList] = React.useState([])
   React.useEffect(() => {
     if (data) {
@@ -129,7 +130,7 @@ const ClassesPage = () => {
   }
   const handleOpen = (id) => {
     //navigate to the class page
-    navigate(`/classes/${id}`)
+    navigate(routes.manageClass({ id: id }))
   }
 
   const handleUpdateOrderSubjects = (data) => {
