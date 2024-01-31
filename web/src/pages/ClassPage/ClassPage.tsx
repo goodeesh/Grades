@@ -4,6 +4,9 @@ import { useParams } from '@redwoodjs/router'
 import { Metadata } from '@redwoodjs/web'
 
 import CustomDataGrid from 'src/components/DataGrid/dataGrid'
+
+// Sample columns data
+// Sample columns data
 const columns = [
   { field: 'id', headerName: 'ID', width: 90 },
   {
@@ -18,46 +21,207 @@ const columns = [
     width: 150,
     editable: true,
   },
+  // Participation columns
   {
-    field: 'age',
-    headerName: 'Age',
+    field: 'participation1',
+    headerName: 'Participation',
     type: 'number',
-    width: 110,
+    width: 120,
     editable: true,
   },
   {
-    field: 'age2',
-    headerName: 'Age',
+    field: 'participation2',
+    headerName: 'Participation',
     type: 'number',
-    width: 110,
+    width: 120,
     editable: true,
   },
+  {
+    field: 'participation3',
+    headerName: 'Participation',
+    type: 'number',
+    width: 120,
+    editable: true,
+  },
+  {
+    field: 'participation4',
+    headerName: 'Participation',
+    type: 'number',
+    width: 120,
+    editable: true,
+  },
+  {
+    field: 'participation5',
+    headerName: 'Participation',
+    type: 'number',
+    width: 120,
+    editable: true,
+  },
+  {
+    field: 'participation6',
+    headerName: 'Participation',
+    type: 'number',
+    width: 120,
+    editable: true,
+  },
+  {
+    field: 'participation7',
+    headerName: 'Participation',
+    type: 'number',
+    width: 120,
+    editable: true,
+  },
+  {
+    field: 'participation8',
+    headerName: 'Participation',
+    type: 'number',
+    width: 120,
+    editable: true,
+  },
+  {
+    field: 'participation9',
+    headerName: 'Participation',
+    type: 'number',
+    width: 120,
+    editable: true,
+  },
+  {
+    field: 'participation10',
+    headerName: 'Participation',
+    type: 'number',
+    width: 120,
+    editable: true,
+  },
+  {
+    field: 'participation11',
+    headerName: 'Participation',
+    type: 'number',
+    width: 120,
+    editable: true,
+  },
+  {
+    field: 'participation12',
+    headerName: 'Participation',
+    type: 'number',
+    width: 120,
+    editable: true,
+  },
+  {
+    field: 'participation13',
+    headerName: 'Participation',
+    type: 'number',
+    width: 120,
+    editable: true,
+  },
+  {
+    field: 'participation14',
+    headerName: 'Participation',
+    type: 'number',
+    width: 120,
+    editable: true,
+  },
+  {
+    field: 'participation15',
+    headerName: 'Participation',
+    type: 'number',
+    width: 120,
+    editable: true,
+  },
+  // Add more columns as needed
+  // Exams
+  {
+    field: 'exam1',
+    headerName: 'Exam',
+    type: 'number',
+    width: 100,
+    editable: true,
+  },
+  {
+    field: 'exam2',
+    headerName: 'Exam',
+    type: 'number',
+    width: 100,
+    editable: true,
+  },
+  // Vocabulary evaluations
+  {
+    field: 'vocab1',
+    headerName: 'Vocabulary',
+    type: 'number',
+    width: 100,
+    editable: true,
+  },
+  {
+    field: 'vocab2',
+    headerName: 'Vocabulary',
+    type: 'number',
+    width: 100,
+    editable: true,
+  },
+  {
+    field: 'vocab3',
+    headerName: 'Vocabulary',
+    type: 'number',
+    width: 100,
+    editable: true,
+  },
+  {
+    field: 'vocab4',
+    headerName: 'Vocabulary',
+    type: 'number',
+    width: 100,
+    editable: true,
+  },
+  {
+    field: 'vocab5',
+    headerName: 'Vocabulary',
+    type: 'number',
+    width: 100,
+    editable: true,
+  },
+  // Add more vocabulary evaluations as needed
 ]
 
-// Sample rows data
-const rows = [
-  { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35, age2: 35 },
-  { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42, age2: 35 },
-  // { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
-  // { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
-  // { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
-  // { id: 6, lastName: 'Melisandre', firstName: 'NA', age: 150 },
-  // { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-  // { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-  // { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
-]
+// Sample rows data (at least 25 students)
+const rows = []
+for (let i = 1; i <= 25; i++) {
+  rows.push({
+    id: i,
+    lastName: `Student${i}`,
+    firstName: `First${i}`,
+    age: Math.floor(Math.random() * 10) + 18, // Random age between 18 and 27
+    participation1: Math.floor(Math.random() * 5) + 1, // Random participation score between 1 and 5
+    participation2: Math.floor(Math.random() * 5) + 1,
+    // Add values for the rest of the participation columns, exams, and vocabulary evaluations
+    exam1: Math.floor(Math.random() * 100) + 1, // Random exam score between 1 and 100
+    exam2: Math.floor(Math.random() * 100) + 1,
+    vocab1: Math.floor(Math.random() * 5) + 1, // Random vocabulary evaluation score between 1 and 5
+    vocab2: Math.floor(Math.random() * 5) + 1,
+    vocab3: Math.floor(Math.random() * 5) + 1,
+    vocab4: Math.floor(Math.random() * 5) + 1,
+    vocab5: Math.floor(Math.random() * 5) + 1,
+    // Add values for the rest of the vocabulary evaluations
+  })
+}
+
 const ClassPage = () => {
   const { id } = useParams()
   console.log('the id is ', id)
+
   return (
     <>
-      <Grid component="main" maxWidth="xs" textAlign="center" margin="auto">
+      <Grid
+        container
+        component="main"
+        sx={{
+          width: '100%', // Full width
+          textAlign: 'center',
+          margin: 'auto',
+          height: '100%',
+        }}
+      >
         <Metadata title="Class" description="Class page" />
         <CustomDataGrid columns={columns} rows={rows} />
-        <h1>ClassPage</h1>
-        <p>
-          Find me in <code>./web/src/pages/ClassPage/ClassPage.tsx</code>
-        </p>
       </Grid>
     </>
   )

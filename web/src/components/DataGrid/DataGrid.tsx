@@ -5,7 +5,8 @@ import CancelIcon from '@mui/icons-material/Close'
 import DeleteIcon from '@mui/icons-material/DeleteOutlined'
 import EditIcon from '@mui/icons-material/Edit'
 import SaveIcon from '@mui/icons-material/Save'
-import Box from '@mui/material/Box'
+import SettingsApplicationsIcon from '@mui/icons-material/SettingsApplications'
+import { Grid, ListItemIcon, ListItemText, Menu, MenuItem } from '@mui/material'
 import Button from '@mui/material/Button'
 import Checkbox from '@mui/material/Checkbox'
 import FormControlLabel from '@mui/material/FormControlLabel'
@@ -14,18 +15,21 @@ import TextField from '@mui/material/TextField'
 import {
   DataGrid,
   GridColDef,
-  GridRowModes,
   GridRowModesModel,
   GridToolbarContainer,
-  GridActionsCellItem,
   GridRowsProp,
   GridRowEditStopReasons,
+  GridRowModes,
+  GridActionsCellItem,
+  GridColumnMenu,
+  GridColumnMenuItemProps,
+  GridColumnMenuProps,
 } from '@mui/x-data-grid'
-
 interface CustomDataGridProps {
   rows: GridRowsProp
   columns: GridColDef[]
 }
+
 const EditToolbar = React.memo(function EditToolbar({
   setRows,
   addNewColumn,
@@ -44,9 +48,9 @@ const EditToolbar = React.memo(function EditToolbar({
       return [...oldRows, { id: newId, name: '', age: '', isNew: true }]
     })
   }
+
   const searchInputRef = React.useRef<HTMLInputElement | null>(null)
 
-  // Use a callback ref to focus on the input field
   React.useEffect(() => {
     searchInputRef.current.focus()
   }, [searchText])
@@ -60,7 +64,7 @@ const EditToolbar = React.memo(function EditToolbar({
       <TextField
         inputRef={searchInputRef}
         value={searchText}
-        onChange={handleSearchChange}
+        onInput={handleSearchChange}
         placeholder="Search..."
         variant="outlined"
         size="small"
@@ -142,9 +146,37 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
     })
   }
 
+  const [contextMenu, setContextMenu] = React.useState<{
+    mouseX: number
+    mouseY: number
+    field: string
+  } | null>(null)
+
+  const handleClose = () => {
+    setContextMenu(null)
+  }
+
+  // const handleDeleteColumn = (columnField) => {
+  //   setColumns((prevColumns) =>
+  //     prevColumns.filter((column) => column.field !== columnField)
+  //   )
+  //   setVisibleColumns(
+  //     (prevVisibleColumns) =>
+  //       new Set(
+  //         [...prevVisibleColumns].filter((field) => field !== columnField)
+  //       )
+  //   )
+  //   handleClose()
+  // }
+
   const filteredColumns = React.useMemo(() => {
     return [
-      ...columns.filter((column) => visibleColumns.has(column.field)),
+      ...columns
+        .filter((column) => visibleColumns.has(column.field))
+        .map((column) => ({
+          ...column,
+          headerName: column.headerName,
+        })),
       {
         field: 'actions',
         type: 'actions',
@@ -212,52 +244,112 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
     ]
   }, [columns, rowModesModel, rows, visibleColumns])
 
-  return (
-    <Box sx={{ height: 500, width: '100%' }}>
-      <FormGroup row>
-        {Object.keys(groupedColumns).map((headerName) => (
-          <FormControlLabel
-            key={headerName}
-            control={
-              <Checkbox
-                checked={groupedColumns[headerName].every((field) =>
-                  visibleColumns.has(field)
-                )}
-                onChange={() => toggleGroup(headerName)}
-                name={headerName}
-              />
-            }
-            label={headerName}
-          />
-        ))}
-      </FormGroup>
-      <DataGrid
-        rows={filteredRows}
-        columns={filteredColumns}
-        editMode="row"
-        rowModesModel={rowModesModel}
-        onRowModesModelChange={setRowModesModel}
-        processRowUpdate={(newRow) => {
-          const updatedRow = { ...newRow, isNew: false }
-          setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)))
-          return updatedRow
-        }}
-        onRowEditStop={(params, event) => {
-          if (params.reason === GridRowEditStopReasons.rowFocusOut) {
-            event.defaultMuiPrevented = true
-          }
-        }}
+  function CustomUserItem(props: GridColumnMenuItemProps) {
+    const { myCustomHandler, myCustomValue } = props
+    return (
+      <MenuItem onClick={myCustomHandler}>
+        <ListItemIcon>
+          <DeleteIcon fontSize="small" />
+        </ListItemIcon>
+        <ListItemText>{myCustomValue}</ListItemText>
+      </MenuItem>
+    )
+  }
+  function CustomColumnMenu(props: GridColumnMenuProps) {
+    return (
+      <GridColumnMenu
+        {...props}
         slots={{
-          toolbar: () => (
-            <EditToolbar
-              setRows={setRows}
-              addNewColumn={addNewColumn}
-              onSearchChange={setSearchText}
-              searchText={searchText}
-            />
-          ),
+          // Add new item
+          columnMenuUserItem: CustomUserItem,
+        }}
+        slotProps={{
+          columnMenuUserItem: {
+            // set `displayOrder` for the new item
+            displayOrder: 15,
+            // Additional props
+            myCustomValue: 'Delete Column',
+            myCustomHandler: () => handleDeleteColumn(props.colDef.field),
+          },
         }}
       />
-    </Box>
+    )
+  }
+  function handleDeleteColumn(field) {
+    setColumns((prevColumns) =>
+      prevColumns.filter((column) => column.field !== field)
+    )
+    setVisibleColumns(
+      (prevVisibleColumns) =>
+        new Set([...prevVisibleColumns].filter((f) => f !== field))
+    )
+    handleClose()
+  }
+  return (
+    <>
+      <Grid item sx={{ maxWidth: '100%', maxHeight: '100%' }}>
+        <FormGroup row>
+          {Object.keys(groupedColumns).map((headerName) => (
+            <FormControlLabel
+              key={headerName}
+              control={
+                <Checkbox
+                  checked={groupedColumns[headerName].every((field) =>
+                    visibleColumns.has(field)
+                  )}
+                  onChange={() => toggleGroup(headerName)}
+                  name={headerName}
+                />
+              }
+              label={headerName}
+            />
+          ))}
+        </FormGroup>
+        <DataGrid
+          rows={filteredRows}
+          columns={filteredColumns}
+          editMode="row"
+          rowModesModel={rowModesModel}
+          onRowModesModelChange={setRowModesModel}
+          processRowUpdate={(newRow) => {
+            const updatedRow = { ...newRow, isNew: false }
+            setRows(
+              rows.map((row) => (row.id === newRow.id ? updatedRow : row))
+            )
+            return updatedRow
+          }}
+          onRowEditStop={(params, event) => {
+            if (params.reason === GridRowEditStopReasons.rowFocusOut) {
+              event.defaultMuiPrevented = true
+            }
+          }}
+          slots={{
+            toolbar: () => (
+              <EditToolbar
+                setRows={setRows}
+                addNewColumn={addNewColumn}
+                onSearchChange={setSearchText}
+                searchText={searchText}
+              />
+            ),
+            columnMenu: CustomColumnMenu,
+          }}
+        />
+      </Grid>
+      <Menu
+        open={contextMenu !== null}
+        onClose={handleClose}
+        anchorReference="anchorPosition"
+        anchorPosition={
+          contextMenu !== null
+            ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
+            : undefined
+        }
+      >
+        <MenuItem onClick={() => handleDeleteColumn(contextMenu.field)}>
+          Delete Column
+        </MenuItem>
+      </Menu>
+    </>
   )
 }
