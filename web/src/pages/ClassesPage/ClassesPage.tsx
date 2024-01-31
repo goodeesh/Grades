@@ -4,7 +4,7 @@ import { Box, Button, Grid } from '@mui/material'
 import Alert from '@mui/material/Alert'
 import Snackbar from '@mui/material/Snackbar'
 
-import { navigate, routes, useParams } from '@redwoodjs/router'
+import { navigate, routes } from '@redwoodjs/router'
 import { useMutation, useQuery } from '@redwoodjs/web'
 
 import DraggableList from 'src/components/DraggableList/List'

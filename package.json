@@ -27,6 +27,8 @@
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.15.6",
     "@mui/material": "^5.14.14",
+    "@mui/x-data-grid": "^6.19.2",
+    "@mui/x-data-grid-generator": "^6.19.2",
     "formik": "^2.4.5",
     "react-beautiful-dnd": "^13.1.1",
     "react-router-dom": "^6.21.1"
