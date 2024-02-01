@@ -135,12 +135,15 @@ const ClassesPage = () => {
 
   const handleUpdateOrderSubjects = (data) => {
     for (let i = 0; i < data.length; i++) {
-      updateSubject({
-        variables: {
-          id: data[i].id,
-          input: { order: data[i].order },
-        },
-      })
+      const currentItem = itemList.find((item) => item.id === data[i].id)
+      if (currentItem.order !== data[i].order) {
+        updateSubject({
+          variables: {
+            id: data[i].id,
+            input: { order: data[i].order },
+          },
+        })
+      }
     }
   }
   const handleDelete = (id) => {
