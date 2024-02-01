@@ -148,8 +148,6 @@ const ClassesPage = () => {
   }
   const handleDelete = (id) => {
     deleteSubject({ variables: { id: id } })
-    const remainingItems = itemList.filter((item) => item.id !== id)
-    setItemList(remainingItems)
   }
   if (!userData) {
     return <div>Loading...</div>
