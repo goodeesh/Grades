@@ -5,7 +5,6 @@ import CancelIcon from '@mui/icons-material/Close'
 import DeleteIcon from '@mui/icons-material/DeleteOutlined'
 import EditIcon from '@mui/icons-material/Edit'
 import SaveIcon from '@mui/icons-material/Save'
-import SettingsApplicationsIcon from '@mui/icons-material/SettingsApplications'
 import { Grid, ListItemIcon, ListItemText, Menu, MenuItem } from '@mui/material'
 import Button from '@mui/material/Button'
 import Checkbox from '@mui/material/Checkbox'
@@ -155,19 +154,6 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
   const handleClose = () => {
     setContextMenu(null)
   }
-
-  // const handleDeleteColumn = (columnField) => {
-  //   setColumns((prevColumns) =>
-  //     prevColumns.filter((column) => column.field !== columnField)
-  //   )
-  //   setVisibleColumns(
-  //     (prevVisibleColumns) =>
-  //       new Set(
-  //         [...prevVisibleColumns].filter((field) => field !== columnField)
-  //       )
-  //   )
-  //   handleClose()
-  // }
 
   const filteredColumns = React.useMemo(() => {
     return [

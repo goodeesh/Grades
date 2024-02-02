@@ -3,7 +3,7 @@ import { Grid } from '@mui/material'
 import { useParams } from '@redwoodjs/router'
 import { Metadata } from '@redwoodjs/web'
 
-import CustomDataGrid from 'src/components/DataGrid/dataGrid'
+import CustomDataGrid from 'src/components/DataGrid/DataGrid'
 
 // Sample columns data
 // Sample columns data

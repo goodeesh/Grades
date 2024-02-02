@@ -84,35 +84,70 @@ const createItemList = (data) => {
     }))
     .sort((a, b) => a.order - b.order)
 }
-
+const initialState = {
+  id: '',
+  itemList: [],
+  open: false,
+  messageForSnackbar: '',
+  addNewClass: false,
+}
+function reducer(state, action) {
+  switch (action.type) {
+    case 'SET_ID':
+      return { ...state, id: action.payload }
+    case 'SET_ITEM_LIST':
+      return { ...state, itemList: createItemList(action.payload) }
+    case 'TOGGLE_SNACKBAR':
+      return {
+        ...state,
+        messageForSnackbar: action.payload.message,
+      }
+    case 'TOGGLE_ADD_NEW_CLASS':
+      return { ...state, addNewClass: !state.addNewClass }
+    case 'TOGGLE_OPEN':
+      return { ...state, open: !state.open }
+    default:
+      throw new Error()
+  }
+}
 const ClassesPage = () => {
+  const [state, setState] = React.useReducer(reducer, initialState)
   const userData = React.useContext(UserContext)
-  const { loading, data, refetch } = useQuery(GET_SUBJECTS_FOR_TEACHER, {
-    variables: { teacherId: userData?.getUserByEmail.id },
+  //set id in state
+  React.useEffect(() => {
+    if (userData) {
+      setState({ type: 'SET_ID', payload: userData.getUserByEmail.id })
+    }
+  }, [userData])
+  const { data, loading, refetch } = useQuery(GET_SUBJECTS_FOR_TEACHER, {
+    variables: { teacherId: state.id },
   })
-  console.log(userData?.getUserByEmail.id)
-  const [itemList, setItemList] = React.useState([])
   React.useEffect(() => {
     if (data) {
-      setItemList(createItemList(data))
+      setState({ type: 'SET_ITEM_LIST', payload: data })
     }
   }, [data])
-  const [messageForSnackbar, setMessageForSnackbar] = React.useState('')
-  const [addNewClass, setAddNewClass] = React.useState(false) // Initialize addNewClass with false
-  const [open, setOpen] = React.useState(false)
+  const handleSnackbar = (message) => {
+    setState({
+      type: 'TOGGLE_SNACKBAR',
+      payload: { open: true, message: message },
+    })
+  }
+  //const [addNewClass, setAddNewClass] = React.useState(false) // Initialize addNewClass with false
+  //const [open, setOpen] = React.useState(false)
   const [createSubject] = useMutation(CREATE_SUBJECT, {
     onCompleted: () => {
-      setAddNewClass(false)
-      setMessageForSnackbar('Class added successfully!')
-      setOpen(true) // Open the Snackbard
       refetch()
+      setState({ type: 'TOGGLE_ADD_NEW_CLASS' }) // Close the form
+      handleSnackbar('Class created successfully!')
+      setState({ type: 'TOGGLE_OPEN' }) // Close the Snackbar
     },
   })
   const [deleteSubject] = useMutation(DELETE_SUBJECT, {
     onCompleted: () => {
-      setMessageForSnackbar('Class deleted successfully!')
-      setOpen(true) // Close the Snackbar
       refetch()
+      handleSnackbar('Class deleted successfully!')
+      setState({ type: 'TOGGLE_OPEN' }) // Close the Snackbar
     },
   })
   const [updateSubject] = useMutation(UPDATE_SUBJECT)
@@ -135,7 +170,7 @@ const ClassesPage = () => {
 
   const handleUpdateOrderSubjects = (data) => {
     for (let i = 0; i < data.length; i++) {
-      const currentItem = itemList.find((item) => item.id === data[i].id)
+      const currentItem = state.itemList.find((item) => item.id === data[i].id)
       if (currentItem.order !== data[i].order) {
         updateSubject({
           variables: {
@@ -156,22 +191,22 @@ const ClassesPage = () => {
     <>
       <Grid component="main" maxWidth="xs" textAlign="center" margin="auto">
         <Snackbar
-          open={open}
-          autoHideDuration={5000}
-          onClose={() => setOpen(false)}
+          open={state.open}
+          autoHideDuration={3000}
+          onClose={() => setState({ type: 'TOGGLE_OPEN' })}
           anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         >
           <Alert
-            onClose={() => setOpen(false)}
+            onClose={() => setState({ type: 'TOGGLE_OPEN' })}
             severity="success"
             sx={{ width: '100%' }}
           >
-            {messageForSnackbar}
+            {state.messageForSnackbar}
           </Alert>
         </Snackbar>
         <Button
           variant="contained"
-          onClick={() => setAddNewClass(!addNewClass)}
+          onClick={() => setState({ type: 'TOGGLE_ADD_NEW_CLASS' })}
         >
           Add a new Class
         </Button>{' '}
@@ -179,7 +214,7 @@ const ClassesPage = () => {
         <br />
         <Box textAlign="center" margin="auto">
           <br />
-          {addNewClass && ( // Render DemoPaper if addNewClass is true
+          {state.addNewClass && ( // Render DemoPaper if addNewClass is true
             <MyForm
               onSubmit={(values) =>
                 createSubject({
@@ -200,7 +235,7 @@ const ClassesPage = () => {
           <br />
           {loading && <div>Loading...</div>}
           <DraggableList
-            items={itemList}
+            items={state.itemList}
             handleDelete={handleDelete}
             handleUpdateOrderSubjects={handleUpdateOrderSubjects}
             handleNameDescription={handleUpdateNameDescription}
