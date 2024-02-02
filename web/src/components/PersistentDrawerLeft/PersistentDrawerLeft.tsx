@@ -8,9 +8,8 @@ import HomeIcon from '@mui/icons-material/Home'
 import LoginIcon from '@mui/icons-material/Login'
 import MenuIcon from '@mui/icons-material/Menu'
 import PeopleIcon from '@mui/icons-material/People'
-import { Button, MenuItem, Select } from '@mui/material'
+import { Button, Grid, MenuItem, Select } from '@mui/material'
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar'
-import Box from '@mui/material/Box'
 import CssBaseline from '@mui/material/CssBaseline'
 import MuiDrawer from '@mui/material/Drawer'
 import IconButton from '@mui/material/IconButton'
@@ -213,7 +212,7 @@ export default function MiniDrawer() {
     return <div>Loading...</div>
   }
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Grid sx={{ display: 'flex' }}>
       <CssBaseline />
       <AppBar position="fixed" open={open}>
         <Toolbar>
@@ -301,16 +300,16 @@ export default function MiniDrawer() {
           ))}
         </List>
       </Drawer>
-      <Box
+      <Grid
         component="main"
         sx={{
           flexGrow: 1,
           p: 3,
           width: { sm: `calc(100% - ${drawerWidth}px)` },
+          height: 'calc(100vh - 64px)', // Set height to 100% of the viewport height
         }}
       >
         <DrawerHeader />
-
         {userData ? (
           <UserContext.Provider value={userData}>
             <Routes />
@@ -318,7 +317,7 @@ export default function MiniDrawer() {
         ) : (
           <Routes />
         )}
-      </Box>
-    </Box>
+      </Grid>
+    </Grid>
   )
 }

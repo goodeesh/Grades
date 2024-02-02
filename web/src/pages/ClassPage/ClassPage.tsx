@@ -211,12 +211,12 @@ const ClassPage = () => {
   return (
     <>
       <Grid
-        container
-        component="main"
+        item
         sx={{
           width: '100%', // Full width
           textAlign: 'center',
           margin: 'auto',
+          overflow: 'scroll',
           height: '100%',
         }}
       >

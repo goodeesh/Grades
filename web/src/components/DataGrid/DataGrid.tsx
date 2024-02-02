@@ -5,7 +5,7 @@ import CancelIcon from '@mui/icons-material/Close'
 import DeleteIcon from '@mui/icons-material/DeleteOutlined'
 import EditIcon from '@mui/icons-material/Edit'
 import SaveIcon from '@mui/icons-material/Save'
-import { Grid, ListItemIcon, ListItemText, Menu, MenuItem } from '@mui/material'
+import { Grid, ListItemIcon, ListItemText, MenuItem } from '@mui/material'
 import Button from '@mui/material/Button'
 import Checkbox from '@mui/material/Checkbox'
 import FormControlLabel from '@mui/material/FormControlLabel'
@@ -145,16 +145,6 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
     })
   }
 
-  const [contextMenu, setContextMenu] = React.useState<{
-    mouseX: number
-    mouseY: number
-    field: string
-  } | null>(null)
-
-  const handleClose = () => {
-    setContextMenu(null)
-  }
-
   const filteredColumns = React.useMemo(() => {
     return [
       ...columns
@@ -269,28 +259,27 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
       (prevVisibleColumns) =>
         new Set([...prevVisibleColumns].filter((f) => f !== field))
     )
-    handleClose()
   }
   return (
     <>
-      <Grid item sx={{ maxWidth: '100%', maxHeight: '100%' }}>
-        <FormGroup row>
-          {Object.keys(groupedColumns).map((headerName) => (
-            <FormControlLabel
-              key={headerName}
-              control={
-                <Checkbox
-                  checked={groupedColumns[headerName].every((field) =>
-                    visibleColumns.has(field)
-                  )}
-                  onChange={() => toggleGroup(headerName)}
-                  name={headerName}
-                />
-              }
-              label={headerName}
-            />
-          ))}
-        </FormGroup>
+      <FormGroup row>
+        {Object.keys(groupedColumns).map((headerName) => (
+          <FormControlLabel
+            key={headerName}
+            control={
+              <Checkbox
+                checked={groupedColumns[headerName].every((field) =>
+                  visibleColumns.has(field)
+                )}
+                onChange={() => toggleGroup(headerName)}
+                name={headerName}
+              />
+            }
+            label={headerName}
+          />
+        ))}
+      </FormGroup>
+      <Grid item>
         <DataGrid
           rows={filteredRows}
           columns={filteredColumns}
@@ -320,22 +309,9 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
             ),
             columnMenu: CustomColumnMenu,
           }}
+          rowsPerPageOptions={[5, 10, 20]}
         />
       </Grid>
-      <Menu
-        open={contextMenu !== null}
-        onClose={handleClose}
-        anchorReference="anchorPosition"
-        anchorPosition={
-          contextMenu !== null
-            ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
-            : undefined
-        }
-      >
-        <MenuItem onClick={() => handleDeleteColumn(contextMenu.field)}>
-          Delete Column
-        </MenuItem>
-      </Menu>
     </>
   )
 }
