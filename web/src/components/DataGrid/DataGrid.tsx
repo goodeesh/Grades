@@ -12,7 +12,6 @@ import FormControlLabel from '@mui/material/FormControlLabel'
 import FormGroup from '@mui/material/FormGroup'
 import TextField from '@mui/material/TextField'
 import {
-  DataGrid,
   GridColDef,
   GridRowModesModel,
   GridToolbarContainer,
@@ -24,6 +23,8 @@ import {
   GridColumnMenuItemProps,
   GridColumnMenuProps,
 } from '@mui/x-data-grid'
+import { DataGrid } from '@mui/x-data-grid'
+
 interface CustomDataGridProps {
   rows: GridRowsProp
   columns: GridColDef[]
@@ -281,6 +282,7 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
       </FormGroup>
       <Grid item>
         <DataGrid
+          density="compact"
           rows={filteredRows}
           columns={filteredColumns}
           editMode="row"
@@ -309,7 +311,11 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
             ),
             columnMenu: CustomColumnMenu,
           }}
-          rowsPerPageOptions={[5, 10, 20]}
+          initialState={{
+            pagination: {
+              paginationModel: { pageSize: 15, page: 0 },
+            },
+          }}
         />
       </Grid>
     </>

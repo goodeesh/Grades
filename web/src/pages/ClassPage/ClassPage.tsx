@@ -217,7 +217,6 @@ const ClassPage = () => {
           textAlign: 'center',
           margin: 'auto',
           overflow: 'scroll',
-          height: '100%',
         }}
       >
         <Metadata title="Class" description="Class page" />

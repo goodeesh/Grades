@@ -4081,7 +4081,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mui/x-data-grid@npm:6.19.2, @mui/x-data-grid@npm:^6.19.2":
+"@mui/x-data-grid@npm:6.19.2":
   version: 6.19.2
   resolution: "@mui/x-data-grid@npm:6.19.2"
   dependencies:
@@ -4096,6 +4096,24 @@ __metadata:
     react: ^17.0.0 || ^18.0.0
     react-dom: ^17.0.0 || ^18.0.0
   checksum: b9c8c7c03de70b7e6c03f7269230753b424f6d5966acda342988b5d0d58ce2a6c7b9ddcb17c2ff0e8be6bcb887d42fad9494d7efa3294b7c96fb1ae679bc13cd
+  languageName: node
+  linkType: hard
+
+"@mui/x-data-grid@npm:latest":
+  version: 6.19.3
+  resolution: "@mui/x-data-grid@npm:6.19.3::__archiveUrl=http%3A%2F%2Frepo.eb.lan.at%3A80%2Fartifactory%2Fapi%2Fnpm%2Fnpm-repo%2F%40mui%2Fx-data-grid%2F-%2Fx-data-grid-6.19.3.tgz"
+  dependencies:
+    "@babel/runtime": ^7.23.2
+    "@mui/utils": ^5.14.16
+    clsx: ^2.0.0
+    prop-types: ^15.8.1
+    reselect: ^4.1.8
+  peerDependencies:
+    "@mui/material": ^5.4.1
+    "@mui/system": ^5.4.1
+    react: ^17.0.0 || ^18.0.0
+    react-dom: ^17.0.0 || ^18.0.0
+  checksum: 7615b2398c51245af9c86ea5bd4f265c60a08625d408400ca34657534510cc383c39bd4d3781f84798df7666f29aa468a6d52ba0e549e073f1c03601007be71c
   languageName: node
   linkType: hard
 
@@ -18634,7 +18652,7 @@ __metadata:
     "@emotion/styled": ^11.11.0
     "@mui/icons-material": ^5.15.6
     "@mui/material": ^5.14.14
-    "@mui/x-data-grid": ^6.19.2
+    "@mui/x-data-grid": latest
     "@mui/x-data-grid-generator": ^6.19.2
     "@redwoodjs/core": 6.6.4
     formik: ^2.4.5
