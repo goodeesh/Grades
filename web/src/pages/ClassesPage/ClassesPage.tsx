@@ -1,8 +1,17 @@
 import * as React from 'react'
 
-import { Box, Button, Grid } from '@mui/material'
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  Grid,
+  IconButton,
+} from '@mui/material'
 import Alert from '@mui/material/Alert'
 import Snackbar from '@mui/material/Snackbar'
+import { GridCloseIcon } from '@mui/x-data-grid'
 
 import { navigate, routes } from '@redwoodjs/router'
 import { useMutation, useQuery } from '@redwoodjs/web'
@@ -204,13 +213,12 @@ const ClassesPage = () => {
             {state.messageForSnackbar}
           </Alert>
         </Snackbar>
-        <Button
+        {/* <Button
           variant="contained"
           onClick={() => setState({ type: 'TOGGLE_ADD_NEW_CLASS' })}
         >
           Add a new Class
         </Button>{' '}
-        {/* Set addNewClass to true when the button is clicked */}
         <br />
         <Box textAlign="center" margin="auto">
           <br />
@@ -229,6 +237,43 @@ const ClassesPage = () => {
               }
             />
           )}
+        </Box> */}
+        <Box textAlign="center" margin="auto">
+          <br />
+          <Button
+            variant="contained"
+            onClick={() => setState({ type: 'TOGGLE_ADD_NEW_CLASS' })}
+          >
+            Add a new Class
+          </Button>
+
+          <Dialog
+            open={state.addNewClass}
+            onClose={() => setState({ type: 'TOGGLE_ADD_NEW_CLASS' })}
+          >
+            <DialogTitle>Add a new Class</DialogTitle>
+            <IconButton
+              style={{ position: 'absolute', right: '8px', top: '8px' }}
+              onClick={() => setState({ type: 'TOGGLE_ADD_NEW_CLASS' })}
+            >
+              <GridCloseIcon />
+            </IconButton>
+            <DialogContent>
+              <MyForm
+                onSubmit={(values) =>
+                  createSubject({
+                    variables: {
+                      input: {
+                        teacherId: userData.getUserByEmail.id,
+                        subjectName: values.className,
+                        subjectDescription: values.description,
+                      },
+                    },
+                  })
+                }
+              />
+            </DialogContent>
+          </Dialog>
         </Box>
         <Box display="flex" justifyContent="center" alignItems="center">
           <br />

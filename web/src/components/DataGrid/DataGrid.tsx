@@ -5,7 +5,13 @@ import CancelIcon from '@mui/icons-material/Close'
 import DeleteIcon from '@mui/icons-material/DeleteOutlined'
 import EditIcon from '@mui/icons-material/Edit'
 import SaveIcon from '@mui/icons-material/Save'
-import { Grid, ListItemIcon, ListItemText, MenuItem } from '@mui/material'
+import {
+  Grid,
+  ListItemIcon,
+  ListItemText,
+  MenuItem,
+  Select,
+} from '@mui/material'
 import Button from '@mui/material/Button'
 import Checkbox from '@mui/material/Checkbox'
 import FormControlLabel from '@mui/material/FormControlLabel'
@@ -35,11 +41,19 @@ const EditToolbar = React.memo(function EditToolbar({
   addNewColumn,
   onSearchChange,
   searchText,
+  numOfRows,
+  setNumOfRows,
+  density,
+  setDensity,
 }: {
   setRows: (newRows: (oldRows: GridRowsProp) => GridRowsProp) => void
   addNewColumn: () => void
   onSearchChange: (searchValue: string) => void
   searchText: string
+  numOfRows: number
+  setNumOfRows: (num: number) => void
+  density: 'standard' | 'comfortable' | 'compact'
+  setDensity: (density: 'standard' | 'comfortable' | 'compact') => void
 }) {
   const handleAddRecord = () => {
     setRows((oldRows) => {
@@ -70,6 +84,27 @@ const EditToolbar = React.memo(function EditToolbar({
         size="small"
         style={{ marginRight: 8 }}
       />
+      <TextField
+        size="small"
+        type="number"
+        name="numOfRows"
+        value={numOfRows}
+        onChange={(event) => setNumOfRows(Number(event.target.value))}
+      />
+      <Select
+        name="density"
+        size="small"
+        value={density}
+        onChange={(event) =>
+          setDensity(
+            event.target.value as 'standard' | 'comfortable' | 'compact'
+          )
+        }
+      >
+        <MenuItem value="standard">Standard</MenuItem>
+        <MenuItem value="comfortable">Comfortable</MenuItem>
+        <MenuItem value="compact">Compact</MenuItem>
+      </Select>
       <Button color="primary" startIcon={<AddIcon />} onClick={handleAddRecord}>
         Add record
       </Button>
@@ -89,9 +124,23 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
   const [visibleColumns, setVisibleColumns] = React.useState(
     new Set(columns.map((c) => c.field))
   )
+  const [numOfRows, setNumOfRows] = React.useState(10)
+  const [density, setDensity] = React.useState(
+    'comfortable' as 'standard' | 'comfortable' | 'compact'
+  )
   const [rowModesModel, setRowModesModel] = React.useState<GridRowModesModel>(
     {}
   )
+  const [paginationModel, setPaginationModel] = React.useState({
+    pageSize: numOfRows,
+    page: 0,
+  })
+  React.useEffect(() => {
+    setPaginationModel((prevModel) => ({
+      ...prevModel,
+      pageSize: numOfRows,
+    }))
+  }, [numOfRows])
 
   React.useEffect(() => {
     const lowerSearchText = searchText.toLowerCase()
@@ -282,7 +331,7 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
       </FormGroup>
       <Grid item>
         <DataGrid
-          density="compact"
+          density={density}
           rows={filteredRows}
           columns={filteredColumns}
           editMode="row"
@@ -307,15 +356,16 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
                 addNewColumn={addNewColumn}
                 onSearchChange={setSearchText}
                 searchText={searchText}
+                numOfRows={numOfRows}
+                setNumOfRows={setNumOfRows}
+                density={density}
+                setDensity={setDensity}
               />
             ),
             columnMenu: CustomColumnMenu,
           }}
-          initialState={{
-            pagination: {
-              paginationModel: { pageSize: 15, page: 0 },
-            },
-          }}
+          paginationModel={paginationModel}
+          onPaginationModelChange={setPaginationModel}
         />
       </Grid>
     </>
