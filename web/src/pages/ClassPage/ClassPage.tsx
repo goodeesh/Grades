@@ -1,9 +1,18 @@
-import { Grid } from '@mui/material'
+import {
+  Box,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  Grid,
+  IconButton,
+} from '@mui/material'
+import { GridCloseIcon } from '@mui/x-data-grid'
 
 import { useParams } from '@redwoodjs/router'
 import { Metadata } from '@redwoodjs/web'
 
 import CustomDataGrid from 'src/components/DataGrid/DataGrid'
+import { MyForm } from 'src/components/Forms/NewStudent/MyForm'
 
 // Sample columns data
 // Sample columns data
@@ -205,8 +214,12 @@ for (let i = 1; i <= 25; i++) {
 }
 
 const ClassPage = () => {
+  const [openStudent, setOpenStudent] = React.useState(false)
   const { id } = useParams()
   console.log('the id is ', id)
+  const handleSetOpenStudent = () => {
+    setOpenStudent(!openStudent)
+  }
 
   return (
     <>
@@ -219,8 +232,28 @@ const ClassPage = () => {
           overflow: 'scroll',
         }}
       >
+        <Box textAlign="center" margin="auto">
+          <br />
+
+          <Dialog open={openStudent} onClose={() => setOpenStudent(false)}>
+            <DialogTitle>Add new student</DialogTitle>
+            <IconButton
+              style={{ position: 'absolute', right: '8px', top: '8px' }}
+              onClick={() => setOpenStudent(false)}
+            >
+              <GridCloseIcon />
+            </IconButton>
+            <DialogContent>
+              <MyForm onSubmit={(values) => console.log('values', values)} />
+            </DialogContent>
+          </Dialog>
+        </Box>
         <Metadata title="Class" description="Class page" />
-        <CustomDataGrid columns={columns} rows={rows} />
+        <CustomDataGrid
+          columns={columns}
+          rows={rows}
+          setOpenNewStudentDialog={handleSetOpenStudent}
+        />
       </Grid>
     </>
   )

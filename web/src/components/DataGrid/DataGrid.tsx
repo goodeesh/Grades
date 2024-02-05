@@ -34,6 +34,7 @@ import { DataGrid } from '@mui/x-data-grid'
 interface CustomDataGridProps {
   rows: GridRowsProp
   columns: GridColDef[]
+  setOpenNewStudentDialog: () => void
 }
 
 const EditToolbar = React.memo(function EditToolbar({
@@ -45,6 +46,7 @@ const EditToolbar = React.memo(function EditToolbar({
   setNumOfRows,
   density,
   setDensity,
+  setOpenNewStudentDialog,
 }: {
   setRows: (newRows: (oldRows: GridRowsProp) => GridRowsProp) => void
   addNewColumn: () => void
@@ -54,14 +56,15 @@ const EditToolbar = React.memo(function EditToolbar({
   setNumOfRows: (num: number) => void
   density: 'standard' | 'comfortable' | 'compact'
   setDensity: (density: 'standard' | 'comfortable' | 'compact') => void
+  setOpenNewStudentDialog: () => void
 }) {
-  const handleAddRecord = () => {
-    setRows((oldRows) => {
-      const maxId = oldRows.reduce((max, row) => Math.max(max, row.id), 0)
-      const newId = maxId + 1
-      return [...oldRows, { id: newId, name: '', age: '', isNew: true }]
-    })
-  }
+  // const handleAddRecord = () => {
+  //   setRows((oldRows) => {
+  //     const maxId = oldRows.reduce((max, row) => Math.max(max, row.id), 0)
+  //     const newId = maxId + 1
+  //     return [...oldRows, { id: newId, name: '', age: '', isNew: true }]
+  //   })
+  // }
 
   const searchInputRef = React.useRef<HTMLInputElement | null>(null)
 
@@ -105,8 +108,12 @@ const EditToolbar = React.memo(function EditToolbar({
         <MenuItem value="comfortable">Comfortable</MenuItem>
         <MenuItem value="compact">Compact</MenuItem>
       </Select>
-      <Button color="primary" startIcon={<AddIcon />} onClick={handleAddRecord}>
-        Add record
+      <Button
+        color="primary"
+        startIcon={<AddIcon />}
+        onClick={setOpenNewStudentDialog}
+      >
+        Add new student
       </Button>
       <Button color="secondary" startIcon={<AddIcon />} onClick={addNewColumn}>
         Add column
@@ -360,6 +367,7 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
                 setNumOfRows={setNumOfRows}
                 density={density}
                 setDensity={setDensity}
+                setOpenNewStudentDialog={props.setOpenNewStudentDialog}
               />
             ),
             columnMenu: CustomColumnMenu,
