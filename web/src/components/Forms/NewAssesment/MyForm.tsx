@@ -6,8 +6,7 @@ import { Form, Formik, Field } from 'formik'
 import { MyField } from './MyField'
 
 interface Values {
-  firstName: string
-  lastName: string
+  category: string
 }
 
 interface Props {
@@ -17,7 +16,7 @@ interface Props {
 export const MyForm: React.FC<Props> = ({ onSubmit }) => {
   return (
     <Formik
-      initialValues={{ firstName: '', lastName: '' }}
+      initialValues={{ category: '' }}
       onSubmit={(values) => {
         onSubmit(values)
       }}
@@ -27,15 +26,8 @@ export const MyForm: React.FC<Props> = ({ onSubmit }) => {
           <Form>
             <Box width="100%" paddingBottom="20px">
               <Field
-                placeholder="first name"
-                name="firstName"
-                component={MyField}
-              />
-            </Box>
-            <Box width="100%" paddingBottom="20px">
-              <Field
-                name="lastName"
-                placeholder="last name"
+                placeholder="Category"
+                name="category"
                 component={MyField}
               />
             </Box>

@@ -12,7 +12,8 @@ import { useParams } from '@redwoodjs/router'
 import { Metadata } from '@redwoodjs/web'
 
 import CustomDataGrid from 'src/components/DataGrid/DataGrid'
-import { MyForm } from 'src/components/Forms/NewStudent/MyForm'
+import { MyForm as MyFormCreateAssesment } from 'src/components/Forms/NewAssesment/MyForm'
+import { MyForm as MyFormNewStudent } from 'src/components/Forms/NewStudent/MyForm'
 
 // Sample columns data
 // Sample columns data
@@ -214,12 +215,24 @@ for (let i = 1; i <= 25; i++) {
 }
 
 const ClassPage = () => {
-  const [openStudent, setOpenStudent] = React.useState(false)
-  const { id } = useParams()
-  console.log('the id is ', id)
+  const handleSubmitNewStudent = (values) => {
+    console.log('values', values)
+    setOpenStudent(false)
+  }
+  const handleSubmitCreateAssesment = (values) => {
+    console.log('values', values)
+    setOpenAssesment(false)
+  }
   const handleSetOpenStudent = () => {
     setOpenStudent(!openStudent)
   }
+  const handleSetOpenAssesment = () => {
+    setOpenAssesment(!openAssesment)
+  }
+  const [openStudent, setOpenStudent] = React.useState(false)
+  const [openAssesment, setOpenAssesment] = React.useState(false)
+  const { id } = useParams()
+  console.log('the id is ', id)
 
   return (
     <>
@@ -236,7 +249,7 @@ const ClassPage = () => {
           <br />
 
           <Dialog open={openStudent} onClose={() => setOpenStudent(false)}>
-            <DialogTitle>Add new student</DialogTitle>
+            <DialogTitle>New student</DialogTitle>
             <IconButton
               style={{ position: 'absolute', right: '8px', top: '8px' }}
               onClick={() => setOpenStudent(false)}
@@ -244,7 +257,26 @@ const ClassPage = () => {
               <GridCloseIcon />
             </IconButton>
             <DialogContent>
-              <MyForm onSubmit={(values) => console.log('values', values)} />
+              <MyFormNewStudent
+                onSubmit={(values) => handleSubmitNewStudent(values)}
+              />
+            </DialogContent>
+          </Dialog>
+        </Box>
+        <Box textAlign="center" margin="auto">
+          <br />
+          <Dialog open={openAssesment} onClose={() => setOpenAssesment(false)}>
+            <DialogTitle>New assesment</DialogTitle>
+            <IconButton
+              style={{ position: 'absolute', right: '8px', top: '8px' }}
+              onClick={() => setOpenAssesment(false)}
+            >
+              <GridCloseIcon />
+            </IconButton>
+            <DialogContent>
+              <MyFormCreateAssesment
+                onSubmit={(values) => handleSubmitCreateAssesment(values)}
+              />
             </DialogContent>
           </Dialog>
         </Box>
@@ -253,6 +285,7 @@ const ClassPage = () => {
           columns={columns}
           rows={rows}
           setOpenNewStudentDialog={handleSetOpenStudent}
+          setOpenCreateAssesmentDialog={handleSetOpenAssesment}
         />
       </Grid>
     </>

@@ -35,11 +35,10 @@ interface CustomDataGridProps {
   rows: GridRowsProp
   columns: GridColDef[]
   setOpenNewStudentDialog: () => void
+  setOpenCreateAssesmentDialog: () => void
 }
 
 const EditToolbar = React.memo(function EditToolbar({
-  setRows,
-  addNewColumn,
   onSearchChange,
   searchText,
   numOfRows,
@@ -47,6 +46,7 @@ const EditToolbar = React.memo(function EditToolbar({
   density,
   setDensity,
   setOpenNewStudentDialog,
+  setOpenCreateAssesmentDialog,
 }: {
   setRows: (newRows: (oldRows: GridRowsProp) => GridRowsProp) => void
   addNewColumn: () => void
@@ -57,6 +57,7 @@ const EditToolbar = React.memo(function EditToolbar({
   density: 'standard' | 'comfortable' | 'compact'
   setDensity: (density: 'standard' | 'comfortable' | 'compact') => void
   setOpenNewStudentDialog: () => void
+  setOpenCreateAssesmentDialog: () => void
 }) {
   // const handleAddRecord = () => {
   //   setRows((oldRows) => {
@@ -113,10 +114,14 @@ const EditToolbar = React.memo(function EditToolbar({
         startIcon={<AddIcon />}
         onClick={setOpenNewStudentDialog}
       >
-        Add new student
+        New student
       </Button>
-      <Button color="secondary" startIcon={<AddIcon />} onClick={addNewColumn}>
-        Add column
+      <Button
+        color="secondary"
+        startIcon={<AddIcon />}
+        onClick={setOpenCreateAssesmentDialog}
+      >
+        New assesment
       </Button>
     </GridToolbarContainer>
   )
@@ -368,6 +373,9 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
                 density={density}
                 setDensity={setDensity}
                 setOpenNewStudentDialog={props.setOpenNewStudentDialog}
+                setOpenCreateAssesmentDialog={
+                  props.setOpenCreateAssesmentDialog
+                }
               />
             ),
             columnMenu: CustomColumnMenu,
