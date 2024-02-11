@@ -36,7 +36,7 @@ model Subject {
   // Many-to-Many relationship with students through SubjectStudents table
   studentsInSubject User[]            @relation("TeacherSubjects")
   subjectStudents   SubjectStudents[]
-  grades            Grade[]
+  assignments       Assignment[]
 }
 
 model SubjectStudents {
@@ -47,12 +47,23 @@ model SubjectStudents {
   userId    String?
 }
 
+model Assignment {
+  id          String    @id @default(uuid())
+  title       String
+  description String?
+  createdAt   DateTime  @default(now())
+  dueDate     DateTime?
+  subject     Subject   @relation(fields: [subjectId], references: [id])
+  subjectId   String
+  grades      Grade[]
+}
+
 model Grade {
-  id        String  @id @default(uuid())
-  subject   Subject @relation(fields: [subjectId], references: [id])
-  subjectId String
-  User      User    @relation(fields: [userId], references: [id])
-  userId    String
-  grade     Int
-  date      String
+  id           String     @id @default(uuid())
+  grade        Int
+  date         String
+  user         User       @relation(fields: [userId], references: [id])
+  userId       String
+  assignment   Assignment @relation(fields: [assignmentId], references: [id]) // Add this line
+  assignmentId String
 }
