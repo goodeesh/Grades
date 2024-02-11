@@ -1,26 +1,22 @@
 import * as React from 'react'
 
 import AddIcon from '@mui/icons-material/Add'
+import ClearIcon from '@mui/icons-material/Clear'
 import CancelIcon from '@mui/icons-material/Close'
 import DeleteIcon from '@mui/icons-material/DeleteOutlined'
 import EditIcon from '@mui/icons-material/Edit'
 import SaveIcon from '@mui/icons-material/Save'
-import {
-  Grid,
-  ListItemIcon,
-  ListItemText,
-  MenuItem,
-  Select,
-} from '@mui/material'
-import Button from '@mui/material/Button'
+import SearchIcon from '@mui/icons-material/Search'
+import { Grid, ListItemIcon, ListItemText } from '@mui/material'
+import { Select, MenuItem } from '@mui/material'
+import { TextField, Button, InputAdornment } from '@mui/material' // Changed import
 import Checkbox from '@mui/material/Checkbox'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import FormGroup from '@mui/material/FormGroup'
-import TextField from '@mui/material/TextField'
+import IconButton from '@mui/material/IconButton'
 import {
   GridColDef,
   GridRowModesModel,
-  GridToolbarContainer,
   GridRowsProp,
   GridRowEditStopReasons,
   GridRowModes,
@@ -28,9 +24,9 @@ import {
   GridColumnMenu,
   GridColumnMenuItemProps,
   GridColumnMenuProps,
+  GridToolbarContainer,
 } from '@mui/x-data-grid'
 import { DataGrid } from '@mui/x-data-grid'
-
 interface CustomDataGridProps {
   rows: GridRowsProp
   columns: GridColDef[]
@@ -39,8 +35,8 @@ interface CustomDataGridProps {
 }
 
 const EditToolbar = React.memo(function EditToolbar({
+  searchValue,
   onSearchChange,
-  searchText,
   numOfRows,
   setNumOfRows,
   density,
@@ -48,6 +44,7 @@ const EditToolbar = React.memo(function EditToolbar({
   setOpenNewStudentDialog,
   setOpenCreateAssesmentDialog,
 }: {
+  searchValue: string
   setRows: (newRows: (oldRows: GridRowsProp) => GridRowsProp) => void
   addNewColumn: () => void
   onSearchChange: (searchValue: string) => void
@@ -59,56 +56,83 @@ const EditToolbar = React.memo(function EditToolbar({
   setOpenNewStudentDialog: () => void
   setOpenCreateAssesmentDialog: () => void
 }) {
-  // const handleAddRecord = () => {
-  //   setRows((oldRows) => {
-  //     const maxId = oldRows.reduce((max, row) => Math.max(max, row.id), 0)
-  //     const newId = maxId + 1
-  //     return [...oldRows, { id: newId, name: '', age: '', isNew: true }]
-  //   })
-  // }
-
+  const [inputSearchValue, setInputSearchValue] = React.useState(searchValue)
   const searchInputRef = React.useRef<HTMLInputElement | null>(null)
-
-  React.useEffect(() => {
-    searchInputRef.current.focus()
-  }, [searchText])
-
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onSearchChange(e.target.value)
+  const handleSearchClick = () => {
+    onSearchChange(inputSearchValue)
+  }
+  const handleClearClick = () => {
+    setInputSearchValue('')
+    onSearchChange('')
   }
 
   return (
     <GridToolbarContainer>
-      <TextField
-        inputRef={searchInputRef}
-        value={searchText}
-        onInput={handleSearchChange}
-        placeholder="Search..."
-        variant="outlined"
-        size="small"
-        style={{ marginRight: 8 }}
-      />
-      <TextField
-        size="small"
-        type="number"
-        name="numOfRows"
-        value={numOfRows}
-        onChange={(event) => setNumOfRows(Number(event.target.value))}
-      />
-      <Select
-        name="density"
-        size="small"
-        value={density}
-        onChange={(event) =>
-          setDensity(
-            event.target.value as 'standard' | 'comfortable' | 'compact'
-          )
-        }
-      >
-        <MenuItem value="standard">Standard</MenuItem>
-        <MenuItem value="comfortable">Comfortable</MenuItem>
-        <MenuItem value="compact">Compact</MenuItem>
-      </Select>
+      <Grid item sx={{ display: 'flex', alignItems: 'center' }}>
+        <TextField
+          sx={{ width: 'auto' }}
+          key="search-input"
+          inputRef={searchInputRef}
+          value={inputSearchValue}
+          onChange={(e) => setInputSearchValue(e.target.value)}
+          placeholder="Search..."
+          variant="outlined"
+          size="small"
+          style={{ marginRight: 0 }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              handleSearchClick()
+            }
+          }}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                {' '}
+                {/* Key Change */}
+                {inputSearchValue ? (
+                  <IconButton onClick={handleClearClick}>
+                    <ClearIcon />
+                  </IconButton>
+                ) : null}
+              </InputAdornment>
+            ),
+          }}
+        />
+        <Button
+          variant="contained"
+          onClick={handleSearchClick}
+          sx={{
+            marginLeft: '1px',
+          }}
+        >
+          <SearchIcon />
+        </Button>
+      </Grid>
+      <Grid item>
+        <TextField
+          size="small"
+          type="number"
+          name="numOfRows"
+          value={numOfRows}
+          onChange={(event) => setNumOfRows(Number(event.target.value))}
+        />
+      </Grid>
+      <Grid item>
+        <Select
+          name="density"
+          size="small"
+          value={density}
+          onChange={(event) =>
+            setDensity(
+              event.target.value as 'standard' | 'comfortable' | 'compact'
+            )
+          }
+        >
+          <MenuItem value="standard">Standard</MenuItem>
+          <MenuItem value="comfortable">Comfortable</MenuItem>
+          <MenuItem value="compact">Compact</MenuItem>
+        </Select>
+      </Grid>
       <Button
         color="primary"
         startIcon={<AddIcon />}
@@ -136,6 +160,9 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
   const [visibleColumns, setVisibleColumns] = React.useState(
     new Set(columns.map((c) => c.field))
   )
+  const handleSearchChange = (newValue) => {
+    setSearchText(newValue)
+  }
   const [numOfRows, setNumOfRows] = React.useState(10)
   const [density, setDensity] = React.useState(
     'comfortable' as 'standard' | 'comfortable' | 'compact'
@@ -262,6 +289,8 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
               icon={<EditIcon />}
               label="Edit"
               onClick={() =>
+                // ... (Continued from previous portion)
+
                 setRowModesModel({
                   ...rowModesModel,
                   [params.id]: { mode: GridRowModes.Edit },
@@ -293,19 +322,17 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
       </MenuItem>
     )
   }
+
   function CustomColumnMenu(props: GridColumnMenuProps) {
     return (
       <GridColumnMenu
         {...props}
         slots={{
-          // Add new item
           columnMenuUserItem: CustomUserItem,
         }}
         slotProps={{
           columnMenuUserItem: {
-            // set `displayOrder` for the new item
             displayOrder: 15,
-            // Additional props
             myCustomValue: 'Delete Column',
             myCustomHandler: () => handleDeleteColumn(props.colDef.field),
           },
@@ -313,6 +340,7 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
       />
     )
   }
+
   function handleDeleteColumn(field) {
     setColumns((prevColumns) =>
       prevColumns.filter((column) => column.field !== field)
@@ -322,6 +350,7 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
         new Set([...prevVisibleColumns].filter((f) => f !== field))
     )
   }
+
   return (
     <>
       <FormGroup row>
@@ -364,9 +393,10 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
           slots={{
             toolbar: () => (
               <EditToolbar
+                onSearchChange={handleSearchChange}
+                searchValue={searchText}
                 setRows={setRows}
                 addNewColumn={addNewColumn}
-                onSearchChange={setSearchText}
                 searchText={searchText}
                 numOfRows={numOfRows}
                 setNumOfRows={setNumOfRows}

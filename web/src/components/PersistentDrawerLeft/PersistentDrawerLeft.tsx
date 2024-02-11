@@ -304,7 +304,7 @@ export default function MiniDrawer() {
         component="main"
         sx={{
           flexGrow: 1,
-          p: 3,
+          p: 1,
           width: { sm: `calc(100% - ${drawerWidth}px)` },
           height: 'calc(100vh - 64px)', // Set height to 100% of the viewport height
         }}

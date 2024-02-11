@@ -1,5 +1,4 @@
 import {
-  Box,
   Dialog,
   DialogContent,
   DialogTitle,
@@ -245,9 +244,7 @@ const ClassPage = () => {
           overflow: 'scroll',
         }}
       >
-        <Box textAlign="center" margin="auto">
-          <br />
-
+        <Grid item textAlign="center" margin="auto">
           <Dialog open={openStudent} onClose={() => setOpenStudent(false)}>
             <DialogTitle>New student</DialogTitle>
             <IconButton
@@ -262,8 +259,8 @@ const ClassPage = () => {
               />
             </DialogContent>
           </Dialog>
-        </Box>
-        <Box textAlign="center" margin="auto">
+        </Grid>
+        <Grid item textAlign="center" margin="auto">
           <br />
           <Dialog open={openAssesment} onClose={() => setOpenAssesment(false)}>
             <DialogTitle>New assesment</DialogTitle>
@@ -279,7 +276,7 @@ const ClassPage = () => {
               />
             </DialogContent>
           </Dialog>
-        </Box>
+        </Grid>
         <Metadata title="Class" description="Class page" />
         <CustomDataGrid
           columns={columns}
