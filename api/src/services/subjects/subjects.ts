@@ -20,9 +20,12 @@ export const subjects: QueryResolvers['subjects'] = () => {
   return db.subject.findMany()
 }
 
-export const subject: QueryResolvers['subject'] = ({ id }) => {
+export const subject = ({ id }) => {
   return db.subject.findUnique({
     where: { id },
+    include: {
+      assignments: true, // Include assignments in the response
+    },
   })
 }
 

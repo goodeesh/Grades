@@ -10,7 +10,7 @@ export const schema = gql`
     students: [User]!
     studentsInSubject: [User]!
     subjectStudents: [SubjectStudents]!
-    grades: [Grade]!
+    assignments: [Assignment]
   }
 
   type Query {
