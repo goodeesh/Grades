@@ -1,8 +1,8 @@
 export const schema = gql`
   type User {
     id: String!
-    email: String!
-    role: String
+    email: String
+    role: String!
     name: String!
     lastName: String!
     subjects: [Subject]!
@@ -22,8 +22,8 @@ export const schema = gql`
   }
 
   input CreateUserInput {
-    email: String!
-    role: String
+    email: String
+    role: String!
     name: String!
     lastName: String!
   }
@@ -40,10 +40,19 @@ export const schema = gql`
     role: String!
   }
 
+  input CreateUserInputForClass {
+    email: String
+    role: String!
+    name: String!
+    lastName: String!
+    classId: String!
+  }
+
   type Mutation {
     createUser(input: CreateUserInput!): User! @requireAuth
     updateUser(id: String!, input: UpdateUserInput!): User! @requireAuth
     deleteUser(id: String!): User! @requireAuth
     changueRole(input: ChangueRoleInput!): User! @requireAuth
+    createUserForClass(input: CreateUserInputForClass!): User! @requireAuth
   }
 `

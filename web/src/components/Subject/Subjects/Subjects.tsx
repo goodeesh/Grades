@@ -1,14 +1,14 @@
+import type {
+  DeleteSubjectMutationVariables,
+  FindSubjects,
+} from 'types/graphql'
+
 import { Link, routes } from '@redwoodjs/router'
 import { useMutation } from '@redwoodjs/web'
 import { toast } from '@redwoodjs/web/toast'
 
 import { QUERY } from 'src/components/Subject/SubjectsCell'
 import { truncate } from 'src/lib/formatters'
-
-import type {
-  DeleteSubjectMutationVariables,
-  FindSubjects,
-} from 'types/graphql'
 
 const DELETE_SUBJECT_MUTATION = gql`
   mutation DeleteSubjectMutation($id: Int!) {

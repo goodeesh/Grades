@@ -1,8 +1,8 @@
 export const schema = gql`
   type SubjectStudents {
-    id: Int!
+    id: String!
     subject: Subject!
-    subjectId: Int!
+    subjectId: String!
     User: User
     userId: String
   }
@@ -13,13 +13,13 @@ export const schema = gql`
   }
 
   input CreateSubjectStudentsInput {
-    subjectId: Int!
-    userId: String
+    subjectId: String!
+    userId: String!
   }
 
   input UpdateSubjectStudentsInput {
-    subjectId: Int
-    userId: String
+    subjectId: String!
+    userId: String!
   }
 
   type Mutation {

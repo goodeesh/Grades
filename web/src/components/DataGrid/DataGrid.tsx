@@ -160,6 +160,8 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
   const [visibleColumns, setVisibleColumns] = React.useState(
     new Set(columns.map((c) => c.field))
   )
+  console.log(columns)
+  console.log(rows)
   const handleSearchChange = (newValue) => {
     setSearchText(newValue)
   }

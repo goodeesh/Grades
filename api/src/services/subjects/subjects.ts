@@ -24,7 +24,8 @@ export const subject = ({ id }) => {
   return db.subject.findUnique({
     where: { id },
     include: {
-      assignments: true, // Include assignments in the response
+      assignments: true,
+      students: true,
     },
   })
 }
@@ -108,17 +109,24 @@ export const Subject: SubjectRelationResolvers = {
     return db.subject.findUnique({ where: { id: root?.id } }).teacher()
   },
   students: (_obj, { root }) => {
-    return db.subject.findUnique({ where: { id: root?.id } }).students()
+    return db.subjectStudents
+      .findMany({
+        where: { subjectId: root?.id },
+        include: { User: true },
+      })
+      .then((subjectStudents) => subjectStudents.map((ss) => ss.User))
   },
   studentsInSubject: (_obj, { root }) => {
-    return db.subject
-      .findUnique({ where: { id: root?.id } })
-      .studentsInSubject()
+    return db.user.findMany({
+      where: { subjects: { some: { id: root?.id } } },
+    })
   },
   subjectStudents: (_obj, { root }) => {
-    return db.subject.findUnique({ where: { id: root?.id } }).subjectStudents()
-  },
-  grades: (_obj, { root }) => {
-    return db.subject.findUnique({ where: { id: root?.id } }).grades()
+    return db.subject
+      .findUnique({
+        where: { id: root?.id },
+        include: { subjectStudents: true },
+      })
+      .then((subject) => subject?.subjectStudents)
   },
 }

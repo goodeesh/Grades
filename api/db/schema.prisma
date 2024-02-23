@@ -10,10 +10,10 @@ generator client {
 
 model User {
   id       String  @id @default(uuid())
-  email    String  @unique
+  email    String? @unique
   role     String? // "TEACHER" or "STUDENT"
   name     String
-  lastName String
+  lastName String?
 
   // Teacher-User to Subjects relationship
   subjects          Subject[]         @relation("TeacherSubjects")

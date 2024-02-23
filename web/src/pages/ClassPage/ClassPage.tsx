@@ -1,3 +1,4 @@
+import { useMutation } from '@apollo/client'
 import {
   Dialog,
   DialogContent,
@@ -8,7 +9,7 @@ import {
 import { GridCloseIcon } from '@mui/x-data-grid'
 
 import { useParams } from '@redwoodjs/router'
-import { Metadata } from '@redwoodjs/web'
+import { Metadata, useQuery } from '@redwoodjs/web'
 
 import CustomDataGrid from 'src/components/DataGrid/DataGrid'
 import { MyForm as MyFormCreateAssesment } from 'src/components/Forms/NewAssesment/MyForm'
@@ -16,6 +17,76 @@ import { MyForm as MyFormNewStudent } from 'src/components/Forms/NewStudent/MyFo
 
 // Sample columns data
 // Sample columns data
+
+const GET_SUBJECT_BY_ID = gql`
+  query Subject($id: String!) {
+    subject(id: $id) {
+      id
+      teacher {
+        id
+        name
+      }
+      students {
+        id
+        name
+      }
+      assignments {
+        id
+        title
+        createdAt
+        grades {
+          grade
+          date
+        }
+      }
+    }
+  }
+`
+const CREATE_STUDENT = gql`
+  mutation CreateStudent($input: CreateUserInput!) {
+    createUser(input: $input) {
+      name
+    }
+  }
+`
+
+const prepareColumns = (subject) => {
+  const columns = [
+    {
+      id: 'name',
+      field: 'name',
+      headerName: 'Student Name',
+      width: 150,
+      editable: false,
+    },
+    ...subject.assignments.map((assignment) => {
+      return {
+        id: assignment.id,
+        field: assignment.id,
+        headerName: assignment.title,
+        type: 'number',
+        width: 120,
+        editable: true,
+      }
+    }),
+  ]
+  return columns
+}
+
+const prepareRows = (subject) => {
+  const rows = subject.students.map((student) => {
+    const studentRow = {
+      id: student.id,
+      name: student.name,
+      editable: true,
+    }
+    subject.assignments.forEach((assignment) => {
+      studentRow[assignment.id] = 0
+    })
+    return studentRow
+  })
+  return rows
+}
 const columns = [
   { field: 'id', headerName: 'ID', width: 90 },
   {
@@ -214,8 +285,25 @@ for (let i = 1; i <= 25; i++) {
 }
 
 const ClassPage = () => {
+  const { id } = useParams()
+  const { data, error, loading } = useQuery(GET_SUBJECT_BY_ID, {
+    variables: { id },
+  })
+  const [createStudent] = useMutation(CREATE_STUDENT, {
+    onCompleted: () => {
+      console.log('Student created successfully!')
+    },
+  })
+  console.log('data', data)
   const handleSubmitNewStudent = (values) => {
     console.log('values', values)
+    const input = {
+      name: values.firstName + ' ' + values.lastName,
+      role: 'student',
+      lastName: values.lastName,
+    }
+
+    createStudent({ variables: { input } })
     setOpenStudent(false)
   }
   const handleSubmitCreateAssesment = (values) => {
@@ -230,9 +318,9 @@ const ClassPage = () => {
   }
   const [openStudent, setOpenStudent] = React.useState(false)
   const [openAssesment, setOpenAssesment] = React.useState(false)
-  const { id } = useParams()
-  console.log('the id is ', id)
-
+  if (loading) {
+    return <div>Loading...</div>
+  }
   return (
     <>
       <Grid
@@ -279,8 +367,8 @@ const ClassPage = () => {
         </Grid>
         <Metadata title="Class" description="Class page" />
         <CustomDataGrid
-          columns={columns}
-          rows={rows}
+          columns={prepareColumns(data?.subject)}
+          rows={prepareRows(data?.subject)}
           setOpenNewStudentDialog={handleSetOpenStudent}
           setOpenCreateAssesmentDialog={handleSetOpenAssesment}
         />
