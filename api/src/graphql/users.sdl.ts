@@ -40,7 +40,7 @@ export const schema = gql`
     role: String!
   }
 
-  input CreateUserInputForClass {
+  input CreateUserForClassInput {
     email: String
     role: String!
     name: String!
@@ -53,6 +53,6 @@ export const schema = gql`
     updateUser(id: String!, input: UpdateUserInput!): User! @requireAuth
     deleteUser(id: String!): User! @requireAuth
     changueRole(input: ChangueRoleInput!): User! @requireAuth
-    createUserForClass(input: CreateUserInputForClass!): User! @requireAuth
+    createUserForClass(input: CreateUserForClassInput!): User! @requireAuth
   }
 `

@@ -45,7 +45,16 @@ const GET_SUBJECT_BY_ID = gql`
 const CREATE_STUDENT = gql`
   mutation CreateStudent($input: CreateUserInput!) {
     createUser(input: $input) {
+      id
       name
+    }
+  }
+`
+const CREATE_USER_SUBJECT = gql`
+  mutation createSubjectStudents($input: CreateSubjectStudentsInput!) {
+    createSubjectStudents(input: $input) {
+      subjectId
+      userId
     }
   }
 `
@@ -286,7 +295,7 @@ for (let i = 1; i <= 25; i++) {
 
 const ClassPage = () => {
   const { id } = useParams()
-  const { data, error, loading } = useQuery(GET_SUBJECT_BY_ID, {
+  const { data, error, loading, refetch } = useQuery(GET_SUBJECT_BY_ID, {
     variables: { id },
   })
   const [createStudent] = useMutation(CREATE_STUDENT, {
@@ -294,17 +303,33 @@ const ClassPage = () => {
       console.log('Student created successfully!')
     },
   })
+  const [createSubjectStudent] = useMutation(CREATE_USER_SUBJECT, {
+    onCompleted: () => {
+      console.log('Student added to class successfully!')
+      refetch()
+    },
+  })
   console.log('data', data)
   const handleSubmitNewStudent = (values) => {
     console.log('values', values)
-    const input = {
-      name: values.firstName + ' ' + values.lastName,
-      role: 'student',
-      lastName: values.lastName,
+    const handleSubmitCreateStudent = async (values) => {
+      const input = {
+        name: values.firstName + ' ' + values.lastName,
+        role: 'student',
+        lastName: values.lastName,
+      }
+
+      const user = await createStudent({ variables: { input } }) // Await the createStudent mutation
+      console.log(user, 'user')
+      const input2 = {
+        subjectId: id,
+        userId: user.data.createUser.id, // Access the id property from the resolved value
+      }
+      createSubjectStudent({ variables: { input: input2 } })
+      setOpenStudent(false)
     }
 
-    createStudent({ variables: { input } })
-    setOpenStudent(false)
+    handleSubmitCreateStudent(values)
   }
   const handleSubmitCreateAssesment = (values) => {
     console.log('values', values)
