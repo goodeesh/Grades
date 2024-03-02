@@ -1,7 +1,7 @@
 import GradeCell from 'src/components/Grade/GradeCell'
 
 type GradePageProps = {
-  id: number
+  id: string
 }
 
 const GradePage = ({ id }: GradePageProps) => {

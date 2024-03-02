@@ -5,54 +5,38 @@ export const standard = defineScenario<Prisma.GradeCreateArgs>({
   grade: {
     one: {
       data: {
-        grade: 2462868,
+        grade: 7726343,
         date: 'String',
-        subject: {
+        user: { create: { name: 'String' } },
+        assignment: {
           create: {
-            subjectName: 'String',
-            teacher: {
+            title: 'String',
+            subject: {
               create: {
-                id: 'String',
-                role: 'String',
-                name: 'String',
-                lastName: 'String',
+                subjectName: 'String',
+                subjectDescription: 'String',
+                teacher: { create: { name: 'String' } },
               },
             },
-          },
-        },
-        User: {
-          create: {
-            id: 'String',
-            role: 'String',
-            name: 'String',
-            lastName: 'String',
           },
         },
       },
     },
     two: {
       data: {
-        grade: 7358374,
+        grade: 5122984,
         date: 'String',
-        subject: {
+        user: { create: { name: 'String' } },
+        assignment: {
           create: {
-            subjectName: 'String',
-            teacher: {
+            title: 'String',
+            subject: {
               create: {
-                id: 'String',
-                role: 'String',
-                name: 'String',
-                lastName: 'String',
+                subjectName: 'String',
+                subjectDescription: 'String',
+                teacher: { create: { name: 'String' } },
               },
             },
-          },
-        },
-        User: {
-          create: {
-            id: 'String',
-            role: 'String',
-            name: 'String',
-            lastName: 'String',
           },
         },
       },

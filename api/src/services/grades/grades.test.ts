@@ -25,27 +25,27 @@ describe('grades', () => {
   scenario('creates a grade', async (scenario: StandardScenario) => {
     const result = await createGrade({
       input: {
-        subjectId: scenario.grade.two.subjectId,
-        userId: scenario.grade.two.userId,
-        grade: 4995208,
+        grade: 2839978,
         date: 'String',
+        userId: scenario.grade.two.userId,
+        assignmentId: scenario.grade.two.assignmentId,
       },
     })
 
-    expect(result.subjectId).toEqual(scenario.grade.two.subjectId)
-    expect(result.userId).toEqual(scenario.grade.two.userId)
-    expect(result.grade).toEqual(4995208)
+    expect(result.grade).toEqual(2839978)
     expect(result.date).toEqual('String')
+    expect(result.userId).toEqual(scenario.grade.two.userId)
+    expect(result.assignmentId).toEqual(scenario.grade.two.assignmentId)
   })
 
   scenario('updates a grade', async (scenario: StandardScenario) => {
     const original = (await grade({ id: scenario.grade.one.id })) as Grade
     const result = await updateGrade({
       id: original.id,
-      input: { grade: 5958266 },
+      input: { grade: 8395112 },
     })
 
-    expect(result.grade).toEqual(5958266)
+    expect(result.grade).toEqual(8395112)
   })
 
   scenario('deletes a grade', async (scenario: StandardScenario) => {

@@ -39,10 +39,10 @@ export const deleteGrade: MutationResolvers['deleteGrade'] = ({ id }) => {
 }
 
 export const Grade: GradeRelationResolvers = {
-  subject: (_obj, { root }) => {
-    return db.grade.findUnique({ where: { id: root?.id } }).subject()
+  user: (_obj, { root }) => {
+    return db.grade.findUnique({ where: { id: root?.id } }).user()
   },
-  User: (_obj, { root }) => {
-    return db.grade.findUnique({ where: { id: root?.id } }).User()
+  assignment: (_obj, { root }) => {
+    return db.grade.findUnique({ where: { id: root?.id } }).assignment()
   },
 }

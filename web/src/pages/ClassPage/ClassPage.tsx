@@ -35,6 +35,7 @@ const GET_SUBJECT_BY_ID = gql`
         title
         createdAt
         grades {
+          id
           userId
           grade
           date
@@ -77,6 +78,14 @@ const CREATE_GRADE = gql`
     }
   }
 `
+const UPDATE_GRADE = gql`
+  mutation UpdateGrade($id: String!, $input: UpdateGradeInput!) {
+    updateGrade(id: $id, input: $input) {
+      id
+      grade
+    }
+  }
+`
 
 const prepareColumns = (subject) => {
   const columns = [
@@ -87,6 +96,7 @@ const prepareColumns = (subject) => {
       width: 150,
       editable: false,
     },
+
     ...subject.assignments.map((assignment) => {
       return {
         id: assignment.id,
@@ -95,6 +105,8 @@ const prepareColumns = (subject) => {
         type: 'number',
         width: 120,
         editable: true,
+        gradeId: (params) => params.value.gradeId,
+        renderCell: (params) => (params.value.grade ? params.value.grade : ''),
       }
     }),
   ]
@@ -112,7 +124,10 @@ const prepareRows = (subject) => {
       const grade = assignment.grades.find(
         (grade) => grade.userId === student.id
       )
-      studentRow[assignment.id] = grade?.grade
+      studentRow[assignment.id] = {
+        grade: grade?.grade,
+        gradeId: grade?.id,
+      }
     })
     return studentRow
   })
@@ -121,9 +136,16 @@ const prepareRows = (subject) => {
 
 const ClassPage = () => {
   const { id } = useParams()
-  const { data, error, loading, refetch } = useQuery(GET_SUBJECT_BY_ID, {
+  const { data, loading, refetch } = useQuery(GET_SUBJECT_BY_ID, {
     variables: { id },
   })
+
+  const [updateGrade] = useMutation(UPDATE_GRADE, {
+    onCompleted: () => {
+      console.log('Grade updated successfully!')
+    },
+  })
+
   const [createGrade] = useMutation(CREATE_GRADE, {
     onCompleted: () => {
       console.log('Grade created successfully!')
@@ -148,15 +170,25 @@ const ClassPage = () => {
   const handleSubmitGrade = (
     assignmentId: string,
     studentId: string,
-    grade: string
+    grade: string,
+    gradeId?: string
   ) => {
-    const input = {
-      grade: parseInt(grade),
-      assignmentId: assignmentId,
-      userId: studentId,
+    if (gradeId) {
+      const input = {
+        grade: parseInt(grade),
+      }
+      updateGrade({ variables: { id: gradeId, input: input } })
+    } else {
+      const input = {
+        date: new Date().toUTCString(),
+        grade: parseInt(grade),
+        assignmentId: assignmentId,
+        userId: studentId,
+      }
+      console.log('input', input)
+      createGrade({ variables: { input: input } })
     }
-    console.log('input', input)
-    createGrade({ variables: { input: input } })
+    refetch()
   }
 
   const handleSubmitNewStudent = (values) => {

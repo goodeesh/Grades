@@ -33,8 +33,9 @@ interface CustomDataGridProps {
   setOpenCreateAssesmentDialog: () => void
   handleSubmitGrade: (
     assignmentId: string,
-    studentId: string,
-    grade: string
+    studentId: string | number,
+    grade: string,
+    gradeId?: string
   ) => void
 }
 
@@ -393,12 +394,16 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
             )
             return updatedRow
           }}
-          onRowEditStop={(params, event) => {
+          onRowEditStop={(
+            params,
+            event: React.ChangeEvent<HTMLInputElement>
+          ) => {
             const assignmentId = params.field
             const studentId = params.id
             const grade = event.target.value
-            console.log(assignmentId, studentId, grade)
-            handleSubmitGrade(assignmentId, studentId, grade)
+            const gradeId = params.row[assignmentId]?.gradeId
+
+            handleSubmitGrade(assignmentId, studentId, grade, gradeId)
           }}
           slots={{
             toolbar: () => (
