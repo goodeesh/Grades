@@ -18,7 +18,6 @@ import {
   GridColDef,
   GridRowModesModel,
   GridRowsProp,
-  GridRowEditStopReasons,
   GridRowModes,
   GridActionsCellItem,
   GridColumnMenu,
@@ -32,6 +31,11 @@ interface CustomDataGridProps {
   columns: GridColDef[]
   setOpenNewStudentDialog: () => void
   setOpenCreateAssesmentDialog: () => void
+  handleSubmitGrade: (
+    assignmentId: string,
+    studentId: string,
+    grade: string
+  ) => void
 }
 
 const EditToolbar = React.memo(function EditToolbar({
@@ -152,7 +156,11 @@ const EditToolbar = React.memo(function EditToolbar({
 })
 
 export default function CustomDataGrid(props: CustomDataGridProps) {
-  const { rows: initialRows, columns: initialColumns } = props
+  const {
+    rows: initialRows,
+    columns: initialColumns,
+    handleSubmitGrade,
+  } = props
   const [rows, setRows] = React.useState(initialRows)
   const [searchText, setSearchText] = React.useState('')
   const [filteredRows, setFilteredRows] = React.useState(initialRows)
@@ -160,8 +168,6 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
   const [visibleColumns, setVisibleColumns] = React.useState(
     new Set(columns.map((c) => c.field))
   )
-  console.log(columns)
-  console.log(rows)
   const handleSearchChange = (newValue) => {
     setSearchText(newValue)
   }
@@ -388,9 +394,11 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
             return updatedRow
           }}
           onRowEditStop={(params, event) => {
-            if (params.reason === GridRowEditStopReasons.rowFocusOut) {
-              event.defaultMuiPrevented = true
-            }
+            const assignmentId = params.field
+            const studentId = params.id
+            const grade = event.target.value
+            console.log(assignmentId, studentId, grade)
+            handleSubmitGrade(assignmentId, studentId, grade)
           }}
           slots={{
             toolbar: () => (

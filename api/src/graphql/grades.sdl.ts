@@ -1,8 +1,8 @@
 export const schema = gql`
   type Grade {
     id: Int!
-    subject: Subject!
-    subjectId: Int!
+    assignment: Assignment!
+    assignmentId: String!
     User: User!
     userId: String!
     grade: Int!
@@ -15,14 +15,14 @@ export const schema = gql`
   }
 
   input CreateGradeInput {
-    subjectId: Int!
+    subjectId: String!
     userId: String!
     grade: Int!
     date: String!
   }
 
   input UpdateGradeInput {
-    subjectId: Int
+    assignmentId: Int
     userId: String
     grade: Int
     date: String

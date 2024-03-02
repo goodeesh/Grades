@@ -35,6 +35,7 @@ const GET_SUBJECT_BY_ID = gql`
         title
         createdAt
         grades {
+          userId
           grade
           date
         }
@@ -55,6 +56,24 @@ const CREATE_USER_SUBJECT = gql`
     createSubjectStudents(input: $input) {
       subjectId
       userId
+    }
+  }
+`
+
+const CREATE_NEW_ASSESMENT = gql`
+  mutation CreateNewAssesment($input: CreateAssignmentInput!) {
+    createAssignment(input: $input) {
+      id
+      title
+    }
+  }
+`
+
+const CREATE_GRADE = gql`
+  mutation CreateGrade($input: CreateGradeInput!) {
+    createGrade(input: $input) {
+      id
+      grade
     }
   }
 `
@@ -90,207 +109,14 @@ const prepareRows = (subject) => {
       editable: true,
     }
     subject.assignments.forEach((assignment) => {
-      studentRow[assignment.id] = 0
+      const grade = assignment.grades.find(
+        (grade) => grade.userId === student.id
+      )
+      studentRow[assignment.id] = grade?.grade
     })
     return studentRow
   })
   return rows
-}
-const columns = [
-  { field: 'id', headerName: 'ID', width: 90 },
-  {
-    field: 'firstName',
-    headerName: 'First name',
-    width: 150,
-    editable: true,
-  },
-  {
-    field: 'lastName',
-    headerName: 'Last name',
-    width: 150,
-    editable: true,
-  },
-  // Participation columns
-  {
-    field: 'participation1',
-    headerName: 'Participation',
-    type: 'number',
-    width: 120,
-    editable: true,
-  },
-  {
-    field: 'participation2',
-    headerName: 'Participation',
-    type: 'number',
-    width: 120,
-    editable: true,
-  },
-  {
-    field: 'participation3',
-    headerName: 'Participation',
-    type: 'number',
-    width: 120,
-    editable: true,
-  },
-  {
-    field: 'participation4',
-    headerName: 'Participation',
-    type: 'number',
-    width: 120,
-    editable: true,
-  },
-  {
-    field: 'participation5',
-    headerName: 'Participation',
-    type: 'number',
-    width: 120,
-    editable: true,
-  },
-  {
-    field: 'participation6',
-    headerName: 'Participation',
-    type: 'number',
-    width: 120,
-    editable: true,
-  },
-  {
-    field: 'participation7',
-    headerName: 'Participation',
-    type: 'number',
-    width: 120,
-    editable: true,
-  },
-  {
-    field: 'participation8',
-    headerName: 'Participation',
-    type: 'number',
-    width: 120,
-    editable: true,
-  },
-  {
-    field: 'participation9',
-    headerName: 'Participation',
-    type: 'number',
-    width: 120,
-    editable: true,
-  },
-  {
-    field: 'participation10',
-    headerName: 'Participation',
-    type: 'number',
-    width: 120,
-    editable: true,
-  },
-  {
-    field: 'participation11',
-    headerName: 'Participation',
-    type: 'number',
-    width: 120,
-    editable: true,
-  },
-  {
-    field: 'participation12',
-    headerName: 'Participation',
-    type: 'number',
-    width: 120,
-    editable: true,
-  },
-  {
-    field: 'participation13',
-    headerName: 'Participation',
-    type: 'number',
-    width: 120,
-    editable: true,
-  },
-  {
-    field: 'participation14',
-    headerName: 'Participation',
-    type: 'number',
-    width: 120,
-    editable: true,
-  },
-  {
-    field: 'participation15',
-    headerName: 'Participation',
-    type: 'number',
-    width: 120,
-    editable: true,
-  },
-  // Add more columns as needed
-  // Exams
-  {
-    field: 'exam1',
-    headerName: 'Exam',
-    type: 'number',
-    width: 100,
-    editable: true,
-  },
-  {
-    field: 'exam2',
-    headerName: 'Exam',
-    type: 'number',
-    width: 100,
-    editable: true,
-  },
-  // Vocabulary evaluations
-  {
-    field: 'vocab1',
-    headerName: 'Vocabulary',
-    type: 'number',
-    width: 100,
-    editable: true,
-  },
-  {
-    field: 'vocab2',
-    headerName: 'Vocabulary',
-    type: 'number',
-    width: 100,
-    editable: true,
-  },
-  {
-    field: 'vocab3',
-    headerName: 'Vocabulary',
-    type: 'number',
-    width: 100,
-    editable: true,
-  },
-  {
-    field: 'vocab4',
-    headerName: 'Vocabulary',
-    type: 'number',
-    width: 100,
-    editable: true,
-  },
-  {
-    field: 'vocab5',
-    headerName: 'Vocabulary',
-    type: 'number',
-    width: 100,
-    editable: true,
-  },
-  // Add more vocabulary evaluations as needed
-]
-
-// Sample rows data (at least 25 students)
-const rows = []
-for (let i = 1; i <= 25; i++) {
-  rows.push({
-    id: i,
-    lastName: `Student${i}`,
-    firstName: `First${i}`,
-    age: Math.floor(Math.random() * 10) + 18, // Random age between 18 and 27
-    participation1: Math.floor(Math.random() * 5) + 1, // Random participation score between 1 and 5
-    participation2: Math.floor(Math.random() * 5) + 1,
-    // Add values for the rest of the participation columns, exams, and vocabulary evaluations
-    exam1: Math.floor(Math.random() * 100) + 1, // Random exam score between 1 and 100
-    exam2: Math.floor(Math.random() * 100) + 1,
-    vocab1: Math.floor(Math.random() * 5) + 1, // Random vocabulary evaluation score between 1 and 5
-    vocab2: Math.floor(Math.random() * 5) + 1,
-    vocab3: Math.floor(Math.random() * 5) + 1,
-    vocab4: Math.floor(Math.random() * 5) + 1,
-    vocab5: Math.floor(Math.random() * 5) + 1,
-    // Add values for the rest of the vocabulary evaluations
-  })
 }
 
 const ClassPage = () => {
@@ -298,9 +124,19 @@ const ClassPage = () => {
   const { data, error, loading, refetch } = useQuery(GET_SUBJECT_BY_ID, {
     variables: { id },
   })
+  const [createGrade] = useMutation(CREATE_GRADE, {
+    onCompleted: () => {
+      console.log('Grade created successfully!')
+    },
+  })
   const [createStudent] = useMutation(CREATE_STUDENT, {
     onCompleted: () => {
       console.log('Student created successfully!')
+    },
+  })
+  const [createAssesment] = useMutation(CREATE_NEW_ASSESMENT, {
+    onCompleted: () => {
+      console.log('Assesment created successfully!')
     },
   })
   const [createSubjectStudent] = useMutation(CREATE_USER_SUBJECT, {
@@ -309,7 +145,20 @@ const ClassPage = () => {
       refetch()
     },
   })
-  console.log('data', data)
+  const handleSubmitGrade = (
+    assignmentId: string,
+    studentId: string,
+    grade: string
+  ) => {
+    const input = {
+      grade: parseInt(grade),
+      assignmentId: assignmentId,
+      userId: studentId,
+    }
+    console.log('input', input)
+    createGrade({ variables: { input: input } })
+  }
+
   const handleSubmitNewStudent = (values) => {
     console.log('values', values)
     const handleSubmitCreateStudent = async (values) => {
@@ -332,8 +181,13 @@ const ClassPage = () => {
     handleSubmitCreateStudent(values)
   }
   const handleSubmitCreateAssesment = (values) => {
-    console.log('values', values)
+    const input = {
+      title: values.title,
+      subjectId: id,
+    }
+    createAssesment({ variables: { input: input } })
     setOpenAssesment(false)
+    refetch()
   }
   const handleSetOpenStudent = () => {
     setOpenStudent(!openStudent)
@@ -396,6 +250,7 @@ const ClassPage = () => {
           rows={prepareRows(data?.subject)}
           setOpenNewStudentDialog={handleSetOpenStudent}
           setOpenCreateAssesmentDialog={handleSetOpenAssesment}
+          handleSubmitGrade={handleSubmitGrade}
         />
       </Grid>
     </>

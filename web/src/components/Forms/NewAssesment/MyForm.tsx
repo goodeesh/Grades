@@ -25,11 +25,7 @@ export const MyForm: React.FC<Props> = ({ onSubmit }) => {
         <Grid container justifyContent="center">
           <Form>
             <Box width="100%" paddingBottom="20px">
-              <Field
-                placeholder="Category"
-                name="category"
-                component={MyField}
-              />
+              <Field placeholder="Title" name="title" component={MyField} />
             </Box>
             <Box width="100%" paddingBottom="20px">
               <Button variant="contained" type="submit">
