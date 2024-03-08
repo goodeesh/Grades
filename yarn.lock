@@ -4100,8 +4100,8 @@ __metadata:
   linkType: hard
 
 "@mui/x-data-grid@npm:latest":
-  version: 6.19.3
-  resolution: "@mui/x-data-grid@npm:6.19.3::__archiveUrl=http%3A%2F%2Frepo.eb.lan.at%3A80%2Fartifactory%2Fapi%2Fnpm%2Fnpm-repo%2F%40mui%2Fx-data-grid%2F-%2Fx-data-grid-6.19.3.tgz"
+  version: 6.19.6
+  resolution: "@mui/x-data-grid@npm:6.19.6"
   dependencies:
     "@babel/runtime": ^7.23.2
     "@mui/utils": ^5.14.16
@@ -4113,7 +4113,7 @@ __metadata:
     "@mui/system": ^5.4.1
     react: ^17.0.0 || ^18.0.0
     react-dom: ^17.0.0 || ^18.0.0
-  checksum: 7615b2398c51245af9c86ea5bd4f265c60a08625d408400ca34657534510cc383c39bd4d3781f84798df7666f29aa468a6d52ba0e549e073f1c03601007be71c
+  checksum: 1ae4c0482e2759d3445bf8d83aeb0fa3a96101c350e1bfa2586f4b9c203969840b370ce5e94c94a52051d630372535a2662939f7bc6c357a59c2f00e570e81b8
   languageName: node
   linkType: hard
 
