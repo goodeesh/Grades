@@ -379,12 +379,12 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
           />
         ))}
       </FormGroup>
-      <Grid item>
+      <Grid item style={{ width: '100%', overflow: 'auto' }}>
         <DataGrid
           density={density}
           rows={filteredRows}
           columns={filteredColumns}
-          editMode="row"
+          editMode="cell"
           rowModesModel={rowModesModel}
           onRowModesModelChange={setRowModesModel}
           processRowUpdate={(newRow) => {
@@ -394,7 +394,7 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
             )
             return updatedRow
           }}
-          onRowEditStop={(
+          onCellEditStop={(
             params,
             event: React.ChangeEvent<HTMLInputElement>
           ) => {

@@ -92,7 +92,7 @@ const prepareColumns = (subject) => {
     {
       id: 'name',
       field: 'name',
-      headerName: 'Student Name',
+      headerName: 'Name',
       width: 150,
       editable: false,
     },

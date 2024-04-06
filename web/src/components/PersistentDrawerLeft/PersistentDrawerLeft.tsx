@@ -21,6 +21,7 @@ import ListItemText from '@mui/material/ListItemText'
 import { styled, useTheme, Theme, CSSObject } from '@mui/material/styles'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
+import useMediaQuery from '@mui/material/useMediaQuery'
 
 import { Link } from '@redwoodjs/router'
 import { useQuery } from '@redwoodjs/web'
@@ -160,6 +161,8 @@ export default function MiniDrawer() {
     variables: { input: { email: user?.email } },
     skip: !user,
   })
+  const theme: Theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const [role, setRole] = React.useState('')
   const [roleChanged, setRoleChanged] = React.useState(false)
   const [changueRole] = useMutation(CHANGUE_ROLE_MUTATION)
@@ -187,7 +190,7 @@ export default function MiniDrawer() {
     setRole(event.target.value)
     setRoleChanged(true)
   }
-  const theme = useTheme()
+
   const [open, setOpen] = React.useState(false)
 
   const handleLogin = () => {
@@ -212,7 +215,17 @@ export default function MiniDrawer() {
     return <div>Loading...</div>
   }
   return (
-    <Grid sx={{ display: 'flex' }}>
+    <Grid
+      position="fixed"
+      style={{
+        width: '100%',
+        paddingLeft: isMobile
+          ? theme.spacing(1)
+          : open
+          ? drawerWidth
+          : theme.spacing(8),
+      }}
+    >
       <CssBaseline />
       <AppBar position="fixed" open={open}>
         <Toolbar>
@@ -260,7 +273,10 @@ export default function MiniDrawer() {
           </Button>
         </Toolbar>
       </AppBar>
-      <Drawer variant="permanent" open={open}>
+      <Drawer
+        variant={isMobile && !open ? 'temporary' : 'permanent'}
+        open={open}
+      >
         <DrawerHeader>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === 'rtl' ? (
@@ -278,23 +294,20 @@ export default function MiniDrawer() {
                 to={generateTo(item)}
                 sx={{
                   minHeight: 48,
-                  justifyContent: open ? 'initial' : 'center',
+                  justifyContent: 'initial',
                   px: 2.5,
                 }}
               >
                 <ListItemIcon
                   sx={{
                     minWidth: 0,
-                    mr: open ? 3 : 'auto',
+                    mr: 3,
                     justifyContent: 'center',
                   }}
                 >
                   {item.icon}
                 </ListItemIcon>
-                <ListItemText
-                  primary={item.label}
-                  sx={{ opacity: open ? 1 : 0 }}
-                />
+                <ListItemText primary={item.label} />
               </ListItemButton>
             </ListItem>
           ))}
@@ -305,8 +318,7 @@ export default function MiniDrawer() {
         sx={{
           flexGrow: 1,
           p: 1,
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-          height: 'calc(100vh - 64px)', // Set height to 100% of the viewport height
+          width: '100%',
         }}
       >
         <DrawerHeader />
