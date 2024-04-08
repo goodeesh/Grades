@@ -30,7 +30,7 @@ model Subject {
   archived           Boolean @default(false)
   subjectName        String
   order              Int?
-  subjectDescription String // Add this line
+  subjectDescription String? // Add this line
   students           User[]  @relation("StudentSubjects")
 
   // Many-to-Many relationship with students through SubjectStudents table
