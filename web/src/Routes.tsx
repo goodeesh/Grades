@@ -8,7 +8,7 @@
 // 'src/pages/Admin/BooksPage/BooksPage.js' -> AdminBooksPage
 
 import { Router, Route } from '@redwoodjs/router'
-
+//delete things
 const Routes = () => {
   return (
     <Router>
