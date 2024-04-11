@@ -23,3 +23,4 @@ api/src/lib/generateGraphiQLHeader.*
 api/db/schema.prisma
 api/db/schema.prisma
 !.prisma
+api/db/schema.prisma
