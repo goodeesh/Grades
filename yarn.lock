@@ -5643,7 +5643,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/jest-dom@npm:6.4.2":
+"@testing-library/jest-dom@npm:6.4.2, @testing-library/jest-dom@npm:^6.4.2":
   version: 6.4.2
   resolution: "@testing-library/jest-dom@npm:6.4.2"
   dependencies:
@@ -19120,6 +19120,7 @@ __metadata:
     "@mui/x-data-grid": latest
     "@mui/x-data-grid-generator": ^6.19.2
     "@redwoodjs/core": 7.3.0
+    "@testing-library/jest-dom": ^6.4.2
     formik: ^2.4.5
     react-beautiful-dnd: ^13.1.1
     react-router-dom: ^6.21.1
