@@ -18,12 +18,6 @@ const Routes = () => {
         <Route path="/grades/{id}/edit" page={GradeEditGradePage} name="editGrade" />
         <Route path="/grades/{id}" page={GradeGradePage} name="grade" />
       </Set>
-      <Set wrap={ScaffoldLayout} title="Assignments" titleTo="assignments" buttonLabel="New Assignment" buttonTo="newAssignment">
-        <Route path="/assignments/new" page={AssignmentNewAssignmentPage} name="newAssignment" />
-        <Route path="/assignments/{id}/edit" page={AssignmentEditAssignmentPage} name="editAssignment" />
-        <Route path="/assignments/{id}" page={AssignmentAssignmentPage} name="assignment" />
-        <Route path="/assignments" page={AssignmentAssignmentsPage} name="assignments" />
-      </Set>
       <Route path="/classes/{id:String}" page={ClassPage} name="manageClass" />
       <Route path="/classes" page={ClassesPage} name="classes" />
       <Route path="/profile" page={ProfilePage} name="profile" />
