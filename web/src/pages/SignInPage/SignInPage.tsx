@@ -22,18 +22,20 @@ const LoginButton = () => {
   const [createUser] = useMutation(CREATE_USER_MUTATION)
 
   useEffect(() => {
+    console.log('isAuthenticated', isAuthenticated)
+    console.log('user', user)
     if (isAuthenticated && user) {
       const { email, name, family_name } = user
       const input = {
         email,
         name,
         lastName: family_name,
+        role: 'Teacher',
       }
-
       createUser({ variables: { input } }).then(() => {
         console.log('User created successfully!')
+        navigate('/')
       })
-      navigate('/')
     }
     //add redirect to home page
   }, [isAuthenticated, user, createUser])
