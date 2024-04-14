@@ -2,6 +2,7 @@
   "git": {
     "deploymentEnabled": {
       "dev": false,
+      "feature-*": false,
       "production": true
     }
   }
