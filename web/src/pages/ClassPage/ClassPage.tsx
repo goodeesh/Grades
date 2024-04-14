@@ -8,7 +8,7 @@ import {
   Tooltip,
 } from '@mui/material'
 import { GridCloseIcon, GridColDef } from '@mui/x-data-grid'
-import { Assignment, Subject } from 'types/graphql'
+import { Assignment, Subject, User } from 'types/graphql'
 
 import { useParams } from '@redwoodjs/router'
 import { Metadata, useQuery } from '@redwoodjs/web'
@@ -31,6 +31,7 @@ const GET_SUBJECT_BY_ID = gql`
       students {
         id
         name
+        lastName
       }
       assignments {
         id
@@ -132,20 +133,27 @@ const prepareColumns = (subject: Subject) => {
   return columns
 }
 
-const prepareRows = (subject) => {
-  const rows = subject.students.map((student) => {
+const prepareRows = (subject: Subject) => {
+  const rows = subject.students.map((student: User) => {
     const studentRow = {
       id: student.id,
-      name: student.name,
+      name: student.name + ' ' + student.lastName,
       editable: true,
     }
-    subject.assignments.forEach((assignment) => {
+    subject.assignments.forEach((assignment: Assignment) => {
       const grade = assignment.grades.find(
         (grade) => grade.userId === student.id
       )
-      studentRow[assignment.id] = {
-        grade: grade?.grade,
-        gradeId: grade?.id,
+      if (grade) {
+        studentRow[assignment.id] = {
+          grade: grade.grade,
+          gradeId: grade.id,
+        }
+      } else {
+        studentRow[assignment.id] = {
+          grade: null,
+          gradeId: null,
+        }
       }
     })
     return studentRow
@@ -158,35 +166,12 @@ const ClassPage = () => {
   const { data, loading, refetch } = useQuery(GET_SUBJECT_BY_ID, {
     variables: { id },
   })
+  const [updateGrade] = useMutation(UPDATE_GRADE)
+  const [createGrade] = useMutation(CREATE_GRADE)
+  const [createStudent] = useMutation(CREATE_STUDENT)
+  const [createAssesment] = useMutation(CREATE_NEW_ASSESMENT)
+  const [createSubjectStudent] = useMutation(CREATE_USER_SUBJECT)
 
-  const [updateGrade] = useMutation(UPDATE_GRADE, {
-    onCompleted: () => {
-      console.log('Grade updated successfully!')
-    },
-  })
-
-  const [createGrade] = useMutation(CREATE_GRADE, {
-    onCompleted: () => {
-      console.log('Grade created successfully!')
-    },
-  })
-  const [createStudent] = useMutation(CREATE_STUDENT, {
-    onCompleted: () => {
-      console.log('Student created successfully!')
-    },
-  })
-  const [createAssesment] = useMutation(CREATE_NEW_ASSESMENT, {
-    onCompleted: () => {
-      console.log('Assesment created successfully!')
-      refetch()
-    },
-  })
-  const [createSubjectStudent] = useMutation(CREATE_USER_SUBJECT, {
-    onCompleted: () => {
-      console.log('Student added to class successfully!')
-      refetch()
-    },
-  })
   const handleSubmitGrade = (
     assignmentId: string,
     studentId: string,
@@ -205,33 +190,27 @@ const ClassPage = () => {
         assignmentId: assignmentId,
         userId: studentId,
       }
-      console.log('input', input)
       createGrade({ variables: { input: input } })
     }
     refetch()
   }
 
-  const handleSubmitNewStudent = (values) => {
-    console.log('values', values)
-    const handleSubmitCreateStudent = async (values) => {
-      const input = {
-        name: values.firstName + ' ' + values.lastName,
-        role: 'student',
-        lastName: values.lastName,
-      }
-
-      const user = await createStudent({ variables: { input } }) // Await the createStudent mutation
-      console.log(user, 'user')
-      const input2 = {
-        subjectId: id,
-        userId: user.data.createUser.id, // Access the id property from the resolved value
-      }
-      createSubjectStudent({ variables: { input: input2 } })
-      setOpenStudent(false)
+  const handleSubmitNewStudent = async (values) => {
+    const input = {
+      name: values.firstName,
+      role: 'student',
+      lastName: values.lastName,
     }
 
-    handleSubmitCreateStudent(values)
+    const user = await createStudent({ variables: { input } })
+    const input2 = {
+      subjectId: id,
+      userId: user.data.createUser.id, // Access the id property from the resolved value
+    }
+    createSubjectStudent({ variables: { input: input2 } })
+    setOpenStudent(false)
   }
+
   const handleSubmitCreateAssesment = (values) => {
     const input = {
       title: values.title,
@@ -252,8 +231,8 @@ const ClassPage = () => {
   if (loading) {
     return <div>Loading...</div>
   }
-  if (data === undefined) {
-    return <div>Subject not found</div>
+  if (!data) {
+    return NotFoundPage
   }
   const subject: Subject = data.subject
   return (
