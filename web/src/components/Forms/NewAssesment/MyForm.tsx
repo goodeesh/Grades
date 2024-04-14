@@ -16,12 +16,12 @@ interface Props {
 export const MyForm: React.FC<Props> = ({ onSubmit }) => {
   return (
     <Formik
-      initialValues={{ category: '' }}
+      initialValues={{ title: '', category: '' }}
       onSubmit={(values) => {
         onSubmit(values)
       }}
     >
-      {({ values }) => (
+      {() => (
         <Grid container justifyContent="center">
           <Form>
             <Box width="100%" paddingBottom="20px">
