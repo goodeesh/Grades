@@ -2,7 +2,7 @@
   "git": {
     "deploymentEnabled": {
       "dev": false,
-      "main": true
+      "production": true
     }
   }
 }
