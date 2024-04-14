@@ -2,10 +2,7 @@ import * as React from 'react'
 
 import AddIcon from '@mui/icons-material/Add'
 import ClearIcon from '@mui/icons-material/Clear'
-import CancelIcon from '@mui/icons-material/Close'
 import DeleteIcon from '@mui/icons-material/DeleteOutlined'
-import EditIcon from '@mui/icons-material/Edit'
-import SaveIcon from '@mui/icons-material/Save'
 import SearchIcon from '@mui/icons-material/Search'
 import { Grid, ListItemIcon, ListItemText } from '@mui/material'
 import { Select, MenuItem } from '@mui/material'
@@ -18,8 +15,6 @@ import {
   GridColDef,
   GridRowModesModel,
   GridRowsProp,
-  GridRowModes,
-  GridActionsCellItem,
   GridColumnMenu,
   GridColumnMenuItemProps,
   GridColumnMenuProps,
@@ -253,74 +248,8 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
           ...column,
           headerName: column.headerName,
         })),
-      {
-        field: 'actions',
-        type: 'actions',
-        headerName: 'Actions',
-        width: 150,
-        getActions: (params) => {
-          const isInEditMode =
-            rowModesModel[params.id]?.mode === GridRowModes.Edit
-          if (isInEditMode) {
-            return [
-              <GridActionsCellItem
-                key={`${params.id}-save`}
-                icon={<SaveIcon />}
-                label="Save"
-                onClick={() =>
-                  setRowModesModel({
-                    ...rowModesModel,
-                    [params.id]: { mode: GridRowModes.View },
-                  })
-                }
-              />,
-              <GridActionsCellItem
-                key={`${params.id}-cancel`}
-                icon={<CancelIcon />}
-                label="Cancel"
-                onClick={() => {
-                  setRowModesModel({
-                    ...rowModesModel,
-                    [params.id]: {
-                      mode: GridRowModes.View,
-                      ignoreModifications: true,
-                    },
-                  })
-                  const editedRow = rows.find((row) => row.id === params.id)
-                  if (editedRow && editedRow.isNew) {
-                    setRows(rows.filter((row) => row.id !== params.id))
-                  }
-                }}
-              />,
-            ]
-          }
-          return [
-            <GridActionsCellItem
-              key={`${params.id}-edit`}
-              icon={<EditIcon />}
-              label="Edit"
-              onClick={() =>
-                // ... (Continued from previous portion)
-
-                setRowModesModel({
-                  ...rowModesModel,
-                  [params.id]: { mode: GridRowModes.Edit },
-                })
-              }
-            />,
-            <GridActionsCellItem
-              key={`${params.id}-delete`}
-              icon={<DeleteIcon />}
-              label="Delete"
-              onClick={() =>
-                setRows(rows.filter((row) => row.id !== params.id))
-              }
-            />,
-          ]
-        },
-      },
     ]
-  }, [columns, rowModesModel, rows, visibleColumns])
+  }, [columns, visibleColumns])
 
   function CustomUserItem(props: GridColumnMenuItemProps) {
     const { myCustomHandler, myCustomValue } = props

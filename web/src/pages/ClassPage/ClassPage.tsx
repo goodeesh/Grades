@@ -172,7 +172,7 @@ const ClassPage = () => {
   const [createAssesment] = useMutation(CREATE_NEW_ASSESMENT)
   const [createSubjectStudent] = useMutation(CREATE_USER_SUBJECT)
 
-  const handleSubmitGrade = (
+  const handleSubmitGrade = async (
     assignmentId: string,
     studentId: string,
     grade: string,
@@ -190,7 +190,7 @@ const ClassPage = () => {
         assignmentId: assignmentId,
         userId: studentId,
       }
-      createGrade({ variables: { input: input } })
+      await createGrade({ variables: { input: input } })
     }
     refetch()
   }
@@ -207,16 +207,17 @@ const ClassPage = () => {
       subjectId: id,
       userId: user.data.createUser.id, // Access the id property from the resolved value
     }
-    createSubjectStudent({ variables: { input: input2 } })
+    await createSubjectStudent({ variables: { input: input2 } })
     setOpenStudent(false)
+    refetch()
   }
 
-  const handleSubmitCreateAssesment = (values) => {
+  const handleSubmitCreateAssesment = async (values) => {
     const input = {
       title: values.title,
       subjectId: id,
     }
-    createAssesment({ variables: { input: input } })
+    await createAssesment({ variables: { input: input } })
     setOpenAssesment(false)
     refetch()
   }
