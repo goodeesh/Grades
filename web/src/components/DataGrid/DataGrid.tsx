@@ -216,12 +216,14 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
 
   const groupedColumns = React.useMemo(() => {
     const grouped = {}
-    columns.forEach((column) => {
-      const groupName = column.headerName || column.field
-      if (!grouped[groupName]) {
-        grouped[groupName] = []
+    columns.forEach((column: GridColDef & { title: string }) => {
+      const groupName = column.title
+      if (groupName !== 'Name') {
+        if (!grouped[groupName]) {
+          grouped[groupName] = []
+        }
+        grouped[groupName].push(column.field)
       }
-      grouped[groupName].push(column.field)
     })
     return grouped
   }, [columns])

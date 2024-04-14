@@ -5,8 +5,10 @@ import {
   DialogTitle,
   Grid,
   IconButton,
+  Tooltip,
 } from '@mui/material'
-import { GridCloseIcon } from '@mui/x-data-grid'
+import { GridCloseIcon, GridColDef } from '@mui/x-data-grid'
+import { Assignment } from 'types/graphql'
 
 import { useParams } from '@redwoodjs/router'
 import { Metadata, useQuery } from '@redwoodjs/web'
@@ -33,6 +35,7 @@ const GET_SUBJECT_BY_ID = gql`
       assignments {
         id
         title
+        description
         createdAt
         grades {
           id
@@ -88,25 +91,44 @@ const UPDATE_GRADE = gql`
 `
 
 const prepareColumns = (subject) => {
-  const columns = [
+  const columns: GridColDef[] = [
     {
       id: 'name',
       field: 'name',
       headerName: 'Name',
+      title: 'Name',
       width: 150,
       editable: false,
     },
 
-    ...subject.assignments.map((assignment) => {
+    ...subject.assignments.map((assignment: Assignment) => {
       return {
         id: assignment.id,
         field: assignment.id,
         headerName: assignment.title,
         type: 'number',
-        width: 120,
         editable: true,
+        title: assignment.title,
         gradeId: (params) => params.value.gradeId,
         renderCell: (params) => (params.value.grade ? params.value.grade : ''),
+        renderHeader: () => (
+          <Tooltip
+            title={
+              <>
+                {' '}
+                {/* Use a React fragment for multiple elements */}
+                {`Created: ${new Date(
+                  assignment.createdAt
+                ).toLocaleDateString()}`}
+                {assignment.description && <br />}{' '}
+                {/* Add <br/> for line break if the description exists */}
+                {assignment.description}
+              </>
+            }
+          >
+            <span>{assignment.title}</span>
+          </Tooltip>
+        ),
       }
     }),
   ]
