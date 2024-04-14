@@ -8,7 +8,7 @@ import {
   Tooltip,
 } from '@mui/material'
 import { GridCloseIcon, GridColDef } from '@mui/x-data-grid'
-import { Assignment } from 'types/graphql'
+import { Assignment, Subject } from 'types/graphql'
 
 import { useParams } from '@redwoodjs/router'
 import { Metadata, useQuery } from '@redwoodjs/web'
@@ -90,13 +90,11 @@ const UPDATE_GRADE = gql`
   }
 `
 
-const prepareColumns = (subject) => {
+const prepareColumns = (subject: Subject) => {
   const columns: GridColDef[] = [
     {
-      id: 'name',
       field: 'name',
       headerName: 'Name',
-      title: 'Name',
       width: 150,
       editable: false,
     },
@@ -108,7 +106,6 @@ const prepareColumns = (subject) => {
         headerName: assignment.title,
         type: 'number',
         editable: true,
-        title: assignment.title,
         gradeId: (params) => params.value.gradeId,
         renderCell: (params) => (params.value.grade ? params.value.grade : ''),
         renderHeader: () => (
@@ -255,6 +252,10 @@ const ClassPage = () => {
   if (loading) {
     return <div>Loading...</div>
   }
+  if (data === undefined) {
+    return <div>Subject not found</div>
+  }
+  const subject: Subject = data.subject
   return (
     <>
       <Grid
@@ -301,8 +302,8 @@ const ClassPage = () => {
         </Grid>
         <Metadata title="Class" description="Class page" />
         <CustomDataGrid
-          columns={prepareColumns(data?.subject)}
-          rows={prepareRows(data?.subject)}
+          columns={prepareColumns(subject)}
+          rows={prepareRows(subject)}
           setOpenNewStudentDialog={handleSetOpenStudent}
           setOpenCreateAssesmentDialog={handleSetOpenAssesment}
           handleSubmitGrade={handleSubmitGrade}

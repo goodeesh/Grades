@@ -216,8 +216,8 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
 
   const groupedColumns = React.useMemo(() => {
     const grouped = {}
-    columns.forEach((column: GridColDef & { title: string }) => {
-      const groupName = column.title
+    columns.forEach((column: GridColDef) => {
+      const groupName = column.headerName
       if (groupName !== 'Name') {
         if (!grouped[groupName]) {
           grouped[groupName] = []
