@@ -1,6 +1,11 @@
 import * as React from 'react'
 
 import { Box, Button, Grid } from '@mui/material'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import dayjs from 'dayjs'
 import { Form, Formik, Field } from 'formik'
 
 import { MyField } from './MyField'
@@ -16,18 +21,40 @@ interface Props {
 export const MyForm: React.FC<Props> = ({ onSubmit }) => {
   return (
     <Formik
-      initialValues={{ title: '', category: '' }}
+      initialValues={{ title: '', category: '', date: dayjs() }}
       onSubmit={(values) => {
         onSubmit(values)
       }}
     >
-      {() => (
+      {({ setFieldValue, values }) => (
         <Grid container justifyContent="center">
           <Form>
             <Box width="100%" paddingBottom="20px">
-              <Field placeholder="Title" name="title" component={MyField} />
+              <Field placeholder="Title*" name="title" component={MyField} />
             </Box>
-            <Box width="100%" paddingBottom="20px">
+            <Box>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DemoContainer components={['DatePicker']}>
+                  <DatePicker
+                    value={values.date}
+                    onChange={(value) => {
+                      setFieldValue('date', value)
+                    }}
+                    label="Date"
+                  />
+                </DemoContainer>
+              </LocalizationProvider>
+            </Box>
+            <Box width="100%" paddingTop="20px">
+              <Field
+                as="textarea"
+                name="description"
+                placeholder="description"
+                component={MyField}
+              />
+            </Box>
+
+            <Box width="100%" paddingTop="20px">
               <Button variant="contained" type="submit">
                 submit
               </Button>

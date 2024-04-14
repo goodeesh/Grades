@@ -5,6 +5,7 @@ export const schema = gql`
     description: String
     createdAt: DateTime!
     dueDate: DateTime
+    date: DateTime
     subject: Subject!
     subjectId: String!
     grades: [Grade]!
@@ -18,7 +19,7 @@ export const schema = gql`
   input CreateAssignmentInput {
     title: String!
     description: String
-    dueDate: DateTime
+    date: DateTime
     subjectId: String!
   }
 

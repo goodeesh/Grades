@@ -38,6 +38,7 @@ const GET_SUBJECT_BY_ID = gql`
         title
         description
         createdAt
+        date
         grades {
           id
           userId
@@ -114,13 +115,12 @@ const prepareColumns = (subject: Subject) => {
             title={
               <>
                 {' '}
-                {/* Use a React fragment for multiple elements */}
-                {`Created: ${new Date(
-                  assignment.createdAt
+                Title: {assignment.title}
+                {<br />}
+                {`Date: ${new Date(
+                  assignment.date ?? assignment.createdAt
                 ).toLocaleDateString()}`}
-                {assignment.description && <br />}{' '}
-                {/* Add <br/> for line break if the description exists */}
-                {assignment.description}
+                {assignment.description && <br />} {assignment.description}
               </>
             }
           >
@@ -213,9 +213,12 @@ const ClassPage = () => {
   }
 
   const handleSubmitCreateAssesment = async (values) => {
+    console.log(values)
     const input = {
       title: values.title,
       subjectId: id,
+      date: values.date,
+      description: values.description,
     }
     await createAssesment({ variables: { input: input } })
     setOpenAssesment(false)
@@ -232,9 +235,7 @@ const ClassPage = () => {
   if (loading) {
     return <div>Loading...</div>
   }
-  if (!data) {
-    return NotFoundPage
-  }
+
   const subject: Subject = data.subject
   return (
     <>

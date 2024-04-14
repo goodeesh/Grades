@@ -28,9 +28,12 @@
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.15.6",
+    "@mui/lab": "^5.0.0-alpha.170",
     "@mui/material": "^5.14.14",
     "@mui/x-data-grid": "latest",
     "@mui/x-data-grid-generator": "^6.19.2",
+    "@mui/x-date-pickers": "^7.2.0",
+    "dayjs": "^1.11.10",
     "formik": "^2.4.5",
     "react-beautiful-dnd": "^13.1.1",
     "react-router-dom": "^6.21.1"

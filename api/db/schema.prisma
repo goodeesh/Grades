@@ -52,6 +52,7 @@ model Assignment {
   title       String
   description String?
   createdAt   DateTime  @default(now())
+  date        DateTime?
   dueDate     DateTime?
   subject     Subject   @relation(fields: [subjectId], references: [id])
   subjectId   String
