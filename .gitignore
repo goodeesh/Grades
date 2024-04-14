@@ -20,3 +20,7 @@ api/src/lib/generateGraphiQLHeader.*
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+api/db/schema.prisma
+api/db/schema.prisma
+!.prisma
+api/db/schema.prisma

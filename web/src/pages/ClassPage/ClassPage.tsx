@@ -159,6 +159,7 @@ const ClassPage = () => {
   const [createAssesment] = useMutation(CREATE_NEW_ASSESMENT, {
     onCompleted: () => {
       console.log('Assesment created successfully!')
+      refetch()
     },
   })
   const [createSubjectStudent] = useMutation(CREATE_USER_SUBJECT, {
