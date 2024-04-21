@@ -22,9 +22,6 @@ import CustomDataGrid from 'src/components/DataGrid/DataGrid'
 import { MyForm as MyFormCreateAssesment } from 'src/components/Forms/NewAssesment/MyForm'
 import { MyForm as MyFormNewStudent } from 'src/components/Forms/NewStudent/MyForm'
 
-// Sample columns data
-// Sample columns data
-
 const GET_SUBJECT_BY_ID = gql`
   query Subject($id: String!) {
     subject(id: $id) {

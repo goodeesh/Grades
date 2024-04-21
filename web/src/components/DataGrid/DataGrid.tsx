@@ -28,7 +28,7 @@ interface CustomDataGridProps {
   setOpenCreateAssesmentDialog: () => void
   handleSubmitGrade: (
     assignmentId: string,
-    studentId: string | number,
+    studentId: string,
     grade: string,
     gradeId?: string
   ) => void

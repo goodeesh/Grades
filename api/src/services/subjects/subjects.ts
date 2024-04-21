@@ -104,6 +104,21 @@ export const deleteSubject: MutationResolvers['deleteSubject'] = async ({
   return deletedSubject
 }
 
+export const updateOrderSubjects: MutationResolvers['updateOrderSubjects'] =
+  async ({ input }) => {
+    const updates = []
+    for (let i = 0; i < input.ids.length; i++) {
+      updates.push(
+        db.subject.update({
+          where: { id: input.ids[i] },
+          data: { order: input.order[i] },
+        })
+      )
+    }
+
+    return Promise.all(updates)
+  }
+
 export const Subject: SubjectRelationResolvers = {
   teacher: (_obj, { root }) => {
     return db.subject.findUnique({ where: { id: root?.id } }).teacher()

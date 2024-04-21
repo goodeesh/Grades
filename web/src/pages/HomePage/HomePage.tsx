@@ -1,5 +1,3 @@
-import { useEffect, useState } from 'react'
-
 import { useAuth0 } from '@auth0/auth0-react'
 import { Box, Button, Grid, Typography } from '@mui/material'
 
@@ -18,19 +16,14 @@ const HomePage = () => {
   const userData = React.useContext(UserContext)
   const { user } = useAuth0()
   const [changueRoleMutation] = useMutation(CHANGUE_ROLE_MUTATION)
-  const [changueRole, setChangueRole] = useState(null) // State to hold the mutation function
-  useEffect(() => {
-    if (userData) {
-      setChangueRole(() => changueRoleMutation)
-    }
-  }, [user, changueRole, changueRoleMutation, userData])
-  if (userData?.getUserByEmail?.role === 'Teacher') {
+
+  if (userData?.role === 'Teacher') {
     return (
       <>
         <Grid component="main" maxWidth="xs">
           <Box textAlign="center" margin="auto">
             <Typography variant="h4" gutterBottom>
-              Welcome {user.given_name}!
+              Welcome {userData?.name}!
             </Typography>
             <Typography variant="body1" gutterBottom>
               You are logged in as a teacher.
@@ -40,13 +33,13 @@ const HomePage = () => {
       </>
     )
   }
-  if (userData?.getUserByEmail?.role === 'Student') {
+  if (userData?.role === 'Student') {
     return (
       <>
         <Grid component="main" maxWidth="xs">
           <Box textAlign="center" margin="auto">
             <Typography variant="h4" gutterBottom>
-              Welcome {user.given_name}!
+              Welcome {userData?.name}!
             </Typography>
             <Typography variant="body1" gutterBottom>
               You are logged in as a student.
@@ -62,7 +55,7 @@ const HomePage = () => {
         <Grid component="main" maxWidth="xs">
           <Box textAlign="center" margin="auto">
             <Typography variant="h4" gutterBottom>
-              Welcome {user.given_name}!
+              Welcome {userData?.name}!
             </Typography>
             <Typography variant="body1" gutterBottom>
               Would you like to use the app as a student or as a teacher?
@@ -70,9 +63,9 @@ const HomePage = () => {
             <Typography variant="body1">
               <Button
                 onClick={() => {
-                  changueRole({
+                  changueRoleMutation({
                     variables: {
-                      input: { email: user.email, role: 'Student' },
+                      input: { email: userData?.name, role: 'Student' },
                     },
                   }).then(() => {
                     window.location.reload()
@@ -87,9 +80,9 @@ const HomePage = () => {
               </Button>
               <Button
                 onClick={() => {
-                  changueRole({
+                  changueRoleMutation({
                     variables: {
-                      input: { email: user.email, role: 'Teacher' },
+                      input: { email: userData?.name, role: 'Teacher' },
                     },
                   }).then(() => {
                     window.location.reload()

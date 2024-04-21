@@ -5,7 +5,7 @@ import { useAuth0 } from '@auth0/auth0-react'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import HomeIcon from '@mui/icons-material/Home'
-import LoginIcon from '@mui/icons-material/Login'
+// import LoginIcon from '@mui/icons-material/Login'
 import MenuIcon from '@mui/icons-material/Menu'
 import PeopleIcon from '@mui/icons-material/People'
 import { Button, Grid, MenuItem, Select } from '@mui/material'
@@ -22,6 +22,7 @@ import { styled, useTheme, Theme, CSSObject } from '@mui/material/styles'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
 import useMediaQuery from '@mui/material/useMediaQuery'
+import { User } from 'types/graphql'
 
 import { Link } from '@redwoodjs/router'
 import { useQuery } from '@redwoodjs/web'
@@ -70,12 +71,13 @@ const mainNavbarItems = [
     label: 'Classes',
     route: routes.classes,
   },
-  {
-    id: 2,
-    icon: <LoginIcon />,
-    label: 'Sign In',
-    route: routes.signIn,
-  },
+  //let's remove the sign in page for the moment
+  // {
+  //   id: 2,
+  //   icon: <LoginIcon />,
+  //   label: 'Sign In',
+  //   route: routes.signIn,
+  // },
   {
     id: 3,
     icon: <PeopleIcon />,
@@ -154,21 +156,22 @@ const Drawer = styled(MuiDrawer, {
     '& .MuiDrawer-paper': closedMixin(theme),
   }),
 }))
-export const UserContext = React.createContext(null)
+export const UserContext = React.createContext<User | null>(null)
 export default function MiniDrawer() {
   const { user, isAuthenticated, logout, loginWithPopup } = useAuth0()
-  const { data: userData, loading } = useQuery(GET_USER_QUERY, {
+  const { data, loading } = useQuery(GET_USER_QUERY, {
     variables: { input: { email: user?.email } },
     skip: !user,
   })
+  const userData: User = data?.getUserByEmail
   const theme: Theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const [role, setRole] = React.useState('')
   const [roleChanged, setRoleChanged] = React.useState(false)
   const [changueRole] = useMutation(CHANGUE_ROLE_MUTATION)
   useEffect(() => {
-    if (userData?.getUserByEmail?.role) {
-      setRole(userData.getUserByEmail.role)
+    if (userData?.role) {
+      setRole(userData.role)
     }
     if (user && roleChanged) {
       changueRole({
@@ -186,7 +189,9 @@ export default function MiniDrawer() {
     setRoleChanged(false) // Reset roleChanged to false after calling changueRole
   }, [role, user, changueRole, userData, roleChanged])
 
-  const handleChange = (event) => {
+  const handleChange = (event: {
+    target: { value: React.SetStateAction<string> }
+  }) => {
     setRole(event.target.value)
     setRoleChanged(true)
   }
@@ -208,12 +213,23 @@ export default function MiniDrawer() {
   const handleDrawerClose = () => {
     setOpen(false)
   }
-  function generateTo(item) {
-    return item.route()
+  function generateTo(item: {
+    id?: number
+    icon?: React.JSX.Element
+    label?: string
+    route?: () => string
+  }) {
+    if (item.route) {
+      return item.route()
+    }
+    // handle the case when route is undefined
+    // for example, return a default route
+    return '/'
   }
   if (loading) {
     return <div>Loading...</div>
   }
+
   return (
     <Grid
       position="fixed"

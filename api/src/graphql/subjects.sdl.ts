@@ -30,6 +30,8 @@ export const schema = gql`
       id: String!
       input: UpdateNameDescriptionInput!
     ): Subject! @requireAuth
+    updateOrderSubjects(input: UpdateOrderSubjectsInput!): [Subject!]!
+      @requireAuth
   }
 
   input UpdateNameDescriptionInput {
@@ -49,6 +51,11 @@ export const schema = gql`
     teacherId: String!
     subjectName: String!
     subjectDescription: String!
+  }
+
+  input UpdateOrderSubjectsInput {
+    ids: [String!]!
+    order: [Int!]!
   }
 
   input UpdateSubjectInput {

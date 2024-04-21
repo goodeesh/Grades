@@ -12,6 +12,7 @@ import {
 import Alert from '@mui/material/Alert'
 import Snackbar from '@mui/material/Snackbar'
 import { GridCloseIcon } from '@mui/x-data-grid'
+import { GetSubjectsForTeacherQuery } from 'types/graphql'
 
 import { navigate, routes } from '@redwoodjs/router'
 import { useMutation, useQuery } from '@redwoodjs/web'
@@ -48,21 +49,16 @@ const DELETE_SUBJECT = gql`
     }
   }
 `
-const UPDATE_SUBJECT = gql`
-  mutation UpdateOrderSubjectMutation(
-    $id: String!
-    $input: UpdateOrderSubjectInput!
-  ) {
-    updateOrderSubject(id: $id, input: $input) {
+
+const UPDATE_ORDER_SUBJECTS = gql`
+  mutation UpdateOrderSubjectsMutation($input: UpdateOrderSubjectsInput!) {
+    updateOrderSubjects(input: $input) {
       id
-      teacherId
-      subjectName
-      subjectDescription
       order
-      archived
     }
   }
 `
+
 const UPDATE_NAME_DESCRIPTION = gql`
   mutation updateNameDescription(
     $id: String!
@@ -78,29 +74,54 @@ const UPDATE_NAME_DESCRIPTION = gql`
     }
   }
 `
-const createItemList = (data) => {
+type SubjectItem = {
+  id: string
+  primary: string
+  secondary: string
+  order: number
+  archived: boolean
+}
+
+const createItemList = (data: GetSubjectsForTeacherQuery): SubjectItem[] => {
   if (!data || !data.subjectsByTeacherId) {
     return []
   }
-  //order the list
   return data.subjectsByTeacherId
-    .map((subject) => ({
+    .map((subject: GetSubjectsForTeacherQuery['subjectsByTeacherId'][0]) => ({
       id: subject.id.toString(),
       primary: subject.subjectName,
       secondary: subject.subjectDescription,
-      order: subject.order,
+      order: subject.order ?? 0,
       archived: subject.archived,
     }))
     .sort((a, b) => a.order - b.order)
 }
-const initialState = {
+
+type TypeState = {
+  id: string
+  itemList: SubjectItem[]
+  open: boolean
+  messageForSnackbar: string
+  addNewClass: boolean
+}
+
+const initialState: TypeState = {
   id: '',
   itemList: [],
   open: false,
   messageForSnackbar: '',
   addNewClass: false,
 }
-function reducer(state, action) {
+type TypeAction =
+  | { type: 'SET_ID'; payload: string }
+  | { type: 'SET_ITEM_LIST'; payload: GetSubjectsForTeacherQuery }
+  | {
+      type: 'TOGGLE_SNACKBAR'
+      payload: { open: boolean; message: string }
+    }
+  | { type: 'TOGGLE_ADD_NEW_CLASS' }
+  | { type: 'TOGGLE_OPEN' }
+function reducer(state: TypeState, action: TypeAction) {
   switch (action.type) {
     case 'SET_ID':
       return { ...state, id: action.payload }
@@ -109,7 +130,7 @@ function reducer(state, action) {
     case 'TOGGLE_SNACKBAR':
       return {
         ...state,
-        messageForSnackbar: action.payload.message,
+        message: action.payload.message,
       }
     case 'TOGGLE_ADD_NEW_CLASS':
       return { ...state, addNewClass: !state.addNewClass }
@@ -119,31 +140,36 @@ function reducer(state, action) {
       throw new Error()
   }
 }
+
 const ClassesPage = () => {
   const [state, setState] = React.useReducer(reducer, initialState)
   const userData = React.useContext(UserContext)
   //set id in state
   React.useEffect(() => {
     if (userData) {
-      setState({ type: 'SET_ID', payload: userData.getUserByEmail.id })
+      setState({ type: 'SET_ID', payload: userData.id })
     }
   }, [userData])
-  const { data, loading, refetch } = useQuery(GET_SUBJECTS_FOR_TEACHER, {
-    variables: { teacherId: state.id },
-  })
+  const { data, loading, refetch } = useQuery<GetSubjectsForTeacherQuery>(
+    GET_SUBJECTS_FOR_TEACHER,
+    {
+      variables: { teacherId: state.id },
+    }
+  )
   React.useEffect(() => {
     if (data) {
       setState({ type: 'SET_ITEM_LIST', payload: data })
     }
   }, [data])
-  const handleSnackbar = (message) => {
+  const handleSnackbar = (message: string) => {
     setState({
       type: 'TOGGLE_SNACKBAR',
       payload: { open: true, message: message },
     })
   }
-  //const [addNewClass, setAddNewClass] = React.useState(false) // Initialize addNewClass with false
-  //const [open, setOpen] = React.useState(false)
+
+  const [updateOrderSubjects] = useMutation(UPDATE_ORDER_SUBJECTS)
+
   const [createSubject] = useMutation(CREATE_SUBJECT, {
     onCompleted: () => {
       refetch()
@@ -159,9 +185,14 @@ const ClassesPage = () => {
       setState({ type: 'TOGGLE_OPEN' }) // Close the Snackbar
     },
   })
-  const [updateSubject] = useMutation(UPDATE_SUBJECT)
   const [updateNameDescription] = useMutation(UPDATE_NAME_DESCRIPTION)
-  const handleUpdateNameDescription = (id, input) => {
+  const handleUpdateNameDescription = (
+    id: string,
+    input: {
+      name: string
+      description: string
+    }
+  ) => {
     updateNameDescription({
       variables: {
         id: id,
@@ -172,25 +203,26 @@ const ClassesPage = () => {
       },
     })
   }
-  const handleOpen = (id) => {
+  const handleOpen = (id: string) => {
     //navigate to the class page
     navigate(routes.manageClass({ id: id }))
   }
 
-  const handleUpdateOrderSubjects = (data) => {
-    for (let i = 0; i < data.length; i++) {
-      const currentItem = state.itemList.find((item) => item.id === data[i].id)
-      if (currentItem.order !== data[i].order) {
-        updateSubject({
-          variables: {
-            id: data[i].id,
-            input: { order: data[i].order },
-          },
-        })
-      }
-    }
+  const handleUpdateOrderSubjects = (newOrderedItems: SubjectItem[]) => {
+    const ids = newOrderedItems.map((item) => item.id)
+    const order = newOrderedItems.map((item) => item.order)
+
+    updateOrderSubjects({
+      variables: {
+        input: {
+          ids: ids,
+          order: order,
+        },
+      },
+    })
   }
-  const handleDelete = (id) => {
+
+  const handleDelete = (id: string) => {
     deleteSubject({ variables: { id: id } })
   }
   if (!userData) {
@@ -213,31 +245,6 @@ const ClassesPage = () => {
             {state.messageForSnackbar}
           </Alert>
         </Snackbar>
-        {/* <Button
-          variant="contained"
-          onClick={() => setState({ type: 'TOGGLE_ADD_NEW_CLASS' })}
-        >
-          Add a new Class
-        </Button>{' '}
-        <br />
-        <Box textAlign="center" margin="auto">
-          <br />
-          {state.addNewClass && ( // Render DemoPaper if addNewClass is true
-            <MyForm
-              onSubmit={(values) =>
-                createSubject({
-                  variables: {
-                    input: {
-                      teacherId: userData.getUserByEmail.id,
-                      subjectName: values.className,
-                      subjectDescription: values.description,
-                    },
-                  },
-                })
-              }
-            />
-          )}
-        </Box> */}
         <Box textAlign="center" margin="auto">
           <br />
           <Button
@@ -264,7 +271,7 @@ const ClassesPage = () => {
                   createSubject({
                     variables: {
                       input: {
-                        teacherId: userData.getUserByEmail.id,
+                        teacherId: userData.id,
                         subjectName: values.className,
                         subjectDescription: values.description,
                       },

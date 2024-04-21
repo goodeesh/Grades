@@ -39,7 +39,7 @@ interface Item {
 interface DraggableListProps {
   items: Item[]
   handleDelete: (id: string) => void
-  handleUpdateOrderSubjects: (data) => void
+  handleUpdateOrderSubjects: (newOrderedItems) => void
   handleNameDescription: (id, input) => void
   handleOpen: (id) => void
 }
@@ -66,7 +66,6 @@ const DraggableList: React.FC<DraggableListProps> = ({
     if (!result.destination) {
       return
     }
-
     const fromIndex = result.source.index
     const toIndex = result.destination.index
 
@@ -77,14 +76,13 @@ const DraggableList: React.FC<DraggableListProps> = ({
 
       // Set the order property of each item to its index in the array plus 1
       for (let i = 0; i < newOrderedItems.length; i++) {
-        newOrderedItems[i].order = i + 1
+        newOrderedItems[i].order = i
       }
-
-      // Update local state
       setOrderedItems(newOrderedItems)
 
       // Call function to update the backend
       handleUpdateOrderSubjects(newOrderedItems)
+      // Update local state
     }
   }
   const [editingItem, setEditingItem] = React.useState(null)
