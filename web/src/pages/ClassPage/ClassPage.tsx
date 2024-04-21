@@ -7,8 +7,13 @@ import {
   IconButton,
   Tooltip,
 } from '@mui/material'
-import { GridCloseIcon, GridColDef } from '@mui/x-data-grid'
-import { Assignment, Subject, User } from 'types/graphql'
+import {
+  GridCloseIcon,
+  GridColDef,
+  GridRenderCellParams,
+} from '@mui/x-data-grid'
+import dayjs from 'dayjs'
+import { Assignment, Maybe, Subject, User } from 'types/graphql'
 
 import { useParams } from '@redwoodjs/router'
 import { Metadata, useQuery } from '@redwoodjs/web'
@@ -92,6 +97,21 @@ const UPDATE_GRADE = gql`
   }
 `
 
+type AssignmentGrade = {
+  grade: number | null
+  gradeId: string | null
+}
+
+type StudentRowBase = {
+  id: string
+  name: string
+  editable: boolean
+}
+
+type StudentRow = StudentRowBase & {
+  [key: string]: AssignmentGrade | StudentRowBase[keyof StudentRowBase]
+}
+
 const prepareColumns = (subject: Subject) => {
   const columns: GridColDef[] = [
     {
@@ -100,15 +120,20 @@ const prepareColumns = (subject: Subject) => {
       width: 150,
       editable: false,
     },
-
-    ...subject.assignments.map((assignment: Assignment) => {
+  ]
+  let restColumns: Maybe<GridColDef>[] = []
+  if (subject.assignments) {
+    restColumns = subject.assignments.map((assignment: Maybe<Assignment>) => {
+      if (!assignment) {
+        return null
+      }
       return {
         id: assignment.id,
         field: assignment.id,
         headerName: assignment.title,
         type: 'number',
         editable: true,
-        gradeId: (params) => params.value.gradeId,
+        gradeId: (params: GridRenderCellParams) => params.value.gradeId,
         renderCell: (params) => (params.value.grade ? params.value.grade : ''),
         renderHeader: () => (
           <Tooltip
@@ -128,37 +153,48 @@ const prepareColumns = (subject: Subject) => {
           </Tooltip>
         ),
       }
-    }),
-  ]
+    })
+  }
+  const restColumnsFiltered: GridColDef[] = restColumns.filter(
+    (column): column is GridColDef => column !== null
+  )
+  restColumnsFiltered?.forEach((column) => {
+    columns.push(column)
+  })
   return columns
 }
 
 const prepareRows = (subject: Subject) => {
-  const rows = subject.students.map((student: User) => {
-    const studentRow = {
-      id: student.id,
-      name: student.name + ' ' + student.lastName,
-      editable: true,
-    }
-    subject.assignments.forEach((assignment: Assignment) => {
-      const grade = assignment.grades.find(
-        (grade) => grade.userId === student.id
-      )
-      if (grade) {
-        studentRow[assignment.id] = {
-          grade: grade.grade,
-          gradeId: grade.id,
-        }
-      } else {
-        studentRow[assignment.id] = {
-          grade: null,
-          gradeId: null,
-        }
+  const rows: Maybe<StudentRow>[] = subject.students.map(
+    (student: Maybe<User>) => {
+      if (!student) {
+        return null
       }
-    })
-    return studentRow
-  })
-  return rows
+      const studentRow: StudentRow = {
+        id: student.id,
+        name: student.name + ' ' + student?.lastName,
+        editable: true,
+      }
+      subject.assignments?.forEach((assignment: Maybe<Assignment>) => {
+        const grade = assignment?.grades.find(
+          (grade) => grade?.userId === student?.id
+        )
+        if (grade && assignment?.id) {
+          studentRow[assignment.id] = {
+            grade: grade.grade,
+            gradeId: grade.id,
+          }
+        } else if (assignment?.id) {
+          studentRow[assignment.id] = {
+            grade: null,
+            gradeId: null,
+          }
+        }
+      })
+      return studentRow
+    }
+  )
+  return rows.filter((row): row is StudentRow => row !== null)
 }
 
 const ClassPage = () => {
@@ -195,7 +231,10 @@ const ClassPage = () => {
     refetch()
   }
 
-  const handleSubmitNewStudent = async (values) => {
+  const handleSubmitNewStudent = async (values: {
+    firstName: string
+    lastName: string
+  }) => {
     const input = {
       name: values.firstName,
       role: 'student',
@@ -212,7 +251,11 @@ const ClassPage = () => {
     refetch()
   }
 
-  const handleSubmitCreateAssesment = async (values) => {
+  const handleSubmitCreateAssesment = async (values: {
+    title: string
+    date: dayjs.Dayjs
+    description: string
+  }) => {
     console.log(values)
     const input = {
       title: values.title,
@@ -276,7 +319,11 @@ const ClassPage = () => {
             </IconButton>
             <DialogContent>
               <MyFormCreateAssesment
-                onSubmit={(values) => handleSubmitCreateAssesment(values)}
+                onSubmit={(values: {
+                  title: string
+                  date: dayjs.Dayjs
+                  description: string
+                }) => handleSubmitCreateAssesment(values)}
               />
             </DialogContent>
           </Dialog>

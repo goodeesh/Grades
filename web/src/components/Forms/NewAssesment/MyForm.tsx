@@ -11,6 +11,9 @@ import { Form, Formik, Field } from 'formik'
 import { MyField } from './MyField'
 
 interface Values {
+  title: string
+  date: dayjs.Dayjs
+  description: string
   category: string
 }
 
@@ -21,8 +24,13 @@ interface Props {
 export const MyForm: React.FC<Props> = ({ onSubmit }) => {
   return (
     <Formik
-      initialValues={{ title: '', category: '', date: dayjs() }}
-      onSubmit={(values) => {
+      initialValues={{
+        title: '',
+        category: '',
+        date: dayjs(),
+        description: '',
+      }}
+      onSubmit={(values: Values) => {
         onSubmit(values)
       }}
     >
