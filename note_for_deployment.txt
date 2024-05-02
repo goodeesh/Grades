@@ -1,0 +1,4 @@
+  "predeploy": "yarn rw prisma migrate resolve --applied '20240414183308_new'",
+
+
+Might have to ignore this one!
