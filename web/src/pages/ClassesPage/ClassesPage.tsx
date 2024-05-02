@@ -172,7 +172,7 @@ const ClassesPage = () => {
 
   const [createSubject] = useMutation(CREATE_SUBJECT, {
     onCompleted: () => {
-      refetch()
+      refetch().catch((error) => console.error(error))
       setState({ type: 'TOGGLE_ADD_NEW_CLASS' }) // Close the form
       handleSnackbar('Class created successfully!')
       setState({ type: 'TOGGLE_OPEN' }) // Close the Snackbar
@@ -180,7 +180,7 @@ const ClassesPage = () => {
   })
   const [deleteSubject] = useMutation(DELETE_SUBJECT, {
     onCompleted: () => {
-      refetch()
+      refetch().catch((error) => console.error(error))
       handleSnackbar('Class deleted successfully!')
       setState({ type: 'TOGGLE_OPEN' }) // Close the Snackbar
     },
@@ -201,7 +201,7 @@ const ClassesPage = () => {
           subjectDescription: input.description,
         },
       },
-    })
+    }).catch((error) => console.error(error))
   }
   const handleOpen = (id: string) => {
     //navigate to the class page
@@ -219,11 +219,13 @@ const ClassesPage = () => {
           order: order,
         },
       },
-    })
+    }).catch((error) => console.error(error))
   }
 
   const handleDelete = (id: string) => {
-    deleteSubject({ variables: { id: id } })
+    deleteSubject({ variables: { id: id } }).catch((error) =>
+      console.error(error)
+    )
   }
   if (!userData) {
     return <div>Loading...</div>
