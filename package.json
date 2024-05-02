@@ -7,8 +7,8 @@
     ]
   },
   "devDependencies": {
-    "@redwoodjs/cli-data-migrate": "7.3.0",
-    "@redwoodjs/core": "7.3.0",
+    "@redwoodjs/cli-data-migrate": "7.4.3",
+    "@redwoodjs/core": "7.4.3",
     "@testing-library/jest-dom": "^6.4.2"
   },
   "eslintConfig": {
@@ -33,6 +33,7 @@
     "@mui/x-data-grid": "latest",
     "@mui/x-data-grid-generator": "^6.19.2",
     "@mui/x-date-pickers": "^7.2.0",
+    "@types/react": "^18.3.1",
     "dayjs": "^1.11.10",
     "formik": "^2.4.5",
     "react-beautiful-dnd": "^13.1.1",
