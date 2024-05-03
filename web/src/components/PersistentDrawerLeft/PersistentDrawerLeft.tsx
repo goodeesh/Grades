@@ -9,6 +9,14 @@ import HomeIcon from '@mui/icons-material/Home'
 import MenuIcon from '@mui/icons-material/Menu'
 import PeopleIcon from '@mui/icons-material/People'
 import { Button, Grid, MenuItem, Select } from '@mui/material'
+import {
+  styled,
+  useTheme,
+  Theme,
+  CSSObject,
+  createTheme,
+  ThemeProvider,
+} from '@mui/material'
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar'
 import CssBaseline from '@mui/material/CssBaseline'
 import MuiDrawer from '@mui/material/Drawer'
@@ -18,7 +26,6 @@ import ListItem from '@mui/material/ListItem'
 import ListItemButton from '@mui/material/ListItemButton'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
-import { styled, useTheme, Theme, CSSObject } from '@mui/material/styles'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
 import useMediaQuery from '@mui/material/useMediaQuery'
@@ -169,6 +176,7 @@ export default function MiniDrawer() {
   const [role, setRole] = React.useState('')
   const [roleChanged, setRoleChanged] = React.useState(false)
   const [changueRole] = useMutation(CHANGUE_ROLE_MUTATION)
+  const [isDarkMode, setIsDarkMode] = React.useState(false)
   useEffect(() => {
     if (userData?.role) {
       setRole(userData.role)
@@ -231,121 +239,139 @@ export default function MiniDrawer() {
   }
 
   return (
-    <Grid
-      position="fixed"
-      style={{
-        width: '100%',
-        paddingLeft: isMobile
-          ? theme.spacing(1)
-          : open
-          ? drawerWidth
-          : theme.spacing(8),
-      }}
+    <ThemeProvider
+      theme={createTheme({
+        palette: {
+          mode: isDarkMode ? 'dark' : 'light',
+        },
+      })}
     >
-      <CssBaseline />
-      <AppBar position="fixed" open={open}>
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            sx={{
-              marginRight: 5,
-              ...(open && { display: 'none' }),
-            }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            Grades
-          </Typography>
-          {isAuthenticated && (
-            <Select
-              sx={{
-                minWidth: '10%',
-                alignItems: 'flex-end',
-                marginLeft: 'auto',
-              }}
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              label="Role"
-              onChange={handleChange}
-              value={role}
-            >
-              <MenuItem value={'Student'}>Student</MenuItem>
-              <MenuItem value={'Teacher'}>Teacher</MenuItem>
-            </Select>
-          )}
-          <Button
-            sx={{
-              alignItems: 'flex-end',
-              marginLeft: isAuthenticated ? '2%' : 'auto',
-            }}
-            color="inherit"
-            onClick={handleLogin}
-          >
-            {isAuthenticated ? 'Log down' : 'Log in'}
-          </Button>
-        </Toolbar>
-      </AppBar>
-      <Drawer
-        variant={isMobile && !open ? 'temporary' : 'permanent'}
-        open={open}
-      >
-        <DrawerHeader>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'rtl' ? (
-              <ChevronRightIcon />
-            ) : (
-              <ChevronLeftIcon />
-            )}
-          </IconButton>
-        </DrawerHeader>
-        <List>
-          {mainNavbarItems.map((item, _index) => (
-            <ListItem key={item.id} disablePadding sx={{ display: 'block' }}>
-              <ListItemButton
-                component={Link}
-                to={generateTo(item)}
-                sx={{
-                  minHeight: 48,
-                  justifyContent: 'initial',
-                  px: 2.5,
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: 3,
-                    justifyContent: 'center',
-                  }}
-                >
-                  {item.icon}
-                </ListItemIcon>
-                <ListItemText primary={item.label} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
-      </Drawer>
       <Grid
-        component="main"
-        sx={{
-          flexGrow: 1,
-          p: 1,
+        position="fixed"
+        style={{
           width: '100%',
+          paddingLeft: isMobile
+            ? theme.spacing(1)
+            : open
+            ? drawerWidth
+            : theme.spacing(8),
         }}
       >
-        <DrawerHeader />
-        {userData ? (
-          <UserContext.Provider value={userData}>
+        <CssBaseline />
+        <AppBar position="fixed" open={open}>
+          <Toolbar>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              onClick={handleDrawerOpen}
+              edge="start"
+              sx={{
+                marginRight: 5,
+                ...(open && { display: 'none' }),
+              }}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6" noWrap component="div">
+              Grades
+            </Typography>
+            {isAuthenticated && (
+              <Select
+                sx={{
+                  minWidth: '10%',
+                  alignItems: 'flex-end',
+                  marginLeft: 'auto',
+                }}
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                label="Role"
+                onChange={handleChange}
+                value={role}
+              >
+                <MenuItem value={'Student'}>Student</MenuItem>
+                <MenuItem value={'Teacher'}>Teacher</MenuItem>
+              </Select>
+            )}
+            <Button
+              sx={{
+                alignItems: 'flex-end',
+                marginLeft: isAuthenticated ? '2%' : 'auto',
+              }}
+              color="inherit"
+              onClick={() => setIsDarkMode(!isDarkMode)}
+            >
+              {isDarkMode ? 'Switch to Light Mode' : 'Switch to  Dark Mode'}
+            </Button>
+            <Button
+              sx={{
+                alignItems: 'flex-end',
+                marginLeft: isAuthenticated ? '2%' : 'auto',
+              }}
+              color="inherit"
+              onClick={handleLogin}
+            >
+              {isAuthenticated ? 'Log down' : 'Log in'}
+            </Button>
+          </Toolbar>
+        </AppBar>
+        <Drawer
+          variant={isMobile && !open ? 'temporary' : 'permanent'}
+          open={open}
+        >
+          <DrawerHeader>
+            <IconButton onClick={handleDrawerClose}>
+              {theme.direction === 'rtl' ? (
+                <ChevronRightIcon />
+              ) : (
+                <ChevronLeftIcon />
+              )}
+            </IconButton>
+          </DrawerHeader>
+          <List>
+            {mainNavbarItems.map((item, _index) => (
+              <ListItem key={item.id} disablePadding sx={{ display: 'block' }}>
+                <ListItemButton
+                  component={Link}
+                  to={generateTo(item)}
+                  sx={{
+                    minHeight: 48,
+                    justifyContent: 'initial',
+                    px: 2.5,
+                  }}
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: 3,
+                      justifyContent: 'center',
+                    }}
+                  >
+                    {item.icon}
+                  </ListItemIcon>
+                  <ListItemText primary={item.label} />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </List>
+        </Drawer>
+        <Grid
+          component="main"
+          sx={{
+            flexGrow: 1,
+            p: 1,
+            width: '100%',
+          }}
+        >
+          <DrawerHeader />
+          {userData ? (
+            <UserContext.Provider value={userData}>
+              <Routes />
+            </UserContext.Provider>
+          ) : (
             <Routes />
-          </UserContext.Provider>
-        ) : (
-          <Routes />
-        )}
+          )}
+        </Grid>
       </Grid>
-    </Grid>
+    </ThemeProvider>
   )
 }
