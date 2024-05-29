@@ -22,7 +22,7 @@ export const MyForm: React.FC<Props> = ({ onSubmit }) => {
         onSubmit(values)
       }}
     >
-      {({ values }) => (
+      {() => (
         <Grid container justifyContent="center">
           <Form>
             <Box width="100%" paddingBottom="20px">

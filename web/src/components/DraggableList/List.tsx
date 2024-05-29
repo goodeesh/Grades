@@ -25,6 +25,7 @@ import {
   Droppable,
   DroppableProvided,
   DraggableProvided,
+  DropResult,
 } from 'react-beautiful-dnd'
 
 import { MyField } from '../Forms/NewClass/MyField'
@@ -39,9 +40,12 @@ interface Item {
 interface DraggableListProps {
   items: Item[]
   handleDelete: (id: string) => void
-  handleUpdateOrderSubjects: (newOrderedItems) => void
-  handleNameDescription: (id, input) => void
-  handleOpen: (id) => void
+  handleUpdateOrderSubjects: (newOrderedItems: Item[]) => void
+  handleNameDescription: (
+    id: string,
+    input: { name: string; description: string | null }
+  ) => void
+  handleOpen: (id: string) => void
 }
 
 const DraggableList: React.FC<DraggableListProps> = ({
@@ -62,7 +66,7 @@ const DraggableList: React.FC<DraggableListProps> = ({
   const dense = false // or false, depending on your needs
   const secondary = false
 
-  const handleDragEnd = (result) => {
+  const handleDragEnd = (result: DropResult) => {
     if (!result.destination) {
       return
     }
@@ -85,24 +89,26 @@ const DraggableList: React.FC<DraggableListProps> = ({
       // Update local state
     }
   }
-  const [editingItem, setEditingItem] = React.useState(null)
+  const [editingItem, setEditingItem] = React.useState('')
 
-  const handleEdit = (id) => {
+  const handleEdit = (id: string) => {
     setEditingItem(id)
   }
-  const [expandedItem, setExpandedItem] = React.useState(null)
+  const [expandedItem, setExpandedItem] = React.useState('')
 
-  const handleAccordionChange = (id) => (event, isExpanded) => {
-    setExpandedItem(isExpanded ? id : false)
-  }
+  const handleAccordionChange =
+    (id: string) =>
+    (_event: React.ChangeEvent<unknown>, isExpanded: boolean) => {
+      setExpandedItem(isExpanded ? id : '')
+    }
 
-  const handleSave = (item) => {
+  const handleSave = (item: Item) => {
     handleNameDescription(item.id, {
       name: item.primary,
-      description: item.secondary,
+      description: item.secondary ?? null,
     })
     // Save your changes here
-    setEditingItem(null)
+    setEditingItem('')
   }
   return (
     <Box sx={{ flexGrow: 1, maxWidth: 752 }}>
@@ -127,7 +133,6 @@ const DraggableList: React.FC<DraggableListProps> = ({
                         <Draggable draggableId={item.id} index={index}>
                           {(provided: DraggableProvided) => (
                             <Form onSubmit={handleSubmit} key={editingItem}>
-                              {' '}
                               <Accordion
                                 key={item.id}
                                 ref={provided.innerRef}
@@ -135,6 +140,7 @@ const DraggableList: React.FC<DraggableListProps> = ({
                                 {...provided.dragHandleProps}
                                 expanded={expandedItem === item.id}
                                 onChange={handleAccordionChange(item.id)}
+                                sx={{ border: '1px solid #f0f0f0' }}
                               >
                                 <AccordionSummary
                                   expandIcon={<ExpandMoreIcon />}

@@ -7,9 +7,10 @@
     ]
   },
   "devDependencies": {
-    "@redwoodjs/cli-data-migrate": "7.4.3",
-    "@redwoodjs/core": "7.4.3",
-    "@testing-library/jest-dom": "^6.4.2"
+    "@redwoodjs/cli-data-migrate": "7.6.2",
+    "@redwoodjs/core": "7.6.2",
+    "@testing-library/jest-dom": "^6.4.2",
+    "@types/react-beautiful-dnd": "^13.1.8"
   },
   "eslintConfig": {
     "extends": "@redwoodjs/eslint-config",
