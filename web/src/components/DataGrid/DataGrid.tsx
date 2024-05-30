@@ -23,11 +23,12 @@ import {
   GridCellEditStopParams,
 } from '@mui/x-data-grid'
 import { DataGrid } from '@mui/x-data-grid'
+
 interface CustomDataGridProps {
   rows: GridRowsProp
   columns: GridColDef[]
   setOpenNewStudentDialog: () => void
-  setOpenCreateAssesmentDialog: () => void
+  setOpenCreateAssesmentDialog: (id: string) => void
   handleSubmitGrade: (
     assignmentId: string,
     studentId: string,
@@ -56,7 +57,7 @@ const EditToolbar = React.memo(function EditToolbar({
   density: 'standard' | 'comfortable' | 'compact'
   setDensity: (density: 'standard' | 'comfortable' | 'compact') => void
   setOpenNewStudentDialog: () => void
-  setOpenCreateAssesmentDialog: () => void
+  setOpenCreateAssesmentDialog: (id: string) => void
 }) {
   const [inputSearchValue, setInputSearchValue] = React.useState(searchValue)
   const searchInputRef = React.useRef<HTMLInputElement | null>(null)
@@ -145,7 +146,7 @@ const EditToolbar = React.memo(function EditToolbar({
       <Button
         color="secondary"
         startIcon={<AddIcon />}
-        onClick={setOpenCreateAssesmentDialog}
+        onClick={() => setOpenCreateAssesmentDialog('')}
       >
         New assesment
       </Button>
@@ -158,6 +159,7 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
     rows: initialRows,
     columns: initialColumns,
     handleSubmitGrade,
+    setOpenCreateAssesmentDialog,
   } = props
   const [rows, setRows] = React.useState(initialRows)
   const [searchText, setSearchText] = React.useState('')
@@ -278,6 +280,7 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
   }
 
   function CustomColumnMenu(props: GridColumnMenuProps) {
+    console.log(props)
     return (
       <GridColumnMenu
         {...props}
@@ -294,7 +297,9 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
           anotherColumnMenuUserItem: {
             displayOrder: 20,
             myCustomValue: 'Edit Assignment',
-            myCustomHandler: () => console.log('Edit Assignment'),
+            myCustomHandler: () => {
+              setOpenCreateAssesmentDialog(props.colDef.field)
+            },
           },
         }}
       />

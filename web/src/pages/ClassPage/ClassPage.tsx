@@ -15,6 +15,7 @@ import {
 import dayjs from 'dayjs'
 import { Assignment, Maybe, Subject, User } from 'types/graphql'
 
+import { set } from '@redwoodjs/forms'
 import { useParams } from '@redwoodjs/router'
 import { Metadata, useQuery } from '@redwoodjs/web'
 
@@ -204,6 +205,7 @@ const ClassPage = () => {
   const [createStudent] = useMutation(CREATE_STUDENT)
   const [createAssesment] = useMutation(CREATE_NEW_ASSESMENT)
   const [createSubjectStudent] = useMutation(CREATE_USER_SUBJECT)
+  const [assignment, setAssignment] = React.useState<Assignment | null>(null)
 
   const handleSubmitGrade = async (
     assignmentId: string,
@@ -267,7 +269,12 @@ const ClassPage = () => {
   const handleSetOpenStudent = () => {
     setOpenStudent(!openStudent)
   }
-  const handleSetOpenAssesment = () => {
+  const handleSetOpenAssesment = (id: string) => {
+    console.log(id) // You can use the id here
+    const assignment: Assignment | null = data.subject.assignments?.find(
+      (assignment: Assignment) => assignment?.id === id
+    )
+    setAssignment(assignment)
     setOpenAssesment(!openAssesment)
   }
   const [openStudent, setOpenStudent] = React.useState(false)
@@ -321,6 +328,7 @@ const ClassPage = () => {
                   date: dayjs.Dayjs
                   description: string
                 }) => handleSubmitCreateAssesment(values)}
+                assignment={assignment}
               />
             </DialogContent>
           </Dialog>

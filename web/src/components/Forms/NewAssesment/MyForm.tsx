@@ -7,6 +7,7 @@ import { DemoContainer } from '@mui/x-date-pickers/internals/demo'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import dayjs from 'dayjs'
 import { Form, Formik, Field } from 'formik'
+import { Assignment } from 'types/graphql'
 
 import { MyField } from './MyField'
 
@@ -14,21 +15,20 @@ interface Values {
   title: string
   date: dayjs.Dayjs
   description: string
-  category: string
 }
 
 interface Props {
   onSubmit: (values: Values) => void
+  assignment: Assignment | null
 }
 
-export const MyForm: React.FC<Props> = ({ onSubmit }) => {
+export const MyForm: React.FC<Props> = ({ onSubmit, assignment }) => {
   return (
     <Formik
       initialValues={{
-        title: '',
-        category: '',
-        date: dayjs(),
-        description: '',
+        title: assignment?.title || '',
+        date: assignment?.date ? dayjs(assignment.date) : dayjs(),
+        description: assignment?.description || '',
       }}
       onSubmit={(values: Values) => {
         onSubmit(values)
