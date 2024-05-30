@@ -15,7 +15,6 @@ import {
 import dayjs from 'dayjs'
 import { Assignment, Maybe, Subject, User } from 'types/graphql'
 
-import { set } from '@redwoodjs/forms'
 import { useParams } from '@redwoodjs/router'
 import { Metadata, useQuery } from '@redwoodjs/web'
 
