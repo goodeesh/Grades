@@ -3,6 +3,7 @@ import * as React from 'react'
 import AddIcon from '@mui/icons-material/Add'
 import ClearIcon from '@mui/icons-material/Clear'
 import DeleteIcon from '@mui/icons-material/DeleteOutlined'
+import EditIcon from '@mui/icons-material/Edit'
 import SearchIcon from '@mui/icons-material/Search'
 import { Grid, ListItemIcon, ListItemText } from '@mui/material'
 import { Select, MenuItem } from '@mui/material'
@@ -19,6 +20,7 @@ import {
   GridColumnMenuItemProps,
   GridColumnMenuProps,
   GridToolbarContainer,
+  GridCellEditStopParams,
 } from '@mui/x-data-grid'
 import { DataGrid } from '@mui/x-data-grid'
 interface CustomDataGridProps {
@@ -164,7 +166,7 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
   const [visibleColumns, setVisibleColumns] = React.useState(
     new Set(columns.map((c) => c.field))
   )
-  const handleSearchChange = (newValue) => {
+  const handleSearchChange = (newValue: string) => {
     setSearchText(newValue)
   }
   const [numOfRows, setNumOfRows] = React.useState(10)
@@ -210,10 +212,10 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
   }
 
   const groupedColumns = React.useMemo(() => {
-    const grouped = {}
+    const grouped: Record<string, string[]> = {}
     columns.forEach((column: GridColDef) => {
       const groupName = column.headerName
-      if (groupName !== 'Name') {
+      if (groupName && groupName !== 'Name') {
         if (!grouped[groupName]) {
           grouped[groupName] = []
         }
@@ -223,7 +225,7 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
     return grouped
   }, [columns])
 
-  const toggleGroup = (headerName) => {
+  const toggleGroup = (headerName: string) => {
     setVisibleColumns((prevVisibleColumns) => {
       const newVisibleColumns = new Set(prevVisibleColumns)
       const allVisible = groupedColumns[headerName].every((field) =>
@@ -263,12 +265,25 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
     )
   }
 
+  function AnotherCustomUserItem(props: GridColumnMenuItemProps) {
+    const { myCustomHandler, myCustomValue } = props
+    return (
+      <MenuItem onClick={myCustomHandler}>
+        <ListItemIcon>
+          <EditIcon fontSize="small" />
+        </ListItemIcon>
+        <ListItemText>{myCustomValue}</ListItemText>
+      </MenuItem>
+    )
+  }
+
   function CustomColumnMenu(props: GridColumnMenuProps) {
     return (
       <GridColumnMenu
         {...props}
         slots={{
           columnMenuUserItem: CustomUserItem,
+          anotherColumnMenuUserItem: AnotherCustomUserItem,
         }}
         slotProps={{
           columnMenuUserItem: {
@@ -276,12 +291,18 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
             myCustomValue: 'Delete Column',
             myCustomHandler: () => handleDeleteColumn(props.colDef.field),
           },
+          anotherColumnMenuUserItem: {
+            displayOrder: 20,
+            myCustomValue: 'Edit Assignment',
+            myCustomHandler: () => console.log('Edit Assignment'),
+          },
         }}
       />
     )
   }
 
-  function handleDeleteColumn(field) {
+  function handleDeleteColumn(field: string) {
+    console.log(field)
     setColumns((prevColumns) =>
       prevColumns.filter((column) => column.field !== field)
     )
@@ -325,12 +346,9 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
             )
             return updatedRow
           }}
-          onCellEditStop={(
-            params,
-            event: React.ChangeEvent<HTMLInputElement>
-          ) => {
+          onCellEditStop={(params: GridCellEditStopParams, event) => {
             const assignmentId = params.field
-            const studentId = params.id
+            const studentId = params.id.toString()
             const grade = event.target.value
             const gradeId = params.row[assignmentId]?.gradeId
 
