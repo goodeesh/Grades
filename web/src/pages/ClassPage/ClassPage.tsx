@@ -77,6 +77,15 @@ const CREATE_NEW_ASSESMENT = gql`
   }
 `
 
+const UPDATE_ASSIGNMENT = gql`
+  mutation updateAssignment($id: String!, $input: UpdateAssignmentInput!) {
+    updateAssignment(id: $id, input: $input) {
+      id
+      title
+    }
+  }
+`
+
 const CREATE_GRADE = gql`
   mutation CreateGrade($input: CreateGradeInput!) {
     createGrade(input: $input) {
@@ -204,7 +213,10 @@ const ClassPage = () => {
   const [createStudent] = useMutation(CREATE_STUDENT)
   const [createAssesment] = useMutation(CREATE_NEW_ASSESMENT)
   const [createSubjectStudent] = useMutation(CREATE_USER_SUBJECT)
-  const [assignment, setAssignment] = React.useState<Assignment | null>(null)
+  const [updateAssignment] = useMutation(UPDATE_ASSIGNMENT)
+  const [assignmentId, setAssignmentId] = React.useState<Assignment | null>(
+    null
+  )
 
   const handleSubmitGrade = async (
     assignmentId: string,
@@ -249,11 +261,14 @@ const ClassPage = () => {
     refetch()
   }
 
-  const handleSubmitCreateAssesment = async (values: {
-    title: string
-    date: dayjs.Dayjs
-    description: string
-  }) => {
+  const handleSubmitCreateOrUpdateAssesment = async (
+    values: {
+      title: string
+      date: dayjs.Dayjs
+      description: string
+    },
+    assignmentId: string
+  ) => {
     console.log(values)
     const input = {
       title: values.title,
@@ -261,7 +276,11 @@ const ClassPage = () => {
       date: values.date,
       description: values.description,
     }
-    await createAssesment({ variables: { input: input } })
+    if (assignmentId) {
+      await updateAssignment({ variables: { id: assignmentId, input: input } })
+    } else {
+      await createAssesment({ variables: { input: input } })
+    }
     setOpenAssesment(false)
     refetch()
   }
@@ -273,7 +292,7 @@ const ClassPage = () => {
     const assignment: Assignment | null = data.subject.assignments?.find(
       (assignment: Assignment) => assignment?.id === id
     )
-    setAssignment(assignment)
+    setAssignmentId(assignment)
     setOpenAssesment(!openAssesment)
   }
   const [openStudent, setOpenStudent] = React.useState(false)
@@ -326,8 +345,13 @@ const ClassPage = () => {
                   title: string
                   date: dayjs.Dayjs
                   description: string
-                }) => handleSubmitCreateAssesment(values)}
-                assignment={assignment}
+                }) =>
+                  handleSubmitCreateOrUpdateAssesment(
+                    values,
+                    assignmentId?.id ?? ''
+                  )
+                }
+                assignment={assignmentId}
               />
             </DialogContent>
           </Dialog>

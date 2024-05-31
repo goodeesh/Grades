@@ -19,14 +19,14 @@ export const schema = gql`
   input CreateAssignmentInput {
     title: String!
     description: String
-    date: DateTime
+    date: DateTime!
     subjectId: String!
   }
 
   input UpdateAssignmentInput {
-    title: String
+    title: String!
     description: String
-    dueDate: DateTime
+    date: DateTime!
     subjectId: String
   }
 
