@@ -155,7 +155,7 @@ const EditToolbar = React.memo(function EditToolbar({
         startIcon={<AddIcon />}
         onClick={() => setOpenCreateAssessmentDialog('')}
       >
-        New assessment
+        New assignment
       </Button>
     </GridToolbarContainer>
   )

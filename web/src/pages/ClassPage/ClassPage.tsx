@@ -19,7 +19,7 @@ import { useParams } from '@redwoodjs/router'
 import { Metadata, useQuery } from '@redwoodjs/web'
 
 import CustomDataGrid from 'src/components/DataGrid/DataGrid'
-import { MyForm as MyFormCreateAssesment } from 'src/components/Forms/NewAssesment/MyForm'
+import { MyForm as MyFormCreateAssignment } from 'src/components/Forms/NewAssignment/MyForm'
 import { MyForm as MyFormNewStudent } from 'src/components/Forms/NewStudent/MyForm'
 
 const GET_SUBJECT_BY_ID = gql`
@@ -68,8 +68,8 @@ const CREATE_USER_SUBJECT = gql`
   }
 `
 
-const CREATE_NEW_ASSESMENT = gql`
-  mutation CreateNewAssesment($input: CreateAssignmentInput!) {
+const CREATE_NEW_ASSIGNMENT = gql`
+  mutation CreateNewAssignment($input: CreateAssignmentInput!) {
     createAssignment(input: $input) {
       id
       title
@@ -211,7 +211,7 @@ const ClassPage = () => {
   const [updateGrade] = useMutation(UPDATE_GRADE)
   const [createGrade] = useMutation(CREATE_GRADE)
   const [createStudent] = useMutation(CREATE_STUDENT)
-  const [createAssesment] = useMutation(CREATE_NEW_ASSESMENT)
+  const [createAssignment] = useMutation(CREATE_NEW_ASSIGNMENT)
   const [createSubjectStudent] = useMutation(CREATE_USER_SUBJECT)
   const [updateAssignment] = useMutation(UPDATE_ASSIGNMENT)
   const [assignmentId, setAssignmentId] = React.useState<Assignment | null>(
@@ -261,7 +261,7 @@ const ClassPage = () => {
     refetch()
   }
 
-  const handleSubmitCreateOrUpdateAssesment = async (
+  const handleSubmitCreateOrUpdateAssignment = async (
     values: {
       title: string
       date: dayjs.Dayjs
@@ -279,24 +279,24 @@ const ClassPage = () => {
     if (assignmentId) {
       await updateAssignment({ variables: { id: assignmentId, input: input } })
     } else {
-      await createAssesment({ variables: { input: input } })
+      await createAssignment({ variables: { input: input } })
     }
-    setOpenAssesment(false)
+    setOpenAssignment(false)
     refetch()
   }
   const handleSetOpenStudent = () => {
     setOpenStudent(!openStudent)
   }
-  const handleSetOpenAssesment = (id: string) => {
+  const handleSetOpenAssignment = (id: string) => {
     console.log(id) // You can use the id here
     const assignment: Assignment | null = data.subject.assignments?.find(
       (assignment: Assignment) => assignment?.id === id
     )
     setAssignmentId(assignment)
-    setOpenAssesment(!openAssesment)
+    setOpenAssignment(!openAssignment)
   }
   const [openStudent, setOpenStudent] = React.useState(false)
-  const [openAssesment, setOpenAssesment] = React.useState(false)
+  const [openAssignment, setOpenAssignment] = React.useState(false)
   if (loading) {
     return <div>Loading...</div>
   }
@@ -331,22 +331,25 @@ const ClassPage = () => {
         </Grid>
         <Grid item textAlign="center" margin="auto">
           <br />
-          <Dialog open={openAssesment} onClose={() => setOpenAssesment(false)}>
-            <DialogTitle>New assesment</DialogTitle>
+          <Dialog
+            open={openAssignment}
+            onClose={() => setOpenAssignment(false)}
+          >
+            <DialogTitle>New assignment</DialogTitle>
             <IconButton
               style={{ position: 'absolute', right: '8px', top: '8px' }}
-              onClick={() => setOpenAssesment(false)}
+              onClick={() => setOpenAssignment(false)}
             >
               <GridCloseIcon />
             </IconButton>
             <DialogContent>
-              <MyFormCreateAssesment
+              <MyFormCreateAssignment
                 onSubmit={(values: {
                   title: string
                   date: dayjs.Dayjs
                   description: string
                 }) =>
-                  handleSubmitCreateOrUpdateAssesment(
+                  handleSubmitCreateOrUpdateAssignment(
                     values,
                     assignmentId?.id ?? ''
                   )
@@ -361,7 +364,7 @@ const ClassPage = () => {
           columns={prepareColumns(subject)}
           rows={prepareRows(subject)}
           setOpenNewStudentDialog={handleSetOpenStudent}
-          setOpenCreateAssessmentDialog={handleSetOpenAssesment}
+          setOpenCreateAssessmentDialog={handleSetOpenAssignment}
           handleSubmitGrade={handleSubmitGrade}
         />
       </Grid>
