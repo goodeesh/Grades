@@ -269,7 +269,6 @@ const ClassPage = () => {
     },
     assignmentId: string
   ) => {
-    console.log(values)
     const input = {
       title: values.title,
       subjectId: id,
