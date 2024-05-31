@@ -5,6 +5,7 @@ import {
   DialogTitle,
   Grid,
   IconButton,
+  Rating,
   Tooltip,
 } from '@mui/material'
 import {
@@ -118,91 +119,6 @@ type StudentRow = StudentRowBase & {
   [key: string]: AssignmentGrade | StudentRowBase[keyof StudentRowBase]
 }
 
-const prepareColumns = (subject: Subject) => {
-  const columns: GridColDef[] = [
-    {
-      field: 'name',
-      headerName: 'Name',
-      width: 150,
-      editable: false,
-    },
-  ]
-  let restColumns: Maybe<GridColDef>[] = []
-  if (subject.assignments) {
-    restColumns = subject.assignments.map((assignment: Maybe<Assignment>) => {
-      if (!assignment) {
-        return null
-      }
-      return {
-        id: assignment.id,
-        field: assignment.id,
-        headerName: assignment.title,
-        type: 'number',
-        editable: true,
-        gradeId: (params: GridRenderCellParams) => params.value.gradeId,
-        renderCell: (params) => (params.value.grade ? params.value.grade : ''),
-        renderHeader: () => (
-          <Tooltip
-            title={
-              <>
-                {' '}
-                Title: {assignment.title}
-                {<br />}
-                {`Date: ${new Date(
-                  assignment.date ?? assignment.createdAt
-                ).toLocaleDateString()}`}
-                {assignment.description && <br />} {assignment.description}
-              </>
-            }
-          >
-            <span>{assignment.title}</span>
-          </Tooltip>
-        ),
-      }
-    })
-  }
-  const restColumnsFiltered: GridColDef[] = restColumns.filter(
-    (column): column is GridColDef => column !== null
-  )
-  restColumnsFiltered?.forEach((column) => {
-    columns.push(column)
-  })
-  return columns
-}
-
-const prepareRows = (subject: Subject) => {
-  const rows: Maybe<StudentRow>[] = subject.students.map(
-    (student: Maybe<User>) => {
-      if (!student) {
-        return null
-      }
-      const studentRow: StudentRow = {
-        id: student.id,
-        name: student.name + ' ' + student?.lastName,
-        editable: true,
-      }
-      subject.assignments?.forEach((assignment: Maybe<Assignment>) => {
-        const grade = assignment?.grades.find(
-          (grade) => grade?.userId === student?.id
-        )
-        if (grade && assignment?.id) {
-          studentRow[assignment.id] = {
-            grade: grade.grade,
-            gradeId: grade.id,
-          }
-        } else if (assignment?.id) {
-          studentRow[assignment.id] = {
-            grade: null,
-            gradeId: null,
-          }
-        }
-      })
-      return studentRow
-    }
-  )
-  return rows.filter((row): row is StudentRow => row !== null)
-}
-
 const ClassPage = () => {
   const { id } = useParams()
   const { data, loading, refetch } = useQuery(GET_SUBJECT_BY_ID, {
@@ -214,9 +130,126 @@ const ClassPage = () => {
   const [createAssignment] = useMutation(CREATE_NEW_ASSIGNMENT)
   const [createSubjectStudent] = useMutation(CREATE_USER_SUBJECT)
   const [updateAssignment] = useMutation(UPDATE_ASSIGNMENT)
+  const [openStudent, setOpenStudent] = React.useState(false)
+  const [openAssignment, setOpenAssignment] = React.useState(false)
   const [assignmentId, setAssignmentId] = React.useState<Assignment | null>(
     null
   )
+
+  if (loading) {
+    return <div>Loading...</div>
+  } else if (!data) {
+    return <div>Class was not found</div>
+  }
+
+  const subject: Subject = data.subject
+  const prepareRows = (subject: Subject) => {
+    const rows: Maybe<StudentRow>[] = subject.students.map(
+      (student: Maybe<User>) => {
+        if (!student) {
+          return null
+        }
+        const studentRow: StudentRow = {
+          id: student.id,
+          name: student.name + ' ' + student?.lastName,
+          editable: true,
+        }
+        subject.assignments?.forEach((assignment: Maybe<Assignment>) => {
+          const grade = assignment?.grades.find(
+            (grade) => grade?.userId === student?.id
+          )
+          if (grade && assignment?.id) {
+            studentRow[assignment.id] = {
+              grade: grade.grade,
+              gradeId: grade.id,
+            }
+          } else if (assignment?.id) {
+            studentRow[assignment.id] = {
+              grade: null,
+              gradeId: null,
+            }
+          }
+        })
+        return studentRow
+      }
+    )
+    return rows.filter((row): row is StudentRow => row !== null)
+  }
+
+  const prepareColumns = (subject: Subject) => {
+    const columns: GridColDef[] = [
+      {
+        field: 'name',
+        headerName: 'Name',
+        width: 150,
+        editable: false,
+      },
+    ]
+    let restColumns: Maybe<GridColDef>[] = []
+    if (subject.assignments) {
+      restColumns = subject.assignments.map((assignment: Maybe<Assignment>) => {
+        if (!assignment) {
+          return null
+        }
+        return {
+          id: assignment.id,
+          field: assignment.id,
+          headerName: assignment.title,
+          type: 'number',
+          editable: true,
+          gradeId: (params: GridRenderCellParams) => params.value.gradeId,
+          renderCell: (params) => (
+            <Rating
+              name="simple-controlled"
+              size="small"
+              value={params.value.grade}
+              onChange={(event, value) => {
+                const assignmentId = params.field
+                const studentId = params.row.id // Assuming the studentId is stored in the 'id' field of the row
+                const grade = value
+                const gradeId = params.value.gradeId
+                if (grade) {
+                  handleSubmitGrade(
+                    assignmentId,
+                    studentId,
+                    grade.toString(),
+                    gradeId
+                  )
+                  params.value.grade = grade
+                  //deselect row in mui
+                  params.api.selectRow(params.id, false, false)
+                }
+              }}
+            />
+          ),
+          renderHeader: () => (
+            <Tooltip
+              title={
+                <>
+                  {' '}
+                  Title: {assignment.title}
+                  {<br />}
+                  {`Date: ${new Date(
+                    assignment.date ?? assignment.createdAt
+                  ).toLocaleDateString()}`}
+                  {assignment.description && <br />} {assignment.description}
+                </>
+              }
+            >
+              <span>{assignment.title}</span>
+            </Tooltip>
+          ),
+        }
+      })
+    }
+    const restColumnsFiltered: GridColDef[] = restColumns.filter(
+      (column): column is GridColDef => column !== null
+    )
+    restColumnsFiltered?.forEach((column) => {
+      columns.push(column)
+    })
+    return columns
+  }
 
   const handleSubmitGrade = async (
     assignmentId: string,
@@ -238,7 +271,7 @@ const ClassPage = () => {
       }
       await createGrade({ variables: { input: input } })
     }
-    refetch()
+    //refetch()
   }
 
   const handleSubmitNewStudent = async (values: {
@@ -294,14 +327,7 @@ const ClassPage = () => {
     setAssignmentId(assignment)
     setOpenAssignment(!openAssignment)
   }
-  const [openStudent, setOpenStudent] = React.useState(false)
-  const [openAssignment, setOpenAssignment] = React.useState(false)
-  if (loading) {
-    return <div>Loading...</div>
-  } else if (!data) {
-    return <div>Not found</div>
-  }
-  const subject: Subject = data.subject
+
   return (
     <>
       <Grid
