@@ -5,30 +5,37 @@ import ClearIcon from '@mui/icons-material/Clear'
 import DeleteIcon from '@mui/icons-material/DeleteOutlined'
 import EditIcon from '@mui/icons-material/Edit'
 import SearchIcon from '@mui/icons-material/Search'
-import { Grid, ListItemIcon, ListItemText } from '@mui/material'
-import { Select, MenuItem } from '@mui/material'
-import { TextField, Button, InputAdornment } from '@mui/material'
+import {
+  Button,
+  Grid,
+  InputAdornment,
+  ListItemIcon,
+  ListItemText,
+  MenuItem,
+  Select,
+  TextField,
+} from '@mui/material'
 import Checkbox from '@mui/material/Checkbox'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import FormGroup from '@mui/material/FormGroup'
 import IconButton from '@mui/material/IconButton'
 import {
+  DataGrid,
+  GridCellEditStopParams,
   GridColDef,
-  GridRowModesModel,
-  GridRowsProp,
   GridColumnMenu,
   GridColumnMenuItemProps,
   GridColumnMenuProps,
+  GridRowModesModel,
+  GridRowsProp,
   GridToolbarContainer,
-  GridCellEditStopParams,
 } from '@mui/x-data-grid'
-import { DataGrid } from '@mui/x-data-grid'
 
 interface CustomDataGridProps {
   rows: GridRowsProp
   columns: GridColDef[]
   setOpenNewStudentDialog: () => void
-  setOpenCreateAssesmentDialog: (id: string) => void
+  setOpenCreateAssessmentDialog: (id: string) => void
   handleSubmitGrade: (
     assignmentId: string,
     studentId: string,
@@ -45,7 +52,7 @@ const EditToolbar = React.memo(function EditToolbar({
   density,
   setDensity,
   setOpenNewStudentDialog,
-  setOpenCreateAssesmentDialog,
+  setOpenCreateAssessmentDialog,
 }: {
   searchValue: string
   setRows: (newRows: (oldRows: GridRowsProp) => GridRowsProp) => void
@@ -57,7 +64,7 @@ const EditToolbar = React.memo(function EditToolbar({
   density: 'standard' | 'comfortable' | 'compact'
   setDensity: (density: 'standard' | 'comfortable' | 'compact') => void
   setOpenNewStudentDialog: () => void
-  setOpenCreateAssesmentDialog: (id: string) => void
+  setOpenCreateAssessmentDialog: (id: string) => void
 }) {
   const [inputSearchValue, setInputSearchValue] = React.useState(searchValue)
   const searchInputRef = React.useRef<HTMLInputElement | null>(null)
@@ -146,9 +153,9 @@ const EditToolbar = React.memo(function EditToolbar({
       <Button
         color="secondary"
         startIcon={<AddIcon />}
-        onClick={() => setOpenCreateAssesmentDialog('')}
+        onClick={() => setOpenCreateAssessmentDialog('')}
       >
-        New assesment
+        New assessment
       </Button>
     </GridToolbarContainer>
   )
@@ -159,7 +166,7 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
     rows: initialRows,
     columns: initialColumns,
     handleSubmitGrade,
-    setOpenCreateAssesmentDialog,
+    setOpenCreateAssessmentDialog,
   } = props
   const [rows, setRows] = React.useState(initialRows)
   const [searchText, setSearchText] = React.useState('')
@@ -255,7 +262,7 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
     ]
   }, [columns, visibleColumns])
 
-  function CustomUserItem(props: GridColumnMenuItemProps) {
+  function DeleteAssignment(props: GridColumnMenuItemProps) {
     const { myCustomHandler, myCustomValue } = props
     return (
       <MenuItem onClick={myCustomHandler}>
@@ -267,7 +274,7 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
     )
   }
 
-  function AnotherCustomUserItem(props: GridColumnMenuItemProps) {
+  function EditAssignment(props: GridColumnMenuItemProps) {
     const { myCustomHandler, myCustomValue } = props
     return (
       <MenuItem onClick={myCustomHandler}>
@@ -285,8 +292,8 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
       <GridColumnMenu
         {...props}
         slots={{
-          columnMenuUserItem: CustomUserItem,
-          anotherColumnMenuUserItem: AnotherCustomUserItem,
+          columnMenuUserItem: DeleteAssignment,
+          anotherColumnMenuUserItem: EditAssignment,
         }}
         slotProps={{
           columnMenuUserItem: {
@@ -298,7 +305,7 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
             displayOrder: 20,
             myCustomValue: 'Edit Assignment',
             myCustomHandler: () => {
-              setOpenCreateAssesmentDialog(props.colDef.field)
+              setOpenCreateAssessmentDialog(props.colDef.field)
             },
           },
         }}
@@ -354,7 +361,9 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
           onCellEditStop={(params: GridCellEditStopParams, event) => {
             const assignmentId = params.field
             const studentId = params.id.toString()
-            const grade = event.target.value
+            const eventAsHtmlInputEvent =
+              event as React.ChangeEvent<HTMLInputElement>
+            const grade = eventAsHtmlInputEvent.target.value
             const gradeId = params.row[assignmentId]?.gradeId
 
             handleSubmitGrade(assignmentId, studentId, grade, gradeId)
@@ -372,8 +381,8 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
                 density={density}
                 setDensity={setDensity}
                 setOpenNewStudentDialog={props.setOpenNewStudentDialog}
-                setOpenCreateAssesmentDialog={
-                  props.setOpenCreateAssesmentDialog
+                setOpenCreateAssessmentDialog={
+                  props.setOpenCreateAssessmentDialog
                 }
               />
             ),

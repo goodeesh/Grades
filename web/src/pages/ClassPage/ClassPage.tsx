@@ -337,7 +337,7 @@ const ClassPage = () => {
           columns={prepareColumns(subject)}
           rows={prepareRows(subject)}
           setOpenNewStudentDialog={handleSetOpenStudent}
-          setOpenCreateAssesmentDialog={handleSetOpenAssesment}
+          setOpenCreateAssessmentDialog={handleSetOpenAssesment}
           handleSubmitGrade={handleSubmitGrade}
         />
       </Grid>
