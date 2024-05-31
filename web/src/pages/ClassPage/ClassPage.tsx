@@ -299,8 +299,9 @@ const ClassPage = () => {
   const [openAssignment, setOpenAssignment] = React.useState(false)
   if (loading) {
     return <div>Loading...</div>
+  } else if (!data) {
+    return <div>Not found</div>
   }
-
   const subject: Subject = data.subject
   return (
     <>
