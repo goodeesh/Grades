@@ -9,7 +9,7 @@ export const schema = gql`
 
   type Query {
     subjectStudentses: [SubjectStudents!]! @requireAuth
-    subjectStudents(id: Int!): SubjectStudents @requireAuth
+    subjectStudents(id: String!): SubjectStudents @requireAuth
   }
 
   input CreateSubjectStudentsInput {
