@@ -26,9 +26,9 @@ export const schema = gql`
     createSubjectStudents(input: CreateSubjectStudentsInput!): SubjectStudents!
       @requireAuth
     updateSubjectStudents(
-      id: Int!
+      id: String!
       input: UpdateSubjectStudentsInput!
     ): SubjectStudents! @requireAuth
-    deleteSubjectStudents(id: Int!): SubjectStudents! @requireAuth
+    deleteSubjectStudents(id: String!): SubjectStudents! @requireAuth
   }
 `
