@@ -14,6 +14,7 @@ model User {
   role     String? // "TEACHER" or "STUDENT"
   name     String
   lastName String?
+  darkMode Boolean @default(false)
 
   // Teacher-User to Subjects relationship
   subjects          Subject[]         @relation("TeacherSubjects")

@@ -57,6 +57,15 @@ export const deleteUser: MutationResolvers['deleteUser'] = ({ id }) => {
   })
 }
 
+export const setDarkModeForUser: MutationResolvers['setDarkModeForUser'] = ({
+  input,
+}) => {
+  return db.user.update({
+    data: { darkMode: input.darkMode },
+    where: { id: input.id },
+  })
+}
+
 export const User: UserRelationResolvers = {
   subjects: (_obj, { root }) => {
     return db.user.findUnique({ where: { id: root?.id } }).subjects()

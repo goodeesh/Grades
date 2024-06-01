@@ -10,6 +10,7 @@ export const schema = gql`
     Subject: [Subject]!
     SubjectStudents: [SubjectStudents]!
     Grades: [Grade]!
+    darkMode: Boolean!
   }
 
   input GetUserByEmail {
@@ -48,11 +49,17 @@ export const schema = gql`
     classId: String!
   }
 
+  input SetDarkModeForUserInput {
+    id: String!
+    darkMode: Boolean!
+  }
+
   type Mutation {
     createUser(input: CreateUserInput!): User! @requireAuth
     updateUser(id: String!, input: UpdateUserInput!): User! @requireAuth
     deleteUser(id: String!): User! @requireAuth
     changueRole(input: ChangueRoleInput!): User! @requireAuth
     createUserForClass(input: CreateUserForClassInput!): User! @requireAuth
+    setDarkModeForUser(input: SetDarkModeForUserInput!): User! @requireAuth
   }
 `

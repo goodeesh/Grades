@@ -8,7 +8,7 @@ import HomeIcon from '@mui/icons-material/Home'
 // import LoginIcon from '@mui/icons-material/Login'
 import MenuIcon from '@mui/icons-material/Menu'
 import PeopleIcon from '@mui/icons-material/People'
-import { Button, Grid, MenuItem, Select } from '@mui/material'
+import { Box, Button, Grid, MenuItem, Select } from '@mui/material'
 import {
   styled,
   useTheme,
@@ -52,6 +52,15 @@ const GET_USER_QUERY = gql`
       lastName
       email
       role
+      darkMode
+    }
+  }
+`
+
+const SET_DARK_MODE_MUTATION = gql`
+  mutation SetDarkModeMutation($input: SetDarkModeForUserInput!) {
+    setDarkModeForUser(input: $input) {
+      darkMode
     }
   }
 `
@@ -177,6 +186,7 @@ export default function MiniDrawer() {
   const [roleChanged, setRoleChanged] = React.useState(false)
   const [changueRole] = useMutation(CHANGUE_ROLE_MUTATION)
   const [isDarkMode, setIsDarkMode] = React.useState(false)
+  const [setDarkMode] = useMutation(SET_DARK_MODE_MUTATION)
   useEffect(() => {
     if (userData?.role) {
       setRole(userData.role)
@@ -193,6 +203,9 @@ export default function MiniDrawer() {
           },
         ],
       })
+    }
+    if (userData?.darkMode) {
+      setIsDarkMode(userData.darkMode)
     }
     setRoleChanged(false) // Reset roleChanged to false after calling changueRole
   }, [role, user, changueRole, userData, roleChanged])
@@ -237,7 +250,6 @@ export default function MiniDrawer() {
   if (loading) {
     return <div>Loading...</div>
   }
-
   return (
     <ThemeProvider
       theme={createTheme({
@@ -292,26 +304,31 @@ export default function MiniDrawer() {
                 <MenuItem value={'Teacher'}>Teacher</MenuItem>
               </Select>
             )}
-            <Button
+            <Box
               sx={{
                 alignItems: 'flex-end',
                 marginLeft: isAuthenticated ? '2%' : 'auto',
               }}
-              color="inherit"
-              onClick={() => setIsDarkMode(!isDarkMode)}
             >
-              {isDarkMode ? 'Switch to Light Mode' : 'Switch to  Dark Mode'}
-            </Button>
-            <Button
-              sx={{
-                alignItems: 'flex-end',
-                marginLeft: isAuthenticated ? '2%' : 'auto',
-              }}
-              color="inherit"
-              onClick={handleLogin}
-            >
-              {isAuthenticated ? 'Log down' : 'Log in'}
-            </Button>
+              <Button
+                color="inherit"
+                onClick={() => {
+                  setIsDarkMode(!isDarkMode)
+                  if (userData) {
+                    setDarkMode({
+                      variables: {
+                        input: { id: userData.id, darkMode: !isDarkMode },
+                      },
+                    })
+                  }
+                }}
+              >
+                {isDarkMode ? 'Switch to Light Mode' : 'Switch to  Dark Mode'}
+              </Button>
+              <Button color="inherit" onClick={handleLogin}>
+                {isAuthenticated ? 'Log down' : 'Log in'}
+              </Button>
+            </Box>
           </Toolbar>
         </AppBar>
         <Drawer
