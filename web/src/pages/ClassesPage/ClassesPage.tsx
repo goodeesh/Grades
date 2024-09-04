@@ -17,70 +17,22 @@ import { GetSubjectsForTeacherQuery } from 'types/graphql'
 import { navigate, routes } from '@redwoodjs/router'
 import { useMutation, useQuery } from '@redwoodjs/web'
 
-import DraggableList from 'src/components/DraggableList/List'
+import ConfirmationDialog from 'src/components/ConfirmationDialog/ConfirmationDialog'
+import DraggableList, {
+  Item as DraggableItem,
+} from 'src/components/DraggableList/List'
 import { MyForm } from 'src/components/Forms/NewClass/MyForm'
 import { UserContext } from 'src/components/PersistentDrawerLeft'
 
-const CREATE_SUBJECT = gql`
-  mutation CreateSubjectMutation($input: CreateSubjectInput!) {
-    createSubject(input: $input) {
-      teacherId
-      subjectName
-      subjectDescription
-    }
-  }
-`
-const GET_SUBJECTS_FOR_TEACHER = gql`
-  query GetSubjectsForTeacherQuery($teacherId: String!) {
-    subjectsByTeacherId(teacherId: $teacherId) {
-      id
-      teacherId
-      subjectName
-      subjectDescription
-      order
-      archived
-    }
-  }
-`
-const DELETE_SUBJECT = gql`
-  mutation DeleteSubjectMutation($id: String!) {
-    deleteSubject(id: $id) {
-      id
-    }
-  }
-`
+import {
+  GET_SUBJECTS_FOR_TEACHER,
+  UPDATE_ORDER_SUBJECTS,
+  CREATE_SUBJECT,
+  DELETE_SUBJECT,
+  EDIT_SUBJECT,
+} from './ClassPageQueries'
 
-const UPDATE_ORDER_SUBJECTS = gql`
-  mutation UpdateOrderSubjectsMutation($input: UpdateOrderSubjectsInput!) {
-    updateOrderSubjects(input: $input) {
-      id
-      order
-    }
-  }
-`
-
-const UPDATE_NAME_DESCRIPTION = gql`
-  mutation updateNameDescription(
-    $id: String!
-    $input: UpdateNameDescriptionInput!
-  ) {
-    updateNameDescription(id: $id, input: $input) {
-      id
-      teacherId
-      subjectName
-      subjectDescription
-      order
-      archived
-    }
-  }
-`
-type SubjectItem = {
-  id: string
-  primary: string
-  secondary: string
-  order: number
-  archived: boolean
-}
+type SubjectItem = DraggableItem
 
 const createItemList = (data: GetSubjectsForTeacherQuery): SubjectItem[] => {
   if (!data || !data.subjectsByTeacherId) {
@@ -102,6 +54,7 @@ type TypeState = {
   itemList: SubjectItem[]
   open: boolean
   messageForSnackbar: string
+  severity: 'success' | 'error'
   addNewClass: boolean
 }
 
@@ -110,6 +63,7 @@ const initialState: TypeState = {
   itemList: [],
   open: false,
   messageForSnackbar: '',
+  severity: 'success',
   addNewClass: false,
 }
 type TypeAction =
@@ -117,10 +71,11 @@ type TypeAction =
   | { type: 'SET_ITEM_LIST'; payload: GetSubjectsForTeacherQuery }
   | {
       type: 'TOGGLE_SNACKBAR'
-      payload: { open: boolean; message: string }
+      payload: { open: boolean; message: string; severity: 'success' | 'error' }
     }
   | { type: 'TOGGLE_ADD_NEW_CLASS' }
   | { type: 'TOGGLE_OPEN' }
+
 function reducer(state: TypeState, action: TypeAction) {
   switch (action.type) {
     case 'SET_ID':
@@ -130,7 +85,9 @@ function reducer(state: TypeState, action: TypeAction) {
     case 'TOGGLE_SNACKBAR':
       return {
         ...state,
-        message: action.payload.message,
+        open: action.payload.open,
+        messageForSnackbar: action.payload.message,
+        severity: action.payload.severity,
       }
     case 'TOGGLE_ADD_NEW_CLASS':
       return { ...state, addNewClass: !state.addNewClass }
@@ -144,6 +101,9 @@ function reducer(state: TypeState, action: TypeAction) {
 const ClassesPage = () => {
   const [state, setState] = React.useReducer(reducer, initialState)
   const userData = React.useContext(UserContext)
+  const [confirmDialogOpen, setConfirmDialogOpen] = React.useState(false)
+  const [classToDelete, setClassToDelete] = React.useState<string | null>(null)
+
   //set id in state
   React.useEffect(() => {
     if (userData) {
@@ -161,36 +121,65 @@ const ClassesPage = () => {
       setState({ type: 'SET_ITEM_LIST', payload: data })
     }
   }, [data])
-  const handleSnackbar = (message: string) => {
+  const handleSnackbar = (
+    message: string,
+    severity: 'success' | 'error' = 'success'
+  ) => {
     setState({
       type: 'TOGGLE_SNACKBAR',
-      payload: { open: true, message: message },
+      payload: { open: true, message, severity },
     })
   }
 
-  const [updateOrderSubjects] = useMutation(UPDATE_ORDER_SUBJECTS)
+  const [updateOrderSubjects] = useMutation(UPDATE_ORDER_SUBJECTS, {
+    onCompleted: () => {
+      handleSnackbar('Class order updated successfully!')
+    },
+    onError: (error) => {
+      handleSnackbar('Failed to update class order. Please try again.', 'error')
+      console.error(error)
+    },
+  })
 
   const [createSubject] = useMutation(CREATE_SUBJECT, {
     onCompleted: () => {
       refetch().catch((error) => console.error(error))
       setState({ type: 'TOGGLE_ADD_NEW_CLASS' }) // Close the form
-      handleSnackbar('Class created successfully!')
-      setState({ type: 'TOGGLE_OPEN' }) // Close the Snackbar
+      handleSnackbar('New class created successfully!')
+    },
+    onError: (error) => {
+      handleSnackbar('Failed to create new class. Please try again.', 'error')
+      console.error(error)
     },
   })
+
   const [deleteSubject] = useMutation(DELETE_SUBJECT, {
     onCompleted: () => {
       refetch().catch((error) => console.error(error))
       handleSnackbar('Class deleted successfully!')
-      setState({ type: 'TOGGLE_OPEN' }) // Close the Snackbar
+    },
+    onError: (error) => {
+      handleSnackbar('Failed to delete class. Please try again.', 'error')
+      console.error(error)
     },
   })
-  const [updateNameDescription] = useMutation(UPDATE_NAME_DESCRIPTION)
+
+  const [updateNameDescription] = useMutation(EDIT_SUBJECT, {
+    onCompleted: () => {
+      refetch().catch((error) => console.error(error))
+      handleSnackbar('Class updated successfully!')
+    },
+    onError: (error) => {
+      handleSnackbar('Failed to update class. Please try again.', 'error')
+      console.error(error)
+    },
+  })
+
   const handleUpdateNameDescription = (
     id: string,
     input: {
       name: string
-      description: string
+      description: string | null
     }
   ) => {
     updateNameDescription({
@@ -198,17 +187,18 @@ const ClassesPage = () => {
         id: id,
         input: {
           subjectName: input.name,
-          subjectDescription: input.description,
+          subjectDescription: input.description || '', // Convert null to empty string
         },
       },
     }).catch((error) => console.error(error))
   }
+
   const handleOpen = (id: string) => {
     //navigate to the class page
     navigate(routes.manageClass({ id: id }))
   }
 
-  const handleUpdateOrderSubjects = (newOrderedItems: SubjectItem[]) => {
+  const handleUpdateOrderSubjects = (newOrderedItems: DraggableItem[]) => {
     const ids = newOrderedItems.map((item) => item.id)
     const order = newOrderedItems.map((item) => item.order)
 
@@ -223,11 +213,29 @@ const ClassesPage = () => {
   }
 
   const handleDelete = (id: string) => {
-    deleteSubject({ variables: { id: id } }).catch((error) =>
-      console.error(error)
-    )
+    setClassToDelete(id)
+    setConfirmDialogOpen(true)
   }
+
+  const confirmDelete = () => {
+    if (classToDelete) {
+      deleteSubject({ variables: { id: classToDelete } }).catch((error) =>
+        console.error(error)
+      )
+    }
+    setConfirmDialogOpen(false)
+    setClassToDelete(null)
+  }
+
+  const cancelDelete = () => {
+    setConfirmDialogOpen(false)
+    setClassToDelete(null)
+  }
+
   if (!userData) {
+    return <div>Loading...</div>
+  }
+  if (loading) {
     return <div>Loading...</div>
   }
   return (
@@ -241,12 +249,19 @@ const ClassesPage = () => {
         >
           <Alert
             onClose={() => setState({ type: 'TOGGLE_OPEN' })}
-            severity="success"
+            severity={state.severity}
             sx={{ width: '100%' }}
           >
             {state.messageForSnackbar}
           </Alert>
         </Snackbar>
+        <ConfirmationDialog
+          open={confirmDialogOpen}
+          title="Delete Class"
+          content="Are you sure you want to delete this class? This action cannot be undone."
+          onConfirm={confirmDelete}
+          onCancel={cancelDelete}
+        />
         <Box textAlign="center" margin="auto">
           <br />
           <Button

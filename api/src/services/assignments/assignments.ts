@@ -34,9 +34,15 @@ export const updateAssignment: MutationResolvers['updateAssignment'] = ({
   })
 }
 
-export const deleteAssignment: MutationResolvers['deleteAssignment'] = ({
+export const deleteAssignment: MutationResolvers['deleteAssignment'] = async ({
   id,
 }) => {
+  // First, delete all grades associated with this assignment
+  await db.grade.deleteMany({
+    where: { assignmentId: id },
+  })
+
+  // Then delete the assignment
   return db.assignment.delete({
     where: { id },
   })

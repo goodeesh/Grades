@@ -7,17 +7,19 @@ import EditIcon from '@mui/icons-material/Edit'
 import SearchIcon from '@mui/icons-material/Search'
 import {
   Button,
+  FormControl,
   Grid,
   InputAdornment,
+  InputLabel,
   ListItemIcon,
   ListItemText,
   MenuItem,
   Select,
+  Switch,
   TextField,
+  Typography,
 } from '@mui/material'
 import Checkbox from '@mui/material/Checkbox'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import FormGroup from '@mui/material/FormGroup'
 import IconButton from '@mui/material/IconButton'
 import {
   DataGrid,
@@ -30,10 +32,12 @@ import {
   GridRowsProp,
   GridToolbarContainer,
 } from '@mui/x-data-grid'
+import { debounce } from 'lodash'
 
 interface CustomDataGridProps {
   rows: GridRowsProp
   columns: GridColDef[]
+  refetch: () => void
   setOpenNewStudentDialog: () => void
   setOpenCreateAssessmentDialog: (id: string) => void
   handleSubmitGrade: (
@@ -42,6 +46,9 @@ interface CustomDataGridProps {
     grade: string,
     gradeId?: string
   ) => void
+  handleDeleteAssignment: (assignmentId: string) => void
+  viewMode: 'stars' | 'numbers'
+  changeViewMode: (mode: 'stars' | 'numbers') => void
 }
 
 const EditToolbar = React.memo(function EditToolbar({
@@ -53,6 +60,12 @@ const EditToolbar = React.memo(function EditToolbar({
   setDensity,
   setOpenNewStudentDialog,
   setOpenCreateAssessmentDialog,
+  groupedColumns,
+  visibleColumns,
+  toggleGroup,
+  changeViewMode,
+  viewMode,
+  sx, // Add sx to the props
 }: {
   searchValue: string
   setRows: (newRows: (oldRows: GridRowsProp) => GridRowsProp) => void
@@ -65,6 +78,12 @@ const EditToolbar = React.memo(function EditToolbar({
   setDensity: (density: 'standard' | 'comfortable' | 'compact') => void
   setOpenNewStudentDialog: () => void
   setOpenCreateAssessmentDialog: (id: string) => void
+  groupedColumns: Record<string, string[]>
+  visibleColumns: Set<string>
+  changeViewMode: (mode: 'stars' | 'numbers') => void
+  viewMode: 'stars' | 'numbers'
+  toggleGroup: (headerName: string) => void
+  sx?: object // Add sx to the type definition
 }) {
   const [inputSearchValue, setInputSearchValue] = React.useState(searchValue)
   const searchInputRef = React.useRef<HTMLInputElement | null>(null)
@@ -76,8 +95,22 @@ const EditToolbar = React.memo(function EditToolbar({
     onSearchChange('')
   }
 
+  const [inputNumOfRows, setInputNumOfRows] = React.useState(numOfRows)
+
+  const debouncedSetNumOfRows = React.useMemo(
+    () => debounce((value: number) => setNumOfRows(value), 500),
+    [setNumOfRows]
+  )
+
+  const handleNumOfRowsChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setInputNumOfRows(Number(event.target.value))
+    debouncedSetNumOfRows(Number(event.target.value))
+  }
+
   return (
-    <GridToolbarContainer>
+    <GridToolbarContainer sx={sx}>
       <Grid item sx={{ display: 'flex', alignItems: 'center' }}>
         <TextField
           sx={{ width: 'auto' }}
@@ -85,7 +118,7 @@ const EditToolbar = React.memo(function EditToolbar({
           inputRef={searchInputRef}
           value={inputSearchValue}
           onChange={(e) => setInputSearchValue(e.target.value)}
-          placeholder="Search..."
+          placeholder="Search student"
           variant="outlined"
           size="small"
           style={{ marginRight: 0 }}
@@ -112,19 +145,19 @@ const EditToolbar = React.memo(function EditToolbar({
           variant="contained"
           onClick={handleSearchClick}
           sx={{
-            marginLeft: '1px',
+            marginLeft: '10px',
           }}
         >
           <SearchIcon />
         </Button>
       </Grid>
-      <Grid item>
+      <Grid item sx={{ width: '80px' }}>
         <TextField
           size="small"
           type="number"
           name="numOfRows"
-          value={numOfRows}
-          onChange={(event) => setNumOfRows(Number(event.target.value))}
+          value={inputNumOfRows}
+          onChange={handleNumOfRowsChange}
         />
       </Grid>
       <Grid item>
@@ -157,6 +190,45 @@ const EditToolbar = React.memo(function EditToolbar({
       >
         New assignment
       </Button>
+      <FormControl variant="outlined" size="small" sx={{ marginLeft: 2 }}>
+        <InputLabel>Column Groups</InputLabel>
+        <Select
+          label="Column Groups"
+          multiple
+          value={Object.keys(groupedColumns).filter((headerName) =>
+            groupedColumns[headerName].every((field) =>
+              visibleColumns.has(field)
+            )
+          )}
+          //if render value is too long, add ... at the end
+          renderValue={(selected) => {
+            const maxLength = 15
+            return selected.join(', ').length > maxLength
+              ? `${selected.join(', ').substring(0, maxLength)}...`
+              : selected.join(', ')
+          }}
+        >
+          {Object.keys(groupedColumns).map((headerName) => (
+            <MenuItem key={headerName} value={headerName}>
+              <Checkbox
+                checked={groupedColumns[headerName].every((field) =>
+                  visibleColumns.has(field)
+                )}
+                onChange={() => toggleGroup(headerName)}
+              />
+              <ListItemText primary={headerName} />
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+      <Switch
+        checked={viewMode === 'stars'}
+        color="primary"
+        onChange={() =>
+          changeViewMode(viewMode === 'stars' ? 'numbers' : 'stars')
+        }
+      />
+      <Typography>Stars</Typography>
     </GridToolbarContainer>
   )
 })
@@ -167,6 +239,10 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
     columns: initialColumns,
     handleSubmitGrade,
     setOpenCreateAssessmentDialog,
+    handleDeleteAssignment,
+    changeViewMode,
+    viewMode,
+    refetch,
   } = props
   const [rows, setRows] = React.useState(initialRows)
   const [searchText, setSearchText] = React.useState('')
@@ -252,14 +328,7 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
   }
 
   const filteredColumns = React.useMemo(() => {
-    return [
-      ...columns
-        .filter((column) => visibleColumns.has(column.field))
-        .map((column) => ({
-          ...column,
-          headerName: column.headerName,
-        })),
-    ]
+    return columns.filter((column) => visibleColumns.has(column.field))
   }, [columns, visibleColumns])
 
   function DeleteAssignment(props: GridColumnMenuItemProps) {
@@ -298,8 +367,8 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
         slotProps={{
           columnMenuUserItem: {
             displayOrder: 15,
-            myCustomValue: 'Delete Column',
-            myCustomHandler: () => handleDeleteColumn(props.colDef.field),
+            myCustomValue: 'Delete Assignment',
+            myCustomHandler: () => handleDeleteAssignment(props.colDef.field),
           },
           anotherColumnMenuUserItem: {
             displayOrder: 20,
@@ -313,85 +382,68 @@ export default function CustomDataGrid(props: CustomDataGridProps) {
     )
   }
 
-  function handleDeleteColumn(field: string) {
-    console.log(field)
-    setColumns((prevColumns) =>
-      prevColumns.filter((column) => column.field !== field)
-    )
-    setVisibleColumns(
-      (prevVisibleColumns) =>
-        new Set([...prevVisibleColumns].filter((f) => f !== field))
-    )
-  }
-
   return (
     <>
-      <FormGroup row>
-        {Object.keys(groupedColumns).map((headerName) => (
-          <FormControlLabel
-            key={headerName}
-            control={
-              <Checkbox
-                checked={groupedColumns[headerName].every((field) =>
-                  visibleColumns.has(field)
-                )}
-                onChange={() => toggleGroup(headerName)}
-                name={headerName}
-              />
-            }
-            label={headerName}
-          />
-        ))}
-      </FormGroup>
-      <Grid item style={{ width: '100%', overflow: 'auto' }}>
-        <DataGrid
-          density={density}
-          rows={filteredRows}
-          columns={filteredColumns}
-          editMode="cell"
-          rowModesModel={rowModesModel}
-          onRowModesModelChange={setRowModesModel}
-          processRowUpdate={(newRow) => {
-            const updatedRow = { ...newRow, isNew: false }
-            setRows(
-              rows.map((row) => (row.id === newRow.id ? updatedRow : row))
-            )
-            return updatedRow
-          }}
-          onCellEditStop={(params: GridCellEditStopParams, event) => {
-            const assignmentId = params.field
-            const studentId = params.id.toString()
-            const eventAsHtmlInputEvent =
-              event as React.ChangeEvent<HTMLInputElement>
-            const grade = eventAsHtmlInputEvent.target.value
-            const gradeId = params.row[assignmentId]?.gradeId
+      <DataGrid
+        sx={{
+          width: '100%',
+          overflow: 'auto',
+        }}
+        density={density}
+        rows={filteredRows}
+        columns={filteredColumns}
+        editMode="cell"
+        rowModesModel={rowModesModel}
+        onRowModesModelChange={setRowModesModel}
+        processRowUpdate={(newRow) => {
+          const updatedRow = { ...newRow, isNew: false }
+          setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)))
+          return updatedRow
+        }}
+        onCellEditStop={(params: GridCellEditStopParams, event) => {
+          const assignmentId = params.field
+          const studentId = params.id.toString()
+          const eventAsHtmlInputEvent =
+            event as React.ChangeEvent<HTMLInputElement>
+          const grade = eventAsHtmlInputEvent.target.value
+          const gradeId = params.row[assignmentId]?.gradeId
 
-            handleSubmitGrade(assignmentId, studentId, grade, gradeId)
-          }}
-          slots={{
-            toolbar: () => (
-              <EditToolbar
-                onSearchChange={handleSearchChange}
-                searchValue={searchText}
-                setRows={setRows}
-                addNewColumn={addNewColumn}
-                searchText={searchText}
-                numOfRows={numOfRows}
-                setNumOfRows={setNumOfRows}
-                density={density}
-                setDensity={setDensity}
-                setOpenNewStudentDialog={props.setOpenNewStudentDialog}
-                setOpenCreateAssessmentDialog={
-                  props.setOpenCreateAssessmentDialog
-                }
-              />
-            ),
-            columnMenu: CustomColumnMenu,
-          }}
-          paginationModel={paginationModel}
-          onPaginationModelChange={setPaginationModel}
-        />
-      </Grid>
+          handleSubmitGrade(assignmentId, studentId, grade, gradeId)
+          refetch()
+        }}
+        slots={{
+          toolbar: () => (
+            <EditToolbar
+              sx={{
+                paddingTop: '20px',
+                display: 'flex',
+                justifyContent: 'center',
+              }}
+              onSearchChange={handleSearchChange}
+              searchValue={searchText}
+              setRows={setRows}
+              addNewColumn={addNewColumn}
+              searchText={searchText}
+              numOfRows={numOfRows}
+              setNumOfRows={setNumOfRows}
+              density={density}
+              setDensity={setDensity}
+              setOpenNewStudentDialog={props.setOpenNewStudentDialog}
+              setOpenCreateAssessmentDialog={
+                props.setOpenCreateAssessmentDialog
+              }
+              groupedColumns={groupedColumns}
+              visibleColumns={visibleColumns}
+              toggleGroup={toggleGroup}
+              viewMode={viewMode}
+              changeViewMode={changeViewMode}
+            />
+          ),
+          columnMenu: CustomColumnMenu,
+        }}
+        paginationModel={paginationModel}
+        onPaginationModelChange={setPaginationModel}
+      />
     </>
   )
 }
