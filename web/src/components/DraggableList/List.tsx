@@ -30,11 +30,12 @@ import {
 
 import { MyField } from '../Forms/NewClass/MyField'
 
-interface Item {
+export interface Item {
   id: string
   primary: string
-  secondary?: string
+  secondary: string
   order: number
+  archived?: boolean
 }
 
 interface DraggableListProps {
