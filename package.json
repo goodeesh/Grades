@@ -29,7 +29,6 @@
     "@auth0/auth0-react": "^2.2.1",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    "@esbuild/linux-arm64": "^0.21.5",
     "@mui/icons-material": "^5.15.6",
     "@mui/lab": "^5.0.0-alpha.170",
     "@mui/material": "^5.14.14",
@@ -39,13 +38,9 @@
     "@types/react": "^18.3.1",
     "dayjs": "^1.11.10",
     "esbuild": "^0.23.1",
-    "esbuild-wasm": "^0.21.5",
     "formik": "^2.4.5",
     "lodash": "^4.17.21",
     "react-beautiful-dnd": "^13.1.1",
     "react-router-dom": "^6.21.1"
-  },
-  "scripts": {
-    "postinstall": "cp node_modules/@esbuild/linux-arm64/bin/esbuild node_modules/esbuild/bin/esbuild"
   }
 }

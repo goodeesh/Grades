@@ -2197,10 +2197,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@esbuild/linux-arm64@npm:0.21.5, @esbuild/linux-arm64@npm:^0.21.5":
+"@esbuild/linux-arm64@npm:0.21.5":
   version: 0.21.5
   resolution: "@esbuild/linux-arm64@npm:0.21.5"
-  checksum: 1b95b17ed94eb977e38ea9130e677551b7cf0ccccdb3f23a9f8b59b5d67400817c2a417e4f043295bd3f67796853da2a1b1a8ca201ffe745efb40a144dfdc99c
   conditions: os=linux & cpu=arm64
   languageName: node
   linkType: hard
@@ -10079,15 +10078,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild-wasm@npm:^0.21.5":
-  version: 0.21.5
-  resolution: "esbuild-wasm@npm:0.21.5"
-  bin:
-    esbuild: bin/esbuild
-  checksum: eb7b8fd0d4c70a368adf57618410ce60f5e77ea9b27a19b52866858ea048e3b008c358b4c5b3e85be8f89cb4ca8a92050bc40b3c648d7ddccdff1cd0f23edfef
-  languageName: node
-  linkType: hard
-
 "esbuild@npm:0.23.0":
   version: 0.23.0
   resolution: "esbuild@npm:0.23.0"
@@ -16722,7 +16712,6 @@ __metadata:
     "@auth0/auth0-react": ^2.2.1
     "@emotion/react": ^11.11.1
     "@emotion/styled": ^11.11.0
-    "@esbuild/linux-arm64": ^0.21.5
     "@mui/icons-material": ^5.15.6
     "@mui/lab": ^5.0.0-alpha.170
     "@mui/material": ^5.14.14
@@ -16737,7 +16726,6 @@ __metadata:
     "@types/react-beautiful-dnd": ^13.1.8
     dayjs: ^1.11.10
     esbuild: ^0.23.1
-    esbuild-wasm: ^0.21.5
     formik: ^2.4.5
     lodash: ^4.17.21
     react-beautiful-dnd: ^13.1.1
