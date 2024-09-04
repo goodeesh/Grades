@@ -250,7 +250,7 @@ export const prepareColumns = (
               <Rating
                 name="simple-controlled"
                 size="small"
-                value={6 - (params.value?.grade ?? 0)} // Reverse the star rating
+                value={6 - (params.value?.grade ?? 6)} // Reverse the star rating
                 onChange={(event, value) => {
                   // Add null check
                   const assignmentId = params.field
