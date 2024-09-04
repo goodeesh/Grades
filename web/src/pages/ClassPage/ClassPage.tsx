@@ -80,7 +80,6 @@ const ClassPage = () => {
   if (loading) {
     return <div>Loading...</div>
   }
-  //test
 
   return (
     <>
