@@ -4,7 +4,7 @@ import { useMutation } from '@apollo/client'
 import { Rating, Tooltip } from '@mui/material'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import dayjs from 'dayjs'
-import { Assignment, Maybe, Subject, User } from 'types/graphql'
+import { Assignment, AssignmentType, Maybe, Subject, User } from 'types/graphql'
 
 import ConfirmationDialog from 'src/components/ConfirmationDialog/ConfirmationDialog'
 
@@ -102,15 +102,19 @@ export const useAssignmentManagement = (
       title: string
       date: dayjs.Dayjs
       description: string
+      type: AssignmentType
     },
     assignmentId?: string
   ) => {
     const input = {
       title: values.title,
       subjectId: subjectId,
+      type: values.type,
       date: values.date,
       description: values.description,
     }
+
+    console.log('input', input)
 
     try {
       if (assignmentId) {

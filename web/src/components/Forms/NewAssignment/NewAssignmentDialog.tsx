@@ -3,7 +3,7 @@ import React from 'react'
 import { Dialog, DialogContent, DialogTitle, IconButton } from '@mui/material'
 import { GridCloseIcon } from '@mui/x-data-grid'
 import dayjs from 'dayjs'
-import { Assignment } from 'types/graphql'
+import { Assignment, AssignmentType } from 'types/graphql'
 
 import { MyForm as MyFormCreateAssignment } from './MyForm'
 
@@ -15,6 +15,7 @@ interface NewAssignmentDialogProps {
       title: string
       date: dayjs.Dayjs
       description: string
+      type: AssignmentType
     },
     assignmentId: string
   ) => void
@@ -38,7 +39,10 @@ export const NewAssignmentDialog: React.FC<NewAssignmentDialogProps> = ({
       </IconButton>
       <DialogContent>
         <MyFormCreateAssignment
-          onSubmit={(values) => onSubmit(values, assignment?.id ?? '')}
+          onSubmit={(values) => {
+            console.log('values', values)
+            onSubmit(values, assignment?.id ?? '')
+          }}
           assignment={assignment}
         />
       </DialogContent>

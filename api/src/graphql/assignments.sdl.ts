@@ -1,4 +1,9 @@
 export const schema = gql`
+  enum AssignmentType {
+    GRADED
+    COMPLETION
+  }
+
   type Assignment {
     id: String!
     title: String!
@@ -6,6 +11,7 @@ export const schema = gql`
     createdAt: DateTime!
     dueDate: DateTime
     date: DateTime
+    type: AssignmentType
     subject: Subject!
     subjectId: String!
     grades: [Grade]!
@@ -20,6 +26,7 @@ export const schema = gql`
     title: String!
     description: String
     date: DateTime!
+    type: AssignmentType!
     subjectId: String!
   }
 
@@ -27,6 +34,7 @@ export const schema = gql`
     title: String!
     description: String
     date: DateTime!
+    type: AssignmentType!
     subjectId: String
   }
 

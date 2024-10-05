@@ -19,6 +19,7 @@ export const GET_SUBJECT_BY_ID = gql`
         description
         createdAt
         date
+        type
         grades {
           id
           userId

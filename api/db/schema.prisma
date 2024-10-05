@@ -48,14 +48,20 @@ model SubjectStudents {
   userId    String?
 }
 
+enum AssignmentType {
+  GRADED
+  COMPLETION
+}
+
 model Assignment {
-  id          String    @id @default(uuid())
+  id          String         @id @default(uuid())
   title       String
   description String?
-  createdAt   DateTime  @default(now())
+  createdAt   DateTime       @default(now())
+  type        AssignmentType @default(GRADED)
   date        DateTime?
   dueDate     DateTime?
-  subject     Subject   @relation(fields: [subjectId], references: [id])
+  subject     Subject        @relation(fields: [subjectId], references: [id])
   subjectId   String
   grades      Grade[]
 }
